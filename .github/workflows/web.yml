@@ -1,0 +1,21 @@
+name: web CI
+
+on:
+  push:
+    paths:
+      - "web/app/**"
+
+defaults:
+  run:
+    working-directory: web/app
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: yarn install
+      - run: yarn lint
