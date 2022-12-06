@@ -1,4 +1,13 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  OneToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 const USER_STATUS = {
   PRODUCER: 'producer',
@@ -8,12 +17,12 @@ const USER_STATUS = {
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn({ type: 'bigint'})
+  @PrimaryColumn({ type: 'bigint' })
   readonly id: number;
 
   @Column({ default: null })
   hashId: string;
-  
+
   @Column({ default: null })
   name: string;
 

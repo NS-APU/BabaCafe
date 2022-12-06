@@ -1,9 +1,19 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
 export class Staff extends BaseEntity {
-  @PrimaryColumn({ type: 'bigint'})
+  @PrimaryColumn({ type: 'bigint' })
   readonly id: number;
 
   @Column({ default: null })
