@@ -8,11 +8,11 @@ import { AppService } from './app.service';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DATABASE_HOST,
+      host: 'localhost',
       port: 5432,
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
-      database: process.env.DATABASE_SCHEMA,
+      database: process.env.POSTGRES_DB,
       entities: getMetadataArgsStorage().tables.map((tbl) => tbl.target),
       synchronize: false,
       logging: process.env.LOGGING === 'true',
