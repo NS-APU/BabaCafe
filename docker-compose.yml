@@ -17,7 +17,6 @@ services:
       DBHOST: baba_database
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGPASSWORD: ${PGPASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       TZ: ${TZ}
     networks:
