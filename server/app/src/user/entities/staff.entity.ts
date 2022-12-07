@@ -1,3 +1,4 @@
+import { Shop } from 'src/shop/entities/shop.entity';
 import {
   BaseEntity,
   Column,
@@ -5,6 +6,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -32,9 +34,6 @@ export class Staff extends BaseEntity {
   @JoinColumn()
   user: User;
 
-  // @ManyToOne(() => Shop, (shop) => shop.staffs)
-  // shop: Shop;
-  // @Column({ default: null })
-  // @Index()
-  // shopId: number;
+  @ManyToOne(() => Shop, (shop) => shop.staffs)
+  shop: Shop;
 }

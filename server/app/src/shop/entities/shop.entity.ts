@@ -1,5 +1,6 @@
 import { LineProvider } from 'src/line/entities/line-provider.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
+import { Staff } from 'src/user/entities/staff.entity';
 import {
   BaseEntity,
   Column,
@@ -47,11 +48,14 @@ export class Shop extends BaseEntity {
   @Column({ default: null })
   closedAt: Date;
 
+  @OneToOne(() => LineProvider, (lineProvider) => lineProvider.shop)
+  lineProvider: LineProvider;
+
   @OneToMany(() => Reservation, (reservation) => reservation.shop)
   reservations: Reservation[];
 
-  @OneToOne(() => LineProvider, (lineProvider) => lineProvider.shop)
-  lineProvider: LineProvider;
+  @OneToMany(() => Staff, (staff) => staff.shop)
+  staffs: Staff[];
 
   @CreateDateColumn()
   readonly createdAt?: Date;
