@@ -1,37 +1,33 @@
-import { Product } from 'src/product/entities/product.entity';
+import { LineProvider } from 'src/line/entities/line-provider.entity';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 
 @Entity()
-export class Producer extends BaseEntity {
+export class Shop extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
-  readonly id: number;
+  id: number;
 
   @Column({ default: null })
   hashId: string;
+
+  @Column({ default: null })
+  name: string;
 
   @Column({ default: null })
   email: string;
 
   @Column({ default: null })
   tel: string;
-
-  @Column({ default: null })
-  image: string;
-
-  @Column({ default: null })
-  description: string;
 
   @Column({ default: null })
   zipCode: string;
@@ -42,6 +38,21 @@ export class Producer extends BaseEntity {
   @Column({ default: null })
   address2: string;
 
+  @Column({ default: null })
+  description: string;
+
+  @Column({ default: null })
+  openedAt: Date;
+
+  @Column({ default: null })
+  closedAt: Date;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.shop)
+  reservations: Reservation[];
+
+  @OneToOne(() => LineProvider, (lineProvider) => lineProvider.shop)
+  lineProvider: LineProvider;
+
   @CreateDateColumn()
   readonly createdAt?: Date;
 
@@ -50,11 +61,4 @@ export class Producer extends BaseEntity {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
-
-  @OneToOne(() => User, (user) => user.producer)
-  @JoinColumn()
-  user: User;
-
-  @OneToMany(() => Product, (products) => products.producer)
-  products: Product[];
 }

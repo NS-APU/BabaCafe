@@ -1,4 +1,21 @@
-import { BaseEntity, Column, CreateDateColumn, DeleteDateColumn, Entity, OneToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Account } from 'src/account/entities/account.entity';
+import { Review } from 'src/product/entities/review.entity';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Consumer } from './consumer.entity';
+import { Producer } from './producer.entity';
+import { Staff } from './staff.entity';
 
 const USER_STATUS = {
   PRODUCER: 'producer',
@@ -8,12 +25,12 @@ const USER_STATUS = {
 
 @Entity()
 export class User extends BaseEntity {
-  @PrimaryColumn({ type: 'bigint'})
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
 
   @Column({ default: null })
   hashId: string;
-  
+
   @Column({ default: null })
   name: string;
 
@@ -41,8 +58,24 @@ export class User extends BaseEntity {
   @Column({ default: null })
   birthday: Date;
 
-  @OneToOne(() => User, (staff) => staff.user)
-  user: User;
+  @OneToOne(() => Staff, (staff) => staff.user)
+  staff: Staff;
+
+  @OneToOne(() => Producer, (producer) => producer.user)
+  producer: Producer;
+
+  @OneToOne(() => Consumer, (consumer) => consumer.user)
+  consumer: Consumer;
+
+  @OneToOne(() => Account, (account) => account.user)
+  account: Account;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.user)
+  reservations: Reservation[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  @JoinColumn()
+  reviews: Review[];
 
   @CreateDateColumn()
   readonly createdAt?: Date;

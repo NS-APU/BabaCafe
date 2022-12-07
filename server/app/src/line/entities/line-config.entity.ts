@@ -1,4 +1,3 @@
-import { Product } from 'src/product/entities/product.entity';
 import {
   BaseEntity,
   Column,
@@ -6,41 +5,45 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
+import { LineProvider } from './line-provider.entity';
+
+const LINE_CONFIG_STATUS = {
+  ON: 'on',
+  OFF: 'off',
+} as const;
 
 @Entity()
-export class Producer extends BaseEntity {
+export class LineConfig extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
-  readonly id: number;
+  id: number;
 
   @Column({ default: null })
   hashId: string;
 
   @Column({ default: null })
-  email: string;
-
-  @Column({ default: null })
-  tel: string;
-
-  @Column({ default: null })
-  image: string;
+  name: string;
 
   @Column({ default: null })
   description: string;
 
   @Column({ default: null })
-  zipCode: string;
+  status: typeof LINE_CONFIG_STATUS[keyof typeof LINE_CONFIG_STATUS];
 
   @Column({ default: null })
-  address: string;
+  channelId: string;
 
   @Column({ default: null })
-  address2: string;
+  channelSecret: string;
+
+  @Column({ default: null })
+  channelToken: string;
+
+  @Column({ default: null })
+  addFriendUrl: string;
 
   @CreateDateColumn()
   readonly createdAt?: Date;
@@ -51,10 +54,7 @@ export class Producer extends BaseEntity {
   @DeleteDateColumn()
   readonly deletedAt?: Date;
 
-  @OneToOne(() => User, (user) => user.producer)
+  @OneToOne(() => LineProvider, (lineProvider) => lineProvider.lineConfig)
   @JoinColumn()
-  user: User;
-
-  @OneToMany(() => Product, (products) => products.producer)
-  products: Product[];
+  lineProvider: LineProvider;
 }

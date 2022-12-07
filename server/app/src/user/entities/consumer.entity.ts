@@ -1,4 +1,4 @@
-import { Product } from 'src/product/entities/product.entity';
+import { LineProvider } from 'src/line/entities/line-provider.entity';
 import {
   BaseEntity,
   Column,
@@ -6,7 +6,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
+  ManyToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,7 +14,7 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class Producer extends BaseEntity {
+export class Consumer extends BaseEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
 
@@ -22,25 +22,23 @@ export class Producer extends BaseEntity {
   hashId: string;
 
   @Column({ default: null })
-  email: string;
-
-  @Column({ default: null })
-  tel: string;
+  lineName: string;
 
   @Column({ default: null })
   image: string;
 
   @Column({ default: null })
-  description: string;
+  tel: string;
 
-  @Column({ default: null })
-  zipCode: string;
+  @Column({ default: true, comment: 'ブロック判定' })
+  follow: boolean;
 
-  @Column({ default: null })
-  address: string;
+  @OneToOne(() => User, (user) => user.consumer)
+  @JoinColumn()
+  user: User;
 
-  @Column({ default: null })
-  address2: string;
+  @ManyToMany(() => LineProvider, (lineProvider) => lineProvider.consumers)
+  lineProviders: LineProvider[];
 
   @CreateDateColumn()
   readonly createdAt?: Date;
@@ -50,11 +48,4 @@ export class Producer extends BaseEntity {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
-
-  @OneToOne(() => User, (user) => user.producer)
-  @JoinColumn()
-  user: User;
-
-  @OneToMany(() => Product, (products) => products.producer)
-  products: Product[];
 }
