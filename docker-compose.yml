@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   web:
     build: web
@@ -14,9 +14,9 @@ services:
     build: server/app
     container_name: baba_backend
     environment:
+      DBHOST: baba_database
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGPASSWORD: ${PGPASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       TZ: ${TZ}
     networks:
@@ -34,8 +34,6 @@ services:
       PGPASSWORD: ${PGPASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
       TZ: ${TZ}
-    ports:
-      - 5432:5432
     networks:
       - server
 
