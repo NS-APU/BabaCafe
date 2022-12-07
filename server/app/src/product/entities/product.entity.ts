@@ -41,7 +41,7 @@ export class Product extends BaseEntity {
   @Column({ default: null })
   saleStartDate: Date;
 
-  @Column({ default: null })
+  @Column({ type: 'varchar', default: null })
   status: typeof PRODUCT_STATUS[keyof typeof PRODUCT_STATUS];
 
   @Column({ default: null })

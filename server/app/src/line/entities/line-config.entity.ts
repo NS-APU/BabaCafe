@@ -30,7 +30,7 @@ export class LineConfig extends BaseEntity {
   @Column({ default: null })
   description: string;
 
-  @Column({ default: null })
+  @Column({ type: 'varchar', default: null })
   status: typeof LINE_CONFIG_STATUS[keyof typeof LINE_CONFIG_STATUS];
 
   @Column({ default: null })
