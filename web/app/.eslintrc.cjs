@@ -19,6 +19,6 @@ module.exports = {
         "@typescript-eslint"
     ],
     "rules": {
-        "no-console": ["error", { allow: ["warn"] }]
+        "no-console": ["error", { allow: ["warn", "error"] }]
     }
 }
