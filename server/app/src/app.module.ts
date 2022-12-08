@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getMetadataArgsStorage } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +19,11 @@ import { AppService } from './app.service';
       synchronize: false,
       logging: process.env.LOGGING === 'true',
     }),
+    ConfigModule.forRoot({
+      // envファイルを組み込むために使用
+      isGlobal: true,
+    }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
