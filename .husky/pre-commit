@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd `pwd`
+
+cd server/app
+yarn format
+yarn lint
+cd ../../
+
+cd web/app
+yarn format
+yarn lint
+cd ../../
