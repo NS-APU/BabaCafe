@@ -1,1 +1,9 @@
-["/index", "/reservation/index"]
+[
+  "/index",
+  "/login/index",
+  "/product/index",
+  "/product/new",
+  "/reservation/index",
+  "/reservation/new",
+  "/signup/index"
+]
