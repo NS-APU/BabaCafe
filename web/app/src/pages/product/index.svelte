@@ -17,13 +17,15 @@
 
 <div class="m-6">
   <div class="flex justify-between">
-    <h2 class="text-xl font-bold">出品一覧</h2>
-    <button
-      class="bg-secondary font-bold text-lg px-5 py-2 rounded-full"
+    <h1 class="text-2xl font-bold">出品一覧</h1>
+    <Button
+      color="secondary"
+      variant="raised"
+      class="rounded-full px-5 h-10"
       on:click={() => $goto("./new")}
     >
-      新規出品
-    </button>
+      <p class="font-bold text-lg">新規出品</p>
+    </Button>
   </div>
 
   <div class="card-display grid grid-cols-2 gap-14 mt-8">

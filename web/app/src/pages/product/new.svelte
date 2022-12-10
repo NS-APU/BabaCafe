@@ -8,7 +8,7 @@
 </script>
 
 <div class="m-6">
-  <h2 class="text-xl font-bold">新規出品</h2>
+  <h2 class="text-2xl font-bold">新規出品</h2>
 
   <form class="m-[5%]" action="">
     <Textfield class="w-[400px]" variant="standard" label="商品名" value="">

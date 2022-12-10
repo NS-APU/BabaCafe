@@ -27,11 +27,11 @@
     USER_STATUS.PRODUCER;
 </script>
 
-<h1 class="text-xl font-bold m-4">新規登録画面</h1>
+<h1 class="text-2xl font-bold m-8">新規登録画面</h1>
 
 <form class="grid justify-center my-[50px]">
   <Textfield
-    class="w-[300px]"
+    class="w-[400px]"
     variant="standard"
     label="お名前"
     bind:value={email}
@@ -40,7 +40,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="パスワード"
     bind:value={password}
@@ -49,7 +49,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="メールアドレス"
     bind:value={password}
@@ -58,7 +58,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="電話番号"
     bind:value={password}
@@ -67,7 +67,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="郵便番号"
     bind:value={password}
@@ -76,7 +76,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="住所１（都道府県・市区町村）"
     bind:value={password}
@@ -85,7 +85,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="住所２（その他）"
     bind:value={password}
@@ -94,7 +94,7 @@
   </Textfield>
 
   <Textfield
-    class="mt-6 w-[300px]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="生年月日"
     bind:value={password}
@@ -115,7 +115,7 @@
   </div>
 
   <Select
-    class="w-[300px] mt-6"
+    class="w-[400px] mt-6"
     variant="standard"
     label="ユーザーステータス"
     bind:value={userStatus}
@@ -128,7 +128,7 @@
 
   {#if userStatus === "producer"}
     <Textfield
-      class="w-[300px] mt-6"
+      class="w-[400px] mt-6"
       variant="standard"
       label="農業法人名"
       bind:value={email}
@@ -137,7 +137,7 @@
     </Textfield>
 
     <Textfield
-      class="w-[300px] mt-6"
+      class="w-[400px] mt-6"
       variant="standard"
       label="郵便番号（農地）"
       bind:value={email}
@@ -146,7 +146,7 @@
     </Textfield>
 
     <Textfield
-      class="w-[300px] mt-6"
+      class="w-[400px] mt-6"
       variant="standard"
       label="農地住所"
       bind:value={email}
@@ -155,7 +155,7 @@
     </Textfield>
 
     <Textfield
-      class="w-[300px] mt-6"
+      class="w-[400px] mt-6"
       variant="standard"
       label="農地住所2"
       bind:value={email}
@@ -164,7 +164,7 @@
     </Textfield>
   {:else if userStatus === USER_STATUS.STAFF}
     <Select
-      class="w-[300px] mt-6"
+      class="w-[400px] mt-6"
       variant="standard"
       label="店舗"
       bind:value={email}
@@ -179,13 +179,19 @@
   <div>
     <div class="ml-8">
       <Button
-        on:click={$goto("./login")}
-        class="w-[100px]  bg-secondary px-4 py-2 mt-10 mr-4 rounded-full"
+        on:click={$goto("../login")}
+        variant="raised"
+        color="secondary"
+        class="w-[100px]  px-4 py-2 mt-10 mr-4 rounded-full"
       >
         <p class="black">戻る</p>
       </Button>
 
-      <Button class="w-[100px]  bg-secondary px-4 py-2 mt-10 rounded-full">
+      <Button
+        variant="raised"
+        color="secondary"
+        class="w-[100px] px-4 py-2 mt-10 rounded-full"
+      >
         <p class="black">新規登録</p>
       </Button>
     </div>

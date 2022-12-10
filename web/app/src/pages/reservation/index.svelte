@@ -40,7 +40,7 @@
 </script>
 
 <div class="m-6">
-  <h2 class="text-xl font-bold">予約一覧</h2>
+  <h2 class="text-2xl font-bold">予約一覧</h2>
 
   <DataTable class="mt-10" table$aria-label="User list" style="width: 100%;">
     <Head>

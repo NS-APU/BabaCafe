@@ -6,25 +6,31 @@
   let password = "";
 </script>
 
-<h1 class="text-xl font-bold m-4">ログイン画面</h1>
+<h1 class="text-2xl font-bold m-8">ログイン画面</h1>
 
-<form class="grid justify-center my-[50px] ">
+<form class="grid justify-center mt-[20%] my-[50px]">
   <Textfield
-    class="w-[300%]"
+    class="w-[400px]"
     variant="standard"
     label="email"
     bind:value={email}
   />
 
   <Textfield
-    class="mt-6 w-[300%]"
+    class="mt-6 w-[400px]"
     variant="standard"
     label="password"
     bind:value={password}
   />
 
-  <Button class="w-[100px]  bg-secondary px-4 py-2 mt-10 rounded-full">
-    <p class="black">ログイン</p>
+  <Button
+    class="w-[100px] w-[150px] py-2 rounded-full mt-8 ml-[35%]"
+    color="secondary"
+    variant="raised"
+  >
+    <p class="black font-bold">ログイン</p>
   </Button>
-  <a class="text-[#808080] mt-2" href="./signup/">新規ユーザーの方はこちら</a>
+  <a class="text-text-lightGray mt-4" href="./signup/"
+    >新規ユーザーの方はこちら</a
+  >
 </form>
