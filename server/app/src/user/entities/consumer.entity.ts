@@ -1,6 +1,6 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { LineProvider } from 'src/line/entities/line-provider.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -14,12 +14,9 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class Consumer extends BaseEntity {
+export class Consumer extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   lineName: string;

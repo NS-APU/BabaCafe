@@ -1,7 +1,7 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Shop } from 'src/shop/entities/shop.entity';
 import { Consumer } from 'src/user/entities/consumer.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -17,12 +17,9 @@ import { LiffConfig } from './liff-config.entity';
 import { LineConfig } from './line-config.entity';
 
 @Entity()
-export class LineProvider extends BaseEntity {
+export class LineProvider extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   name: string;

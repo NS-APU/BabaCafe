@@ -1,6 +1,6 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { User } from 'src/user/entities/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -18,12 +18,9 @@ const ROLE = {
 };
 
 @Entity()
-export class Account extends BaseEntity {
+export class Account extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   username: string;

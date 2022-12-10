@@ -1,5 +1,5 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -18,12 +18,9 @@ export const LIFF_TYPE = {
 } as const;
 
 @Entity()
-export class LiffConfig extends BaseEntity {
+export class LiffConfig extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ unique: true })
   liffId: string;

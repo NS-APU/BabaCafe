@@ -1,3 +1,4 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Product } from 'src/product/entities/product.entity';
 import { Shop } from 'src/shop/entities/shop.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -24,12 +25,9 @@ const RESERVATION_STATUS = {
 } as const;
 
 @Entity()
-export class Reservation extends BaseEntity {
+export class Reservation extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null, comment: '出荷日時' })
   shippingDate: Date;

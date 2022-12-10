@@ -1,8 +1,8 @@
 import { Account } from 'src/account/entities/account.entity';
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Review } from 'src/product/entities/review.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -24,12 +24,9 @@ const USER_STATUS = {
 } as const;
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   name: string;
