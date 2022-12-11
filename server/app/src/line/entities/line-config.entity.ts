@@ -1,5 +1,5 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -17,12 +17,9 @@ const LINE_CONFIG_STATUS = {
 } as const;
 
 @Entity()
-export class LineConfig extends BaseEntity {
+export class LineConfig extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   name: string;

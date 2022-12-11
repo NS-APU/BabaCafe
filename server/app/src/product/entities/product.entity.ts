@@ -1,7 +1,7 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { ReservationProducts } from 'src/reservation/entities/reservation.entity';
 import { Producer } from 'src/user/entities/producer.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -22,12 +22,9 @@ const PRODUCT_STATUS = {
 };
 
 @Entity()
-export class Product extends BaseEntity {
+export class Product extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   name: string;
