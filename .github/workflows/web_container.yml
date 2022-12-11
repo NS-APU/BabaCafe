@@ -1,10 +1,15 @@
 name: web container build test
 
 on:
+  push:
+    paths:
+      - "web/**"
+      - ".github/workflows/web_container.yml"
   pull_request:
     types: [opened, reopened, review_requested]
     paths:
       - "web/**"
+      - ".github/workflows/web_container.yml"
 
 defaults:
   run:
@@ -13,6 +18,11 @@ defaults:
 jobs:
   container:
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+        github.event_name == 'pull_request' ||
+        github.run_attempt != 1
+      }}
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
