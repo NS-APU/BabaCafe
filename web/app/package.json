@@ -5,8 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "routify -c dev:vite ",
+    "dev-docker": "routify -c dev:vite-docker",
     "build": "svelte-check && routify -b && vite build",
     "dev:vite": "vite",
+    "dev:vite-docker": "vite --host",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

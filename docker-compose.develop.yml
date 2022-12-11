@@ -6,7 +6,7 @@ services:
       target: prepare
       dockerfile: Dockerfile.local
     command: >
-      bash -c "yarn install && yarn run dev"
+      bash -c "yarn install && yarn run dev-docker"
     volumes:
       - "./web/app:/svelte_app"
     ports:
