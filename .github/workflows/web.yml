@@ -38,8 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
-        ${{ github.event_name == 'pull_request'}} &&
-        ${{ github.event.actions != 'synchronize' }}
+        github.event_name == 'pull_request' &&
+        github.event.actions != 'synchronize'
       }}
     steps:
       - uses: actions/checkout@v3
