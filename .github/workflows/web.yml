@@ -6,7 +6,7 @@ on:
       - "web/app/**"
       - ".github/workflows/web.yml"
   pull_request:
-    types: [opened, reopened, synchronize, review_requested]
+    types: [opened, reopened, review_requested]
     paths:
       - "web/**"
       - ".github/workflows/web.yml"
@@ -38,8 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
-        github.event_name == 'pull_request' &&
-        github.event.actions != 'synchronize'
+        github.event_name == 'pull_request' ||
+        github.run_attempt != 1
       }}
     steps:
       - uses: actions/checkout@v3
