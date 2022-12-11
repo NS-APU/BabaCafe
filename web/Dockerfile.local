@@ -8,6 +8,7 @@ RUN apt update \
 
 # build svelte app
 FROM prepare AS builder
+RUN mkdir public
 COPY app/src/theme ./src/theme
 COPY app/package.json app/yarn.lock ./
 RUN yarn install --network-timeout 180000
