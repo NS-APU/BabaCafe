@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "server/app/**"
+      - ".github/workflows/backend.yml"
 
 defaults:
   run:
