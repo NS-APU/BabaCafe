@@ -3,7 +3,7 @@ name: web CI
 on:
   push:
     paths:
-      - "web/app/**"
+      - "web/**"
 
 defaults:
   run:
