@@ -8,7 +8,8 @@ RUN apt update \
 
 # build svelte app
 FROM prepare AS builder
-COPY app/public ./public
+RUN mkdir public
+COPY app/package.json app/yarn.lock ./
 RUN yarn install
 COPY app ./
 RUN yarn build
