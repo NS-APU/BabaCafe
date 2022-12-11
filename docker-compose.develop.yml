@@ -1,12 +1,12 @@
-version: '3'
+version: "3"
 services:
   web:
     build:
       context: web
-      target: develop
+      target: prepare
       dockerfile: Dockerfile.local
     command: >
-      bash -c "yarn install && yarn run dev --host"
+      bash -c "yarn install && yarn run dev-docker"
     volumes:
       - "./web/app:/svelte_app"
     ports:
@@ -15,7 +15,7 @@ services:
   backend:
     build:
       context: server/app
-      target: develop
+      target: prepare
       dockerfile: Dockerfile.local
     volumes:
       - "./server/app:/server"
@@ -24,4 +24,6 @@ services:
     ports:
       - "3000:3000"
 
-
+  database:
+    ports:
+      - "5432:5432"

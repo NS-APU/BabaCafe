@@ -1,6 +1,6 @@
+import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Product } from 'src/product/entities/product.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -14,12 +14,9 @@ import {
 import { User } from './user.entity';
 
 @Entity()
-export class Producer extends BaseEntity {
+export class Producer extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
-
-  @Column({ default: null })
-  hashId: string;
 
   @Column({ default: null })
   email: string;

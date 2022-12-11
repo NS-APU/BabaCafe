@@ -1,16 +1,14 @@
 # prepare svelte project
+# make,python3,g++ -> node-gyp required
 FROM node:16.6.1-slim AS prepare
 WORKDIR /svelte_app
-
-# develop container
-ENV LIB="git curl wget"
-FROM prepare AS develop
+ENV LIB="git curl wget make python3 g++"
 RUN apt update \
   && apt install -y $LIB --no-install-recommends
 
 # build svelte app
-# require: Dockerfie.prepare
 FROM prepare AS builder
+RUN mkdir public
 COPY app/package.json app/yarn.lock ./
 RUN yarn install
 COPY app ./
