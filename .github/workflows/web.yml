@@ -36,6 +36,9 @@ jobs:
       - run: yarn build
   container:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
     if: >-
       ${{
         github.event_name == 'pull_request' ||
