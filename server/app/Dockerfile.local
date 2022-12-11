@@ -9,7 +9,7 @@ RUN apt update \
 # build
 FROM prepare AS builder
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --network-timeout 180000
 COPY . .
 RUN yarn build
 
