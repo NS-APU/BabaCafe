@@ -1,6 +1,10 @@
 # prepare svelte project
+# make,python3,g++ -> node-gyp required
 FROM node:16.6.1-slim AS prepare
 WORKDIR /svelte_app
+ENV LIB="git curl wget make python3 g++"
+RUN apt update \
+  && apt install -y $LIB --no-install-recommends
 COPY app/package.json app/yarn.lock ./
 RUN yarn install
 COPY app ./
