@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - "web/app/**"
+      - ".github/workflows/web.yml"
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested]
+    paths:
+      - "web/**"
+      - ".github/workflows/web.yml"
 
 defaults:
   run:
@@ -28,3 +34,18 @@ jobs:
           node-version: 16
       - run: yarn install
       - run: yarn build
+  container:
+    runs-on: ubuntu-latest
+    if: >-
+      ${{
+        ${{ github.event_name == 'pull_request'}} &&
+        ${{ github.event.actions != 'synchronize' }}
+      }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: docker/setup-buildx-action@v2
+      - name: Build local container
+        run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.local .
+      - name: Build product container
+        run: docker buildx build --platform linux/amd64,linux/arm64 .
