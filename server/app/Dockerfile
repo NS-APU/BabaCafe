@@ -1,6 +1,10 @@
 # build
+# make,python3,g++ -> node-gyp required
 FROM node:16.13.1-slim AS builder
 WORKDIR /server
+ENV LIB="git curl wget make python3 g++"
+RUN apt update \
+  && apt install -y $LIB --no-install-recommends
 COPY package.json yarn.lock ./
 RUN yarn install --prod --frozen-lockfile
 COPY . .

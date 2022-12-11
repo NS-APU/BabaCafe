@@ -15,7 +15,7 @@ services:
   backend:
     build:
       context: server/app
-      target: develop
+      target: prepare
       dockerfile: Dockerfile.local
     volumes:
       - "./server/app:/server"
