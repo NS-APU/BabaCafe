@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - "web/app/**"
+      - ".github/workflows/web.yml"
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested]
+    paths:
+      - "server/app/**"
+      - ".github/workflows/backend_container.yml"
 
 defaults:
   run:
@@ -12,6 +18,11 @@ defaults:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+        github.event.action != 'synchronize' ||
+        github.run_attempt != 1
+      }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v1
@@ -19,8 +30,14 @@ jobs:
           node-version: 16
       - run: yarn install
       - run: yarn lint
+
   build:
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+        github.event.action != 'synchronize' ||
+        github.run_attempt != 1
+      }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v1

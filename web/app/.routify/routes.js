@@ -1,10 +1,10 @@
 /**
  * @roxi/routify 2.18.8
- * File generated Sat Dec 10 2022 01:09:53 GMT+0900 (日本標準時)
+ * File generated Sun Dec 11 2022 13:32:09 GMT+0900 (日本標準時)
  */
 
 export const __version = "2.18.8";
-export const __timestamp = "2022-12-09T16:09:53.934Z";
+export const __timestamp = "2022-12-11T04:32:09.263Z";
 
 //buildRoutes
 import { buildClientTree } from "@roxi/routify/runtime/buildRoutes";
@@ -16,11 +16,14 @@ export const options = {};
 
 //tree
 export const _tree = {
-  name: "root",
-  filepath: "/",
+  name: "_layout",
+  filepath: "/_layout.svelte",
   root: true,
-  ownMeta: {},
-  absolutePath: "src/pages",
+  ownMeta: {
+    preload: "proximity",
+  },
+  absolutePath:
+    "/Users/sugawarakei/Desktop/BabaCafe/web/app/src/pages/_layout.svelte",
   children: [
     {
       isFile: true,
@@ -41,7 +44,7 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/_fallback",
@@ -68,7 +71,7 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/index",
@@ -106,7 +109,7 @@ export const _tree = {
           ownMeta: {},
           meta: {
             recursive: true,
-            preload: false,
+            preload: "proximity",
             prerender: true,
           },
           path: "/login/index",
@@ -123,7 +126,7 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/login",
@@ -158,7 +161,7 @@ export const _tree = {
           ownMeta: {},
           meta: {
             recursive: true,
-            preload: false,
+            preload: "proximity",
             prerender: true,
           },
           path: "/product/index",
@@ -185,7 +188,7 @@ export const _tree = {
           ownMeta: {},
           meta: {
             recursive: true,
-            preload: false,
+            preload: "proximity",
             prerender: true,
           },
           path: "/product/new",
@@ -202,7 +205,7 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/product",
@@ -237,42 +240,13 @@ export const _tree = {
           ownMeta: {},
           meta: {
             recursive: true,
-            preload: false,
+            preload: "proximity",
             prerender: true,
           },
           path: "/reservation/index",
           id: "_reservation_index",
           component: () =>
             import("../src/pages/reservation/index.svelte").then(
-              (m) => m.default
-            ),
-        },
-        {
-          isFile: true,
-          isDir: false,
-          file: "new.svelte",
-          filepath: "/reservation/new.svelte",
-          name: "new",
-          ext: "svelte",
-          badExt: false,
-          absolutePath:
-            "/Users/sugawarakei/Desktop/BabaCafe/web/app/src/pages/reservation/new.svelte",
-          importPath: "../src/pages/reservation/new.svelte",
-          isLayout: false,
-          isReset: false,
-          isIndex: false,
-          isFallback: false,
-          isPage: true,
-          ownMeta: {},
-          meta: {
-            recursive: true,
-            preload: false,
-            prerender: true,
-          },
-          path: "/reservation/new",
-          id: "_reservation_new",
-          component: () =>
-            import("../src/pages/reservation/new.svelte").then(
               (m) => m.default
             ),
         },
@@ -285,10 +259,62 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/reservation",
+    },
+    {
+      isFile: false,
+      isDir: true,
+      file: "setting",
+      filepath: "/setting",
+      name: "setting",
+      ext: "",
+      badExt: false,
+      absolutePath:
+        "/Users/sugawarakei/Desktop/BabaCafe/web/app/src/pages/setting",
+      children: [
+        {
+          isFile: true,
+          isDir: false,
+          file: "index.svelte",
+          filepath: "/setting/index.svelte",
+          name: "index",
+          ext: "svelte",
+          badExt: false,
+          absolutePath:
+            "/Users/sugawarakei/Desktop/BabaCafe/web/app/src/pages/setting/index.svelte",
+          importPath: "../src/pages/setting/index.svelte",
+          isLayout: false,
+          isReset: false,
+          isIndex: true,
+          isFallback: false,
+          isPage: true,
+          ownMeta: {},
+          meta: {
+            recursive: true,
+            preload: "proximity",
+            prerender: true,
+          },
+          path: "/setting/index",
+          id: "_setting_index",
+          component: () =>
+            import("../src/pages/setting/index.svelte").then((m) => m.default),
+        },
+      ],
+      isLayout: false,
+      isReset: false,
+      isIndex: false,
+      isFallback: false,
+      isPage: false,
+      ownMeta: {},
+      meta: {
+        recursive: true,
+        preload: "proximity",
+        prerender: true,
+      },
+      path: "/setting",
     },
     {
       isFile: false,
@@ -320,7 +346,7 @@ export const _tree = {
           ownMeta: {},
           meta: {
             recursive: true,
-            preload: false,
+            preload: "proximity",
             prerender: true,
           },
           path: "/signup/index",
@@ -337,22 +363,30 @@ export const _tree = {
       ownMeta: {},
       meta: {
         recursive: true,
-        preload: false,
+        preload: "proximity",
         prerender: true,
       },
       path: "/signup",
     },
   ],
-  isLayout: false,
+  isLayout: true,
   isReset: false,
   isIndex: false,
   isFallback: false,
+  isPage: false,
+  isFile: true,
+  file: "_layout.svelte",
+  ext: "svelte",
+  badExt: false,
+  importPath: "../src/pages/_layout.svelte",
   meta: {
+    preload: "proximity",
     recursive: true,
-    preload: false,
     prerender: true,
   },
   path: "/",
+  id: "__layout",
+  component: () => import("../src/pages/_layout.svelte").then((m) => m.default),
 };
 
 export const { tree, routes } = buildClientTree(_tree);

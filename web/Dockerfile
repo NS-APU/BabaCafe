@@ -1,12 +1,15 @@
 # prepare svelte project
-FROM node:16.6.1-slim AS prepare
+# make,python3,g++ -> node-gyp required
+FROM node:16.6.1-slim AS builder
 WORKDIR /svelte_app
+ENV LIB="git curl wget make python3 g++"
+RUN apt update \
+  && apt install -y $LIB --no-install-recommends
+RUN mkdir public
+COPY app/src/theme ./src/theme
 COPY app/package.json app/yarn.lock ./
-RUN yarn install
+RUN yarn install --network-timeout 180000
 COPY app ./
-
-# build svelte app
-FROM prepare AS builder
 RUN yarn build
 
 # nginx(product)
