@@ -6,7 +6,7 @@ ENV LIB="git curl wget make python3 g++"
 RUN apt update \
   && apt install -y $LIB --no-install-recommends
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile --network-timeout 180000
 COPY . .
 RUN yarn build
 

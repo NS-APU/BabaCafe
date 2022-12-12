@@ -8,7 +8,7 @@ RUN apt update \
 RUN mkdir public
 COPY app/src/theme ./src/theme
 COPY app/package.json app/yarn.lock ./
-RUN yarn install
+RUN yarn install --network-timeout 180000
 COPY app ./
 RUN yarn build
 
