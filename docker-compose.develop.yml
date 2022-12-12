@@ -9,6 +9,7 @@ services:
       bash -c "yarn install && yarn run dev-docker"
     volumes:
       - "./web/app:/svelte_app"
+      - "web_node_modules:/svelte_app/node_modules"
     ports:
       - "5173:5173"
 
@@ -19,6 +20,7 @@ services:
       dockerfile: Dockerfile.local
     volumes:
       - "./server/app:/server"
+      - "backend_node_modules:/server/node_modules"
     command: >
       bash -c "yarn install && yarn run start"
     ports:
@@ -27,3 +29,6 @@ services:
   database:
     ports:
       - "5432:5432"
+volumes:
+  web_node_modules:
+  backend_node_modules:

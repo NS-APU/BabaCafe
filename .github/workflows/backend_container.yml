@@ -1,10 +1,15 @@
 name: backend container build test
 
 on:
-  pull_request:
-    types: [opened, reopened, review_requested]
+  push:
     paths:
       - "server/app/**"
+      - ".github/workflows/backend_container.yml"
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested]
+    paths:
+      - "server/app/**"
+      - ".github/workflows/backend_container.yml"
 
 defaults:
   run:
@@ -13,6 +18,12 @@ defaults:
 jobs:
   container:
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+        github.event_name == 'pull_request' &&
+        github.event.action != 'synchronize' ||
+        github.run_attempt != 1
+      }}
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-qemu-action@v2
