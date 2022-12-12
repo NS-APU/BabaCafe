@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 import { Review } from './review.entity';
 
-const PRODUCT_STATUS = {
+export const PRODUCT_STATUS = {
   ON_SALE: 'onSale', // 販売中
   SOLD_OUT: 'soldOut', // 売り切れ
   WILL_SALE: 'willSale', // 販売予定
@@ -75,4 +75,31 @@ export class Product extends BaseEntity {
 
   @ManyToOne(() => Producer, (producer) => producer.products)
   producer: Producer;
+
+  convertTProduct(): TProduct {
+    return {
+      ...this,
+      id: this.hashId,
+    };
+  }
 }
+
+export type TProduct = Pick<
+  Product,
+  | 'name'
+  | 'image'
+  | 'description'
+  | 'saleStartDate'
+  | 'status'
+  | 'price'
+  | 'unitWeight'
+  | 'totalAmount'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+> & {
+  id: string;
+  reviews: Review[];
+  producer: Producer;
+  reservationProducts: ReservationProducts[];
+};
