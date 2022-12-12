@@ -17,7 +17,7 @@
     "postall-dev": "db:stop",
     "dev:web": "yarn --cwd web/app dev",
     "dev:server": "yarn --cwd server/app start:dev",
-    "db": "docker-compose -f docker-compose.db.yml"
+    "db": "COMPOSE_PROJECT_NAME=BabaCafeLocal docker-compose -f docker-compose.db.yml"
   },
   "lint-staged": {
     "*.{js,ts,md,yml,html,json,css}": [
