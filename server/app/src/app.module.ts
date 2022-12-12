@@ -4,6 +4,7 @@ import { getMetadataArgsStorage } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as dotenv from 'dotenv';
+import { ProductModule } from './product/product.module';
 dotenv.config();
 
 @Module({
@@ -19,6 +20,7 @@ dotenv.config();
       synchronize: false,
       logging: process.env.LOGGING === 'true',
     }),
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],
