@@ -21,7 +21,7 @@ jobs:
     if: >-
       ${{
         github.event_name == 'pull_request' &&
-        github.event.actions != 'synchronize' ||
+        github.event.action != 'synchronize' ||
         github.run_attempt != 1
       }}
     steps:
