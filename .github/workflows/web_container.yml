@@ -6,7 +6,7 @@ on:
       - "web/**"
       - ".github/workflows/web_container.yml"
   pull_request:
-    types: [opened, reopened, review_requested]
+    types: [opened, reopened, synchronize, review_requested]
     paths:
       - "web/**"
       - ".github/workflows/web_container.yml"
@@ -20,7 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >-
       ${{
-        github.event_name == 'pull_request' ||
+        github.event_name == 'pull_request' &&
+        github.event.actions != 'synchronize' ||
         github.run_attempt != 1
       }}
     steps:
