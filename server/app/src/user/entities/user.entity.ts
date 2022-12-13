@@ -1,4 +1,4 @@
-import { Account } from 'src/account/entities/account.entity';
+import { Account } from 'src/auth/entities/account.entity';
 import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Review } from 'src/product/entities/review.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
