@@ -17,7 +17,7 @@ import { Consumer } from './consumer.entity';
 import { Producer } from './producer.entity';
 import { Staff } from './staff.entity';
 
-const USER_STATUS = {
+export const USER_STATUS = {
   PRODUCER: 'producer',
   CONSUMER: 'consumer',
   STAFF: 'staff',

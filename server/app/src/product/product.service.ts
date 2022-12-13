@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer } from 'src/user/entities/producer.entity';
 import { Repository } from 'typeorm';
-import { CreateProductDto } from '../dto/create-product.dto';
-import { Product, PRODUCT_STATUS, TProduct } from './product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
+import { Product, PRODUCT_STATUS, TProduct } from './entities/product.entity';
 import dayjs from 'dayjs';
 import { putBase64Image } from 'src/utils/file';
+import { Account } from 'src/auth/entities/account.entity';
+import { USER_STATUS } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
+    @InjectRepository(Producer)
+    private producerRepository: Repository<Producer>,
   ) {}
 
   async getProducts(): Promise<TProduct[]> {
@@ -28,9 +32,15 @@ export class ProductService {
 
   async createProduct(
     dto: CreateProductDto,
-    producer: Producer,
+    account: Account,
   ): Promise<TProduct> {
     const product = new Product();
+    let producer: Producer;
+    if (account?.user.mainStatus === USER_STATUS.PRODUCER) {
+      producer = await this.producerRepository.findOne({
+        where: { user: { id: account?.user.id } },
+      });
+    }
     await ProductService.setProductAttributes(dto, product, producer);
     await product.save();
 

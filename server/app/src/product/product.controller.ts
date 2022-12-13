@@ -7,11 +7,11 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { Account } from 'src/account/entities/account.entity';
-import { GetAccount } from 'src/account/get-account.decorator';
+import { Account } from 'src/auth/entities/account.entity';
+import { GetAccount } from 'src/auth/get-account.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './entities/product.entity';
-import { ProductService } from './entities/product.service';
+import { ProductService } from './product.service';
 import { ProductValidationPipe } from './pipes/product-validation.pipe';
 
 @Controller('products')
