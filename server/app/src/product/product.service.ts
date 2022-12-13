@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer } from 'src/user/entities/producer.entity';
 import { Repository } from 'typeorm';
@@ -16,6 +20,8 @@ export class ProductService {
     private productRepository: Repository<Product>,
     @InjectRepository(Producer)
     private producerRepository: Repository<Producer>,
+    @InjectRepository(Account)
+    private accountRepository: Repository<Account>,
   ) {}
 
   async getProducts(): Promise<TProduct[]> {
@@ -36,10 +42,17 @@ export class ProductService {
   ): Promise<TProduct> {
     const product = new Product();
     let producer: Producer;
-    if (account?.user.mainStatus === USER_STATUS.PRODUCER) {
+    account = await this.accountRepository.findOne({
+      where: { id: account.id },
+      relations: { user: true },
+    });
+    if (account.user.mainStatus === USER_STATUS.PRODUCER) {
       producer = await this.producerRepository.findOne({
         where: { user: { id: account?.user.id } },
       });
+    } else {
+      // 農家以外の場合はエラーを表示。
+      throw new BadRequestException();
     }
     await ProductService.setProductAttributes(dto, product, producer);
     await product.save();
@@ -57,16 +70,19 @@ export class ProductService {
     product.price = dto.price;
     product.unitWeight = dto.unitWeight;
     product.totalAmount = dto.totalAmount;
-    product.saleStartDate = dayjs(dto.saleStartDate).toDate();
+    if (dto.saleStartDate) {
+      product.saleStartDate = dayjs(dto.saleStartDate).toDate();
 
-    const todaysDate = dayjs().toDate();
-    // 当日時が商品販売開始日時よりも前の場合は「販売予定」とする。
-    // それ以外は「販売中」とする。
-    if (todaysDate < product.saleStartDate) {
-      product.status = PRODUCT_STATUS.WILL_SALE;
-    } else {
-      product.status = PRODUCT_STATUS.ON_SALE;
+      const todaysDate = dayjs().toDate();
+      // 当日時が商品販売開始日時よりも前の場合は「販売予定」とする。
+      // それ以外は「販売中」とする。
+      if (todaysDate < product.saleStartDate) {
+        product.status = PRODUCT_STATUS.WILL_SALE;
+      } else {
+        product.status = PRODUCT_STATUS.ON_SALE;
+      }
     }
+
     product.producer = producer;
 
     // imageの値がbase64である(httpから始まらない)なら，ストレージに保存する処理を行う

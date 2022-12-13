@@ -5,9 +5,10 @@ import { Staff } from 'src/user/entities/staff.entity';
 import { Product } from './entities/product.entity';
 import { ProductService } from './product.service';
 import { ProductController } from './product.controller';
+import { Account } from 'src/auth/entities/account.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, Producer, Staff])],
+  imports: [TypeOrmModule.forFeature([Product, Producer, Staff, Account])],
   controllers: [ProductController],
   providers: [ProductService],
   exports: [ProductService],
