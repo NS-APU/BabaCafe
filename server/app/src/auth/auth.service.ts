@@ -1,10 +1,9 @@
-import bcrypt = require('bcrypt');
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { AccountService } from 'src/auth/account.service';
 import { Account } from 'src/auth/entities/account.entity';
 
-type PasswordOmitAccount = Omit<Account, 'password'>;
+export type PasswordOmitAccount = Omit<Account, 'password'>;
 
 interface JWTPayload {
   accountId: Account['id'];
@@ -28,13 +27,13 @@ export class AuthService {
   ): Promise<PasswordOmitAccount | null> {
     const account = await this.accountService.getAccountByEmail(email); // DBからAccountを取得
 
-    // DBに保存されているpasswordはハッシュ化されている事を想定しているので、
+    // TODO: DBに保存されているpasswordはハッシュ化されている事を想定しているので、
     // bcryptなどを使ってパスワードを判定する
-    if (account && bcrypt.compareSync(pass, account.password)) {
+    if (account && pass === account.password) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { password, ...result } = account; // パスワード情報を外部に出さないようにする
 
-      return result as Account;
+      return result as PasswordOmitAccount;
     }
 
     return null;

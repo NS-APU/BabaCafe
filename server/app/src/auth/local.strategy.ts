@@ -1,10 +1,8 @@
 import { Strategy as BaseLocalStrategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import { AuthService, PasswordOmitAccount } from './auth.service';
 import { Account } from 'src/auth/entities/account.entity';
-
-type PasswordOmitAccount = Omit<Account, 'password'>;
 
 /**
  * @description accountEmailとpasswordを使った認証処理を行うクラス
