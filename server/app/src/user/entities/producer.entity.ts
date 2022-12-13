@@ -18,6 +18,9 @@ export class Producer extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   readonly id: number;
 
+  @Column({ default: null, comment: '農業法人名' })
+  name: string;
+
   @Column({ default: null })
   email: string;
 
