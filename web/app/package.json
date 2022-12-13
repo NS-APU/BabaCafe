@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "@felte/validator-zod": "^0.3.3",
-    "felte": "^0.8.3"
+    "felte": "^0.8.3",
+    "zod": "^3.9.8"
   }
 }
