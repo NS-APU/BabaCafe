@@ -38,5 +38,9 @@
     "tslib": "^2.4.0",
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
+  },
+  "dependencies": {
+    "@felte/validator-zod": "^0.3.3",
+    "felte": "^0.8.3"
   }
 }
