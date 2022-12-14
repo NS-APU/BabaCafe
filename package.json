@@ -14,7 +14,6 @@
     "lint": "eslint \"{server,web}/**/{src,apps,libs,test}/**/*.ts\" --fix",
     "all-install": "yarn install && yarn --cwd web/app install && yarn --cwd server/app install",
     "all-dev": "run-p dev:* \"db up\"",
-    "postall-dev": "db:stop",
     "dev:web": "yarn --cwd web/app dev",
     "dev:server": "yarn --cwd server/app start:dev",
     "db": "COMPOSE_PROJECT_NAME=BabaCafeLocal docker-compose -f docker-compose.db.yml"
