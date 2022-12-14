@@ -23,6 +23,7 @@ export async function baseAPI<
     mode: "cors",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
     },
     signal: controller.signal,
     ...(body && { body: JSON.stringify(body) }),

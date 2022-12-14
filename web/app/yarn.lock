@@ -27,22 +27,22 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@felte/common@0.5.4":
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/@felte/common/-/common-0.5.4.tgz#c1372ad202ff40ec84ecf66c3bd3b2e5f98c1d67"
-  integrity sha512-t+ARNPFo7iXUQaDZHVmAhLy8u5O5Fj6M/p4z9AjBFu27g2nuZ6oJn4JPxF6yjBAfcAWp3Xkq2oAELN5m/gVB3A==
-
 "@felte/common@0.6.0":
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@felte/common/-/common-0.6.0.tgz#64cb3438be91b2d553641bc7ec523284806186f5"
   integrity sha512-dLh+heGTGKQzIeUbLcJMEvDks3YTy99FFdUHg8/fxeIFSprUM/b4olK+tIMBrTE30AV2BFYeQHxB8hFpzUafAQ==
 
-"@felte/core@0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@felte/core/-/core-0.2.7.tgz#1bca81ebf26537226f4e12de646ce80310c630ef"
-  integrity sha512-NLpALlG9776MFITSx4qdTdeclVtXNqyjgtu2lcy0eQtuCwy5NhYOOVcRA0Uo+oCsMbm5otRVvhtC66IHsiG0xg==
+"@felte/common@1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@felte/common/-/common-1.1.3.tgz#844414ec6c83f1e5f34210eb0a5e57efb75aff6b"
+  integrity sha512-47OJYohloUT9FOgXRxEIaSkaveDB70/eRv3+6MfYDZbc44XfojHJLiUOz3uSWRwfl8f2wonhkhIPCYkzIUltTg==
+
+"@felte/core@1.3.6":
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/@felte/core/-/core-1.3.6.tgz#2fecc2cde097e6406cb91ea7d20dcba276464501"
+  integrity sha512-/V1WG+YTz7gfbvQYeBazMSgaCA5qnNRJy+HP6jtdvi2f5Xm/iwVxZXoZZU5/Da5CmT0rYdkCDcHQe9IG0iTV1Q==
   dependencies:
-    "@felte/common" "0.5.4"
+    "@felte/common" "1.1.3"
 
 "@felte/validator-zod@^0.3.3":
   version "0.3.8"
@@ -2209,12 +2209,12 @@ fastq@^1.6.0:
   dependencies:
     reusify "^1.0.4"
 
-felte@^0.8.3:
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/felte/-/felte-0.8.7.tgz#f9921bc1367f7eb3983063046c546a37149e3783"
-  integrity sha512-1D+wa/Dr0EB2v6vOxeD5eTHnyokr8R+Snk3SRkDmxW95kYJRpU++zEvS4QmJUGr0ZDWRyji8l4FOcY6SyiIbfg==
+felte@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/felte/-/felte-1.2.6.tgz#2bb49ce539b4aefdd81ef48bd074cce8ae708dd7"
+  integrity sha512-0dcDPVkA09vkXFm+hiOFanWGGH1hwjqWDul02nRVjkMe4dtf6FxtyV8JSFY2Rxcq7rCoaYkn1Dv8oeRDRdVPsw==
   dependencies:
-    "@felte/core" "0.2.7"
+    "@felte/core" "1.3.6"
 
 file-entry-cache@^6.0.1:
   version "6.0.1"

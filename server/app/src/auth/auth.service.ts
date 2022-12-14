@@ -2,12 +2,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { AccountService } from 'src/auth/account.service';
 import { Account } from 'src/auth/entities/account.entity';
+import { USER_STATUS } from 'src/user/entities/user.entity';
 
 export type PasswordOmitAccount = Omit<Account, 'password'>;
 
 interface JWTPayload {
-  accountId: Account['id'];
+  accountId: Account['hashId'];
   accountEmail: Account['email'];
+  accountStatus: typeof USER_STATUS[keyof typeof USER_STATUS];
 }
 
 /**
@@ -43,12 +45,15 @@ export class AuthService {
   async login(account: PasswordOmitAccount) {
     // jwtにつけるPayload情報
     const payload: JWTPayload = {
-      accountId: account.id,
+      accountId: account.hashId,
       accountEmail: account.email,
+      accountStatus: account.user.mainStatus,
     };
 
     return {
       access_token: this.jwtService.sign(payload),
+      accountId: payload.accountId,
+      accountStatus: payload.accountStatus,
     };
   }
 }

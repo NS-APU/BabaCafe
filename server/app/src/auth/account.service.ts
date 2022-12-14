@@ -13,6 +13,7 @@ export class AccountService {
   async getAccountByEmail(email: string): Promise<Account | undefined> {
     return await this.accountReporitory.findOne({
       where: { email },
+      relations: { user: true },
     });
   }
 }

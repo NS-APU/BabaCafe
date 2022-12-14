@@ -77,6 +77,7 @@ export class Product extends BaseEntityAddHashId {
     return {
       ...this,
       id: this.hashId,
+      producer: this.producer?.convertTProducer(),
     };
   }
 }

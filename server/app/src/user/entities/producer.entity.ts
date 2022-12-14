@@ -57,4 +57,30 @@ export class Producer extends BaseEntityAddHashId {
 
   @OneToMany(() => Product, (products) => products.producer)
   products: Product[];
+
+  convertTProducer(): TProducer {
+    return {
+      ...this,
+      id: this.hashId,
+      products: this.products?.map((product) => product.convertTProduct) ?? [],
+    };
+  }
 }
+
+export type TProducer = Pick<
+  Producer,
+  | 'email'
+  | 'tel'
+  | 'zipCode'
+  | 'address'
+  | 'address2'
+  | 'description'
+  | 'image'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+> & {
+  id: string;
+  user: User;
+  products: Product[];
+};

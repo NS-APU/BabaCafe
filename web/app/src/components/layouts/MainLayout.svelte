@@ -1,19 +1,22 @@
 <script>
   import Sidebar from "../organizms/Sidebar.svelte";
   import Header from "../organizms/Header.svelte";
+  import AuthGuard from "../wrappers/AuthGuard.svelte";
 
   let open = true;
 </script>
 
 <div class="header-layout">
   <Header onClick={() => (open = !open)} />
-  <div class="sidebar-layout">
-    <Sidebar {open} class="fixed" />
-    <main>
-      <!-- routify:options preload="proximity" -->
-      <slot />
-    </main>
-  </div>
+  <AuthGuard>
+    <div class="sidebar-layout">
+      <Sidebar {open} class="fixed" />
+      <main>
+        <!-- routify:options preload="proximity" -->
+        <slot />
+      </main>
+    </div>
+  </AuthGuard>
 </div>
 
 <style lang="postcss">

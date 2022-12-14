@@ -1,14 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producer } from 'src/user/entities/producer.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product, PRODUCT_STATUS, TProduct } from './entities/product.entity';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { putBase64Image } from 'src/utils/file';
 import { Account } from 'src/auth/entities/account.entity';
 import { USER_STATUS } from 'src/user/entities/user.entity';
@@ -26,13 +22,13 @@ export class ProductService {
 
   async getProducts(): Promise<TProduct[]> {
     return await this.productRepository
-      .find()
+      .find({ relations: { producer: true } })
       .then((products) => products.map((product) => product.convertTProduct()));
   }
 
   async getProduct(id: number): Promise<TProduct> {
     return await this.productRepository
-      .findOne({ where: { id } })
+      .findOne({ where: { id }, relations: { producer: true } })
       .then((product) => product.convertTProduct());
   }
 

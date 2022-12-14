@@ -4,16 +4,21 @@
 
 // Svelte Colors!
 @use "@material/theme/index" as theme with (
-  $primary: #01937c,
-  $secondary: #ffc074,
-  $surface: #faf1e6,
+  $primary: #19b9a1,
+  $secondary: #dbda86,
+  $surface: #fff,
   $background: #c9e4c5,
-  $error: color-palette.$red-900
+  $error: color-palette.$red-900,
+  $on-surface: black
 );
 
 html,
 body {
   background-color: theme.$surface;
+  color: theme.$on-surface;
+}
+
+span {
   color: theme.$on-surface;
 }
 
