@@ -2,11 +2,12 @@
   import Sidebar from "../organizms/Sidebar.svelte";
   import Header from "../organizms/Header.svelte";
   import AuthGuard from "../wrappers/AuthGuard.svelte";
+  import Toasts from "../atoms/Toasts.svelte";
 
   let open = true;
 </script>
 
-<div class="header-layout">
+<div class="main-layout">
   <Header onClick={() => (open = !open)} />
   <AuthGuard>
     <div class="sidebar-layout">
@@ -17,10 +18,12 @@
       </main>
     </div>
   </AuthGuard>
+
+  <Toasts />
 </div>
 
 <style lang="postcss">
-  .header-layout {
+  .main-layout {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
     height: 100%;

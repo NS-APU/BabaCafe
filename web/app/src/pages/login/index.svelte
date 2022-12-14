@@ -2,9 +2,9 @@
   import Button from "@smui/button";
   import Textfield from "@smui/textfield";
   import { AuthService } from "../../services/AuthService";
-  import { noticesStore } from "../../stores/notice";
   import { goto } from "@roxi/routify";
   import { accountIdStore } from "../../stores/Account";
+  import { addToast } from "../../stores/Toast";
 
   let email: string = "";
   let password: string = "";
@@ -34,7 +34,11 @@
         case "パスワードが違います。":
           return (hasPasswordFailedError = true);
         default:
-          return noticesStore.showError(err);
+          return addToast({
+            message:
+              "ログインに失敗しました。もう一度時間をおいて再読み込みしてください。",
+            type: "error",
+          });
       }
     }
   }

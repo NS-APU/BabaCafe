@@ -4,7 +4,7 @@
   import Button from "@smui/button";
   import { ProductRepository, type TProduct } from "../../models/Product";
   import CircularProgress from "@smui/circular-progress";
-  import { noticesStore } from "../../stores/notice";
+  import { addToast } from "../../stores/Toast";
 
   let clicked = 0;
   $: productRepository = new ProductRepository();
@@ -13,7 +13,11 @@
     try {
       return productRepository.all();
     } catch (err) {
-      noticesStore.showError(err);
+      addToast({
+        message:
+          "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+        type: "error",
+      });
     }
   }
 </script>

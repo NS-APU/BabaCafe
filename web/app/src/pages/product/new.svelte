@@ -1,23 +1,27 @@
 <script lang="ts">
   import { ProductRepository, type TProductForm } from "../../models/Product";
-  import { noticesStore } from "../../stores/notice";
   import ProductForm from "./_components/ProductForm.svelte";
   import { goto } from "@roxi/routify";
+  import { addToast } from "../../stores/Toast";
 
   $: productRepository = new ProductRepository();
 
   async function onConfirm(values: Required<TProductForm>) {
-    console.log(values);
     await productRepository
       .create({ ...values })
       .then(() => {
-        noticesStore.add({
-          type: "success",
-          message: "新規作成に成功しました。",
+        addToast({
+          message: "商品の登録に成功しました。",
         });
         $goto("./");
       })
-      .catch(noticesStore.showError);
+      .catch(() => {
+        addToast({
+          message:
+            "商品の作成に失敗しました。もう一度時間をおいて再度試してください。",
+          type: "error",
+        });
+      });
   }
 </script>
 

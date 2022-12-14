@@ -1,17 +1,21 @@
 <script lang="ts">
   import { params } from "@roxi/routify";
   import { ProductRepository, type TProduct } from "../../../models/Product";
-  import { noticesStore } from "../../../stores/notice";
   import CircularProgress from "@smui/circular-progress";
   import Paper from "@smui/paper";
   import Button from "@smui/button";
   import { onMount } from "svelte";
+  import { addToast } from "../../../stores/Toast";
 
   async function fetchProduct(): Promise<TProduct> {
     try {
       return new ProductRepository().findOne($params.id);
     } catch (err) {
-      noticesStore.showError(err);
+      addToast({
+        message:
+          "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+        type: "error",
+      });
     }
   }
 
