@@ -8,8 +8,8 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, review_requested]
     paths:
-      - "server/app/**"
-      - ".github/workflows/backend_container.yml"
+      - "web/app/**"
+      - ".github/workflows/web.yml"
 
 defaults:
   run:
