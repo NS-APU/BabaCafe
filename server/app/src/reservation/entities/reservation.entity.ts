@@ -3,7 +3,6 @@ import { Product } from 'src/product/entities/product.entity';
 import { Shop } from 'src/shop/entities/shop.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -64,7 +63,10 @@ export class Reservation extends BaseEntityAddHashId {
 }
 
 @Entity()
-export class ReservationProducts extends BaseEntity {
+export class ReservationProducts extends BaseEntityAddHashId {
+  @PrimaryGeneratedColumn({ type: 'bigint' })
+  id: number;
+
   @PrimaryColumn()
   reservationId: number;
 
