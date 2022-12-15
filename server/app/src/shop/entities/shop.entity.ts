@@ -62,4 +62,35 @@ export class Shop extends BaseEntityAddHashId {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
+
+  convertTShop() {
+    return {
+      ...this,
+      id: this.hashId,
+      reservations: this.reservations.map(
+        (reservation) => reservation.convertTReservation() || [],
+      ),
+    };
+  }
 }
+
+export type TShop = Pick<
+  Shop,
+  | 'name'
+  | 'email'
+  | 'tel'
+  | 'zipCode'
+  | 'address'
+  | 'address2'
+  | 'description'
+  | 'openedAt'
+  | 'closedAt'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+> & {
+  id: string;
+  lineProvider?: LineProvider;
+  reservations: Reservation[];
+  staffs: Staff[];
+};
