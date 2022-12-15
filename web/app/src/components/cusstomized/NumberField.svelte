@@ -7,6 +7,7 @@
   export let helperText: string = "";
   export let label: string = "";
   export let textValue: number;
+  export let onChange = undefined;
 
   const { field, onInput, onBlur } = createField(name);
 
@@ -14,7 +15,13 @@
 </script>
 
 <div use:field on:blur={onBlur} role="textbox">
-  <Textfield bind:value={textValue} {label} variant="standard" type="number">
+  <Textfield
+    bind:value={textValue}
+    {label}
+    variant="standard"
+    type="number"
+    on:change={onChange}
+  >
     {#if helperText}
       <HelperText slot="helper">
         {helperText}

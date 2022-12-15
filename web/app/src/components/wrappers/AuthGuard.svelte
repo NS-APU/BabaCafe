@@ -1,16 +1,7 @@
 <script context="module" lang="ts">
   import { AuthService } from "./../../services/AuthService";
   import type { GotoHelper, IsActiveHelper } from "@roxi/routify";
-  import { accountIdStore } from "../../stores/Account";
 
-  /**
-   * 各ページに遷移する前に、もろもろのチェックを行う。
-   * 状態によっては、別のページにリダイレクトこともある。
-   *
-   * routify の $isActive や $goto はコンポーネント外で使えないため、苦肉の策として、以下の param を使う
-   * @param isActive 与えられたパスが、今滞在しているパスと同じかを判定する関数。
-   * @returns ページに遷移する権限があるか
-   */
   export async function canEnterPage(
     redirect: GotoHelper,
     isActive: IsActiveHelper
@@ -23,7 +14,7 @@
       if (isActive(path)) return true; // すでに指定先のページにいる場合
 
       redirect(path);
-      return false; // リダイレクトするということは、もとのページに入る権限はないので、falseを返す
+      return false;
     }
 
     try {

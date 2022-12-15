@@ -6,7 +6,6 @@
   import CircularProgress from "@smui/circular-progress";
   import { addToast } from "../../stores/Toast";
 
-  let clicked = 0;
   $: productRepository = new ProductRepository();
 
   async function fetchProducts(): Promise<TProduct[]> {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { params } from "@roxi/routify";
+  import { goto, params } from "@roxi/routify";
   import { ProductRepository, type TProduct } from "../../../models/Product";
   import CircularProgress from "@smui/circular-progress";
   import Paper from "@smui/paper";
@@ -88,7 +88,12 @@
       </div>
 
       <div class="flex justify-center">
-        <Button class="mt-14 px-7 h-12" color="secondary" variant="raised">
+        <Button
+          class="mt-14 px-7 h-12"
+          color="secondary"
+          variant="raised"
+          on:click={$goto("../../reservation/new", { productId: $params.id })}
+        >
           <p class="text-lg font-bold">予約手続きへ</p>
         </Button>
       </div>

@@ -8,8 +8,8 @@
 </script>
 
 <div class="main-layout">
-  <Header onClick={() => (open = !open)} />
   <AuthGuard>
+    <Header onClick={() => (open = !open)} />
     <div class="sidebar-layout">
       <Sidebar {open} class="fixed" />
       <main>
