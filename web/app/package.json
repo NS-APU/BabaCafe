@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@felte/validator-zod": "^0.3.3",
+    "dayjs": "^1.11.7",
     "felte": "^1.2.6",
     "zod": "^3.9.8"
   }
