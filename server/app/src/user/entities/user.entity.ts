@@ -82,4 +82,34 @@ export class User extends BaseEntityAddHashId {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
+
+  convertTUser() {
+    return {
+      ...this,
+      id: this.hashId,
+    };
+  }
 }
+
+export type TUser = Pick<
+  User,
+  | 'name'
+  | 'email'
+  | 'tel'
+  | 'zipCode'
+  | 'address'
+  | 'address2'
+  | 'birthday'
+  | 'gender'
+  | 'mainStatus'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+> & {
+  id: string;
+  staff: Staff;
+  producer: Producer;
+  consumer: Consumer;
+  account: Account;
+  reservations: Reservation[];
+};
