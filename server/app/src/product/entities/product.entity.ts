@@ -98,6 +98,6 @@ export type TProduct = Pick<
 > & {
   id: string;
   reviews: Review[];
-  producer: Producer;
+  producer?: Producer;
   reservationProducts: ReservationProducts[];
 };

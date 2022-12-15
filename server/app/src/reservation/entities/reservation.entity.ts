@@ -15,7 +15,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-const RESERVATION_STATUS = {
+export const RESERVATION_STATUS = {
   ACCEPTING: 'accepting',
   CANCEL: 'cancel',
   SHIPPING: 'shipping',
@@ -60,7 +60,31 @@ export class Reservation extends BaseEntityAddHashId {
 
   @DeleteDateColumn()
   readonly deletedAt?: Date;
+
+  convertTReservation() {
+    return {
+      ...this,
+      id: this.hashId,
+      user: this.user?.convertTUser(),
+    };
+  }
 }
+
+export type TReservation = Pick<
+  Reservation,
+  | 'shippingDate'
+  | 'totalPrice'
+  | 'status'
+  | 'reservationDate'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'deletedAt'
+> & {
+  id: string;
+  shop: Shop;
+  user: User;
+  reservationProducts: ReservationProducts[];
+};
 
 @Entity()
 export class ReservationProducts extends BaseEntityAddHashId {
@@ -86,4 +110,22 @@ export class ReservationProducts extends BaseEntityAddHashId {
   @ManyToOne(() => Product, (product) => product.reservationProducts)
   @JoinColumn({ name: 'productId', referencedColumnName: 'id' })
   product: Product;
+
+  convertTReservationProduct(): TReservationProduct {
+    return {
+      ...this,
+      id: this.hashId,
+      product: this.product.convertTProduct(),
+      reservation: this.reservation.convertTReservation(),
+    };
+  }
 }
+
+export type TReservationProduct = Pick<
+  ReservationProducts,
+  'quantity' | 'reservationId' | 'productId'
+> & {
+  id: string;
+  reservation: Reservation;
+  product: Product;
+};

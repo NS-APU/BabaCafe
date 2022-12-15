@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv';
 import { ProductModule } from './product/product.module';
+import { ReservationModule } from './reservation/reservation.module';
+import { ShopModule } from './shop/shop.module';
 dotenv.config();
 
 @Module({
@@ -28,6 +30,8 @@ dotenv.config();
     }),
     AuthModule,
     ProductModule,
+    ReservationModule,
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [AppService],
