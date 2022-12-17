@@ -48,7 +48,7 @@
 
   const initialValues = {
     totalPrice: selectedProduct?.price,
-    status: RESERVATION_STATUS.ACCEPTING,
+    status: RESERVATION_STATUS.UNDESPATCHED,
     shippingDate: "",
     shopId: "",
     quantity: 1,

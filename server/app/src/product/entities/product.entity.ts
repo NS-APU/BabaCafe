@@ -1,6 +1,7 @@
 import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { ReservationProducts } from 'src/reservation/entities/reservation.entity';
 import { Producer } from 'src/user/entities/producer.entity';
+import { getUrl } from 'src/utils/file';
 import {
   Column,
   CreateDateColumn,
@@ -77,6 +78,7 @@ export class Product extends BaseEntityAddHashId {
     return {
       ...this,
       id: this.hashId,
+      image: this.image,
       producer: this.producer?.convertTProducer(),
     };
   }

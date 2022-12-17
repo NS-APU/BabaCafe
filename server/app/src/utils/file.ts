@@ -1,4 +1,4 @@
-import fs from 'fs';
+import * as fs from 'fs';
 import { join } from 'path';
 
 export async function putBase64Image(
@@ -20,10 +20,10 @@ export async function putObject(
   fileName: string,
   data: string | Buffer,
 ): Promise<string> {
-  if (process.env.NODE_ENV === 'development') {
-    const dir = join(process.cwd(), 'app', 'public');
-    fs.writeFileSync(`${dir}/${fileName.replaceAll('/', '-')}`, data);
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  const dir = join(process.cwd(), 'public');
+  fs.writeFileSync(`${fileName.replaceAll('/', '-')}`, data);
+  // }
   // TODO: 本番環境用にs3バケットに保存する以下処理を実装
   // else {
   //   const s3 = new S3({
@@ -42,4 +42,11 @@ export async function putObject(
   // }
 
   return fileName;
+}
+
+export function getUrl(fileNameOrUrl: string) {
+  if (!fileNameOrUrl) return null;
+  if (fileNameOrUrl.startsWith('http')) return fileNameOrUrl;
+
+  return `http://localhost:3000/${fileNameOrUrl.replaceAll('/', '-')}`;
 }

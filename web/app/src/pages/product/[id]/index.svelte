@@ -31,6 +31,7 @@
 {:then product}
   <div class="container">
     <img
+      class="w-full h-auto"
       src={product.image ??
         "https://girlydrop.com/wp-content/uploads/post/p5774.jpg"}
       alt=""
@@ -48,7 +49,7 @@
         {:else}
           <img
             class="w-[90px] h-[90px] rounded-[50%]"
-            src="./../../../../public/farmer.png"
+            src="./../../../../public/images/farmer.png"
             alt=""
           />
         {/if}

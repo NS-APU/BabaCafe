@@ -22,7 +22,7 @@ export class ProductService {
 
   async getProducts(): Promise<TProduct[]> {
     return await this.productRepository
-      .find({ relations: { producer: true } })
+      .find({ relations: { producer: true }, order: { id: 'ASC' } })
       .then((products) => products.map((product) => product.convertTProduct()));
   }
 
@@ -80,7 +80,15 @@ export class ProductService {
     }
 
     product.producer = producer;
+    await product.save();
 
+    await this.afterSaveProduct(product, dto);
+  }
+
+  private static async afterSaveProduct(
+    product: Product,
+    dto: CreateProductDto,
+  ) {
     // imageの値がbase64である(httpから始まらない)なら，ストレージに保存する処理を行う
     if (dto.image && !dto.image.startsWith('http')) {
       product.image = await putBase64Image(

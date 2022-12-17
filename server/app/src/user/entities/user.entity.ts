@@ -87,6 +87,7 @@ export class User extends BaseEntityAddHashId {
     return {
       ...this,
       id: this.hashId,
+      staff: this.staff?.convertTStaff(),
     };
   }
 }

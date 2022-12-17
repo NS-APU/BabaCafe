@@ -32,4 +32,19 @@ export class Staff extends BaseEntityAddHashId {
 
   @ManyToOne(() => Shop, (shop) => shop.staffs)
   shop: Shop;
+
+  convertTStaff() {
+    return {
+      ...this,
+      id: this.hashId,
+      user: this.user.convertTUser(),
+      shop: this.shop.convertTShop(),
+    };
+  }
 }
+
+export type TStaff = Pick<Staff, 'createdAt' | 'updatedAt' | 'deletedAt'> & {
+  id: string;
+  user: User;
+  shop: Shop;
+};

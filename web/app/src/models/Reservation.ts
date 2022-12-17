@@ -9,19 +9,20 @@ export type TReservationProduct = Jsonify<BaseTReservationProduct>;
 export type TReservation = Jsonify<BaseTReservation>;
 export type TReservationForm = Jsonify<CreateReservationDto>;
 
+// TODO: ラベルを適切に変更する。
 export const statusToText: Record<TReservation["status"], string> = {
-  onSale: "販売中",
   cancel: "取り消し",
-  accepting: "受付中",
-  shipping: "出荷中",
+  undispatched: "未発送",
+  shipping: "配送中",
+  delivered: "配送完了",
   complete: "受け取り完了",
 };
 
 export const RESERVATION_STATUS = {
-  ACCEPTING: "accepting",
   CANCEL: "cancel",
+  UNDESPATCHED: "undispatched",
   SHIPPING: "shipping",
-  ON_SALE: "onSale",
+  DELIVERED: "delivered",
   COMPLETE: "complete",
 } as const;
 

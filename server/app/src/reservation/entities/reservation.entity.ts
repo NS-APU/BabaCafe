@@ -16,10 +16,10 @@ import {
 } from 'typeorm';
 
 export const RESERVATION_STATUS = {
-  ACCEPTING: 'accepting',
   CANCEL: 'cancel',
+  UNDISPATCHED: 'undispatched',
   SHIPPING: 'shipping',
-  ON_SALE: 'onSale',
+  DELIVERED: 'delivered',
   COMPLETE: 'complete',
 } as const;
 

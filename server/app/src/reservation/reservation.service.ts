@@ -38,7 +38,6 @@ export class ReservationService {
     accountId: string,
   ): Promise<TReservationProduct[]> {
     let where: FindOptionsWhere<ReservationProducts> = {};
-
     const account = await this.accountRepository.findOne({
       where: { hashId: accountId },
       relations: { user: { producer: true } },
@@ -58,7 +57,7 @@ export class ReservationService {
         ...where,
         reservation: {
           shop: {
-            id: account.user.staff.shop.id,
+            id: account.user.staff?.shop.id,
           },
         },
       };
@@ -68,6 +67,7 @@ export class ReservationService {
       .find({
         where,
         relations: { reservation: { shop: true, user: true }, product: true },
+        order: { id: 'DESC' },
       })
       .then((reservationProducts) =>
         reservationProducts?.map((reservationProduct) =>
@@ -122,7 +122,7 @@ export class ReservationService {
   ) {
     reservation.shippingDate = dayjs(dto.shippingDate).toDate();
     reservation.reservationDate = dayjs(dto.reservationDate).toDate();
-    reservation.status = RESERVATION_STATUS.ACCEPTING;
+    reservation.status = RESERVATION_STATUS.UNDISPATCHED;
     reservation.totalPrice = dto.totalPrice;
     reservation.shop = shop;
     reservation.user = user;

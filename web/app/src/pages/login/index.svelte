@@ -65,14 +65,17 @@
   />
 
   <Button
-    class="w-[100px] w-[150px] py-2 mt-14 ml-[35%]"
+    class="login-btn mt-14 mx-14"
     color="secondary"
     variant="raised"
     type="submit"
   >
     <p class="black font-bold">ログイン</p>
   </Button>
-  <a class="text-text-lightGray mt-10" href="./signup/"
-    >新規ユーザーの方はこちら</a
-  >
+
+  <div class="flex justify-center">
+    <a class="text-text-lightGray mt-10" href="./signup/">
+      新規ユーザーの方はこちら
+    </a>
+  </div>
 </form>

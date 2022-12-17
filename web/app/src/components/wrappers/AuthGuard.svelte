@@ -25,7 +25,10 @@
       return true;
     } catch (err) {
       console.error(err);
-      alert("通信に失敗しました。時間をおいて再読込してください。");
+      addToast({
+        message: "通信に失敗しました。時間をおいて再読込してください。",
+        type: "error",
+      });
       return false;
     }
   }
@@ -35,6 +38,7 @@
   import { onMount } from "svelte";
   import CircularProgress from "@smui/circular-progress";
   import { isActive, redirect } from "@roxi/routify";
+  import { addToast } from "../../stores/Toast";
 
   // 外部に処理を切り出すためにstoreを使うと"TypeError: Cannot read property 'component' of null"エラーがでてしまう。
   let loading = true;

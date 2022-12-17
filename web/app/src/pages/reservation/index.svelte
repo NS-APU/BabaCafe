@@ -68,7 +68,7 @@
             <Cell
               >{dayjs(item.reservation.shippingDate).format("YYYY-MM-DD")}</Cell
             >
-            <Cell>{item.reservation.shop.name}</Cell>
+            <Cell>{item.reservation.shop?.name}</Cell>
             <Cell>{item.product.name}</Cell>
             <Cell>{item.quantity}</Cell>
             <Cell>{statusToText[item.reservation.status]}</Cell>
@@ -82,7 +82,7 @@
 {#if dialogData && open}
   <Dialog bind:open on:closed={(dialogData = undefined)}>
     <div class="mt-3 flex justify-between">
-      <Title class="text-2xl font-bold">予約詳細</Title>
+      <h2 class="m-4 text-2xl font-bold">予約詳細</h2>
       <div class="m-2 mr-4">
         <StatusLabel status={dialogData.reservation.status} />
       </div>

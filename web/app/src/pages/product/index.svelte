@@ -41,7 +41,7 @@
 
     <div class="card-display">
       {#each products as product, i}
-        <div class="card-container relative">
+        <div class="card-container">
           <Card class="rounded-[24px]">
             <PrimaryAction on:click={$goto(`./${product.id}`)}>
               <div>
@@ -55,22 +55,24 @@
                   <div class="card-content" />
                 </MediaContent>
               </div>
-              <Content class="mdc-typography--body2">
-                <div class="text-sm">
+              <Content class="mdc-typography--body2 relative">
+                <div class="">
                   {#if product.producer.image}
                     <img
-                      class="absolute top-[59%] w-[40px] h-[40px] rounded-[50%]"
+                      class="absolute top-[-12%] w-[40px] h-[40px] rounded-[50%]"
                       src={product.producer.image}
                       alt=""
                     />
                   {:else}
                     <img
-                      class="absolute top-[59%] w-[40px] h-[40px] rounded-[50%]"
-                      src="./../../../public/farmer.png"
+                      class="absolute top-[-12%] w-[40px] h-[40px] rounded-[50%]"
+                      src="./../../../public/images/farmer.png"
                       alt=""
                     />
                   {/if}
-                  <div class="absolute top-[66%] left-[60px] text-[#4A4A4A]">
+                  <div
+                    class="absolute text-sm top-0 left-[60px] text-[#4A4A4A]"
+                  >
                     {product.producer.name}
                   </div>
                 </div>
@@ -99,9 +101,6 @@
 {/await}
 
 <style lang="postcss">
-  /* * :global(.card-media-16x9) {
-    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqJwNC26Z0-qKuh5jgSofZZ8gtkZ5hkCIp7Q&usqp=CAU);
-  } */
   .card-display {
     @apply grid grid-cols-2 gap-16 mt-8 px-8;
   }
@@ -110,10 +109,10 @@
     @apply bg-[#fff] absolute bottom-4 left-4;
   }
   .product-img {
-    @apply h-auto w-[500px];
+    @apply h-auto w-full;
   }
 
   .price-block {
-    @apply flex relative left-[43%];
+    @apply flex relative left-[40%];
   }
 </style>
