@@ -2,7 +2,7 @@
   import { goto } from "@roxi/routify";
   import CircularProgress from "@smui/circular-progress";
 
-  $goto("/reservation");
+  $goto("/login");
 </script>
 
 <div style="display: flex; justify-content: center">
