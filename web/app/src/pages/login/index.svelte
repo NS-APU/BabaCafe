@@ -48,7 +48,7 @@
 
 <form
   on:submit|preventDefault={login}
-  class="grid justify-center mt-[20%] my-[50px]"
+  class="grid justify-center mt-[10%] my-[50px]"
 >
   <Textfield
     class="w-[400px]"
