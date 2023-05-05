@@ -17,10 +17,9 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
-.routify
+.routify/*
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.routify/*
