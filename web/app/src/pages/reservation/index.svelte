@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "@roxi/routify";
   import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
   import {
     ReservationRepository,
@@ -12,7 +13,8 @@
   import Button from "@smui/button";
   import StatusLabel from "./_components/StatusLabel.svelte";
   import { onMount } from "svelte";
-  import { AuthService } from "../../services/AuthService";
+  import { AccountService } from "../../services/AccountService";
+  import { markAsLogoutState } from "../../stores/Login";
 
   let open = false;
   let dialogData: TReservationProduct;
@@ -22,13 +24,26 @@
 
   async function fetchReservationProducts() {
     try {
-      return reservationRepository.allReservationProducts();
-    } catch {
-      addToast({
-        message:
-          "予約の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-        type: "error",
-      });
+      return await reservationRepository.allReservationProducts();
+    } catch (err) {
+      switch (err.error || err.message) {
+        case "Unauthorized":
+          markAsLogoutState();
+          addToast({
+            message: "認証が切れました。再度ログインしてください。",
+            type: "error",
+          });
+          $goto("/login");
+          break;
+        default:
+          addToast({
+            message:
+              "予約の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+            type: "error",
+          });
+          break;
+      }
+      return [];
     }
   }
 
@@ -38,7 +53,7 @@
   }
 
   onMount(async () => {
-    currentAccount = await new AuthService().getProfile();
+    currentAccount = await new AccountService().getProfile();
   });
 </script>
 
@@ -112,8 +127,7 @@
           <br />
           受け取り場所：{dialogData.reservation.shop.name}
           <br />
-          住所：{dialogData.reservation.shop.address +
-            dialogData.reservation.shop.address2}
+          住所：{dialogData.reservation.shop.address}
         </div>
       </div>
     </Content>

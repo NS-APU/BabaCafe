@@ -14,6 +14,7 @@
   import { addToast } from "../../../stores/Toast";
   import dayjs from "dayjs";
   import { ShopRepository, type TShop } from "../../../models/Shop";
+  import { markAsLogoutState } from "../../../stores/Login";
 
   export let onConfirm: (values: Required<TReservationForm>) => unknown;
 
@@ -22,6 +23,7 @@
   let selectedProduct: TProduct;
   onMount(async () => {
     try {
+      console.log("try");
       [selectedProduct, shops] = await Promise.all([
         new ProductRepository().findOne($params.productId),
         new ShopRepository().getShops(),
@@ -29,12 +31,24 @@
       shopIds = Object.fromEntries(shops.map(({ id, name }) => [id, name]));
 
       totalPrice = selectedProduct.price;
-    } catch {
-      addToast({
-        message:
-          "情報の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-        type: "error",
-      });
+    } catch (err) {
+      switch (err.error || err.message) {
+        case "Unauthorized":
+          markAsLogoutState();
+          addToast({
+            message: "認証が切れました。再度ログインしてください。",
+            type: "error",
+          });
+          $goto("/login");
+          break;
+        default:
+          addToast({
+            message:
+              "情報の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+            type: "error",
+          });
+          break;
+      }
     }
   });
 
@@ -57,22 +71,20 @@
   // TODO: バリデーションの実装
   const { form, data } = createForm({
     initialValues,
-    onSubmit: (values) => {},
+    onSubmit: async (values) => {
+      await onConfirm({
+        ...values,
+        reservationDate: dayjs().format("YYYY-MM-DD"),
+        products: [
+          {
+            productId: selectedProduct.id,
+            quantity: $data.quantity,
+          },
+        ],
+        totalPrice: Number(totalPrice),
+      });
+    },
   });
-
-  // TODO: いずれはカート機能の実現を行う。
-  async function onSubmit() {
-    await onConfirm({
-      ...$data,
-      reservationDate: dayjs().format("YYYY-MM-DD"),
-      products: [
-        {
-          productId: selectedProduct.id,
-          quantity: $data.quantity,
-        },
-      ],
-    });
-  }
 
   function calcTotalPrice() {
     $data.totalPrice = $data.quantity * selectedProduct.price;
@@ -146,7 +158,6 @@
           class="px-7 py-2"
           color="secondary"
           type="submit"
-          on:click={onSubmit}
         >
           <p class="font-bold text-lg">予約確定</p>
         </Button>

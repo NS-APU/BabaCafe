@@ -1,7 +1,6 @@
 import type { Jsonify } from "type-fest";
 import { baseAPI } from "../api/base";
 import type { TShop as BaseTShop } from "./../../../../server/app/src/shop/entities/shop.entity";
-import { ShowableError } from "./Error";
 
 export type TShop = Jsonify<BaseTShop>;
 
@@ -11,14 +10,8 @@ export class ShopRepository {
   }
 
   async getShops(): Promise<TShop[]> {
-    try {
-      return await baseAPI<TShop[]>({
-        endpoint: `${this.baseEndpoint}`,
-      });
-    } catch (err) {
-      throw new ShowableError(
-        "店舗の取得に失敗しました。時間をおいて再度試してください。"
-      );
-    }
+    return await baseAPI<TShop[]>({
+      endpoint: `${this.baseEndpoint}`,
+    });
   }
 }

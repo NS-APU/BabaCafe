@@ -1,14 +1,17 @@
 <script lang="ts">
   import TopAppBar, { Row, Section, Title } from "@smui/top-app-bar";
   import IconButton from "@smui/icon-button";
+  import { isLogined } from "../../stores/Login";
 
-  export let onClick;
+  export let toggle;
 </script>
 
 <TopAppBar variant="short">
   <Row>
     <Section>
-      <IconButton class="material-icons" on:click={onClick()}>menu</IconButton>
+      {#if $isLogined}
+        <IconButton class="material-icons" on:click={toggle()}>menu</IconButton>
+      {/if}
       <Title>BaBaCafeアプリ</Title>
     </Section>
   </Row>

@@ -31,13 +31,20 @@
     saleStartDate: "",
     unitWeight: 0,
     price: 0,
-    totalAmount: undefined,
+    totalAmount: 0,
     image: "",
   };
 
   const { form, data } = createForm({
     initialValues,
-    onSubmit: (values) => {},
+    onSubmit: async (values) => {
+      await onConfirm({
+        ...values,
+        unitWeight: Number($data.unitWeight),
+        price: Number($data.price),
+        totalAmount: Number($data.totalAmount),
+      });
+    },
   });
 
   // data URLに変換された画像を$data内に保持するためのもの
@@ -65,17 +72,12 @@
     onBlur();
   }
 
-  async function onSubmit() {
-    await onConfirm({
-      ...$data,
-    });
-  }
   let name = "";
   let description = "";
   let startSaleDate = "";
   let unitWeight = 0;
   let price = 0;
-  let totalAmount = null;
+  let totalAmount = 0;
   let image = "";
 </script>
 
@@ -192,7 +194,6 @@
         class="px-7 py-2"
         color="secondary"
         type="submit"
-        on:click={onSubmit}
       >
         <p class="font-bold text-lg">出品する</p>
       </Button>

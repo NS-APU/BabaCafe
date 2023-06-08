@@ -4,18 +4,31 @@
   import CircularProgress from "@smui/circular-progress";
   import Paper from "@smui/paper";
   import Button from "@smui/button";
-  import { onMount } from "svelte";
   import { addToast } from "../../../stores/Toast";
+  import { markAsLogoutState } from "../../../stores/Login";
 
   async function fetchProduct(): Promise<TProduct> {
     try {
-      return new ProductRepository().findOne($params.id);
+      return await new ProductRepository().findOne($params.id);
     } catch (err) {
-      addToast({
-        message:
-          "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-        type: "error",
-      });
+      switch (err.error || err.message) {
+        case "Unauthorized":
+          markAsLogoutState();
+          addToast({
+            message: "認証が切れました。再度ログインしてください。",
+            type: "error",
+          });
+          $goto("/login");
+          break;
+        default:
+          addToast({
+            message:
+              "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+            type: "error",
+          });
+          break;
+      }
+      return null;
     }
   }
 
@@ -82,7 +95,7 @@
       </Paper>
 
       <div class="mt-12">
-        <h2 class="font-bold text-3xl text-[#5A5A5A] ">【商品説明】</h2>
+        <h2 class="font-bold text-3xl text-[#5A5A5A]">【商品説明】</h2>
         <div class="text-xl mt-4">
           {product.description}
         </div>

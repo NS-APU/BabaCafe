@@ -5,18 +5,33 @@
   import { ProductRepository, type TProduct } from "../../models/Product";
   import CircularProgress from "@smui/circular-progress";
   import { addToast } from "../../stores/Toast";
+  import { markAsLogoutState } from "../../stores/Login";
 
   $: productRepository = new ProductRepository();
 
   async function fetchProducts(): Promise<TProduct[]> {
     try {
-      return productRepository.all();
+      const products = await productRepository.all();
+      return products;
     } catch (err) {
-      addToast({
-        message:
-          "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-        type: "error",
-      });
+      switch (err.error || err.message) {
+        case "Unauthorized":
+          markAsLogoutState();
+          addToast({
+            message: "認証が切れました。再度ログインしてください。",
+            type: "error",
+          });
+          $goto("/login");
+          break;
+        default:
+          addToast({
+            message:
+              "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
+            type: "error",
+          });
+          break;
+      }
+      return [];
     }
   }
 </script>
@@ -80,7 +95,7 @@
                   {product.name}
                 </div>
                 <div class="text-sm text-[#4A4A4A] mt-2">
-                  {product.producer.address + product.producer.address2}
+                  {product.producer.address}
                 </div>
                 <div class="price-block">
                   <div class="text-lg text-[#4A4A4A] mt-1">

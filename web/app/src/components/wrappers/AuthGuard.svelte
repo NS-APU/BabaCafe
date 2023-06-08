@@ -1,6 +1,7 @@
 <script context="module" lang="ts">
-  import { AuthService } from "./../../services/AuthService";
+  import { AccountService } from "../../services/AccountService";
   import type { GotoHelper, IsActiveHelper } from "@roxi/routify";
+  import { markAsLoginState, markAsLogoutState } from "../../stores/Login";
 
   export async function canEnterPage(
     redirect: GotoHelper,
@@ -18,15 +19,14 @@
     }
 
     try {
-      const currentAccount = await new AuthService().getProfile();
+      const currentAccount = await new AccountService().getProfile();
 
       if (!currentAccount) return _redirect("/login");
 
       return true;
     } catch (err) {
-      console.error(err);
       addToast({
-        message: "通信に失敗しました。時間をおいて再読込してください。",
+        message: err.message,
         type: "error",
       });
       return false;
@@ -47,8 +47,10 @@
 
     if (ok) {
       loading = false;
+      markAsLoginState();
     } else {
       loading = false;
+      markAsLogoutState();
       $redirect("./login");
     }
   });

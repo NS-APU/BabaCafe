@@ -1,7 +1,7 @@
 import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { Product } from 'src/product/entities/product.entity';
 import { Shop } from 'src/shop/entities/shop.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Account } from 'src/account/entities/account.entity';
 import {
   Column,
   CreateDateColumn,
@@ -43,8 +43,8 @@ export class Reservation extends BaseEntityAddHashId {
   @ManyToOne(() => Shop, (shop) => shop.reservations)
   shop: Shop;
 
-  @ManyToOne(() => User, (user) => user.reservations)
-  user: User;
+  @ManyToOne(() => Account, (account) => account.reservations)
+  user: Account;
 
   @OneToMany(
     () => ReservationProducts,
@@ -65,7 +65,7 @@ export class Reservation extends BaseEntityAddHashId {
     return {
       ...this,
       id: this.hashId,
-      user: this.user?.convertTUser(),
+      user: this.user,
     };
   }
 }
@@ -82,7 +82,7 @@ export type TReservation = Pick<
 > & {
   id: string;
   shop: Shop;
-  user: User;
+  user: Account;
   reservationProducts: ReservationProducts[];
 };
 

@@ -2,7 +2,6 @@ import type { TProduct as BaseTProduct } from "./../../../../server/app/src/prod
 import type { CreateProductDto } from "./../../../../server/app/src/product/dto/create-product.dto";
 import type { Jsonify } from "type-fest";
 import { baseAPI } from "../api/base";
-import { ShowableError } from "./Error";
 
 export type TProduct = Jsonify<BaseTProduct>;
 export type TProductForm = Jsonify<CreateProductDto>;
@@ -20,36 +19,20 @@ export class ProductRepository {
   }
 
   async all(): Promise<TProduct[]> {
-    try {
-      return await baseAPI<TProduct[]>({ endpoint: `${this.baseEndpoint}` });
-    } catch (err) {
-      throw new ShowableError(
-        "商品の取得に失敗しました。時間をおいて再度試してください。"
-      );
-    }
+    return await baseAPI<TProduct[]>({ endpoint: `${this.baseEndpoint}` });
   }
 
   async findOne(id: string): Promise<TProduct> {
-    try {
-      return await baseAPI<TProduct>({
-        endpoint: `${this.baseEndpoint}/${id}`,
-      });
-    } catch (err) {
-      throw new ShowableError(
-        "商品の取得に失敗しました。時間をおいて再度試してください。"
-      );
-    }
+    return await baseAPI<TProduct>({
+      endpoint: `${this.baseEndpoint}/${id}`,
+    });
   }
 
   async create(body: TProductForm): Promise<TProduct> {
-    try {
-      return await baseAPI<TProduct>({
-        endpoint: `${this.baseEndpoint}`,
-        method: "POST",
-        body,
-      });
-    } catch {
-      throw new ShowableError("保存に失敗しました。");
-    }
+    return await baseAPI<TProduct>({
+      endpoint: `${this.baseEndpoint}`,
+      method: "POST",
+      body,
+    });
   }
 }

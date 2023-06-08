@@ -1,7 +1,6 @@
 import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { LineProvider } from 'src/line/entities/line-provider.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
-import { Staff } from 'src/user/entities/staff.entity';
 import {
   Column,
   CreateDateColumn,
@@ -51,9 +50,6 @@ export class Shop extends BaseEntityAddHashId {
   @OneToMany(() => Reservation, (reservation) => reservation.shop)
   reservations: Reservation[];
 
-  @OneToMany(() => Staff, (staff) => staff.shop)
-  staffs: Staff[];
-
   @CreateDateColumn()
   readonly createdAt?: Date;
 
@@ -92,5 +88,4 @@ export type TShop = Pick<
   id: string;
   lineProvider?: LineProvider;
   reservations: Reservation[];
-  staffs: Staff[];
 };

@@ -1,24 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Producer } from 'src/user/entities/producer.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product, PRODUCT_STATUS, TProduct } from './entities/product.entity';
 import * as dayjs from 'dayjs';
 import { putBase64Image } from 'src/utils/file';
-import { Account } from 'src/auth/entities/account.entity';
-import { USER_STATUS } from 'src/user/entities/user.entity';
+import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private productRepository: Repository<Product>,
-    @InjectRepository(Producer)
-    private producerRepository: Repository<Producer>,
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
-  ) {}
+  ) { }
 
   async getProducts(): Promise<TProduct[]> {
     return await this.productRepository
@@ -26,9 +22,9 @@ export class ProductService {
       .then((products) => products.map((product) => product.convertTProduct()));
   }
 
-  async getProduct(id: number): Promise<TProduct> {
+  async getProduct(id: string): Promise<TProduct> {
     return await this.productRepository
-      .findOne({ where: { id }, relations: { producer: true } })
+      .findOne({ where: { hashId: id }, relations: { producer: true } })
       .then((product) => product.convertTProduct());
   }
 
@@ -37,14 +33,13 @@ export class ProductService {
     account: Account,
   ): Promise<TProduct> {
     const product = new Product();
-    let producer: Producer;
+    let producer: Account;
     account = await this.accountRepository.findOne({
       where: { id: account.id },
-      relations: { user: true },
     });
-    if (account.user.mainStatus === USER_STATUS.PRODUCER) {
-      producer = await this.producerRepository.findOne({
-        where: { user: { id: account?.user.id } },
+    if (account.attribute === USER_ATTRIBUTE.producer) {
+      producer = await this.accountRepository.findOne({
+        where: { id: account?.id },
       });
     } else {
       // 農家以外の場合はエラーを表示。
@@ -59,7 +54,7 @@ export class ProductService {
   private static async setProductAttributes(
     dto: CreateProductDto,
     product: Product,
-    producer: Producer,
+    producer: Account,
   ) {
     product.name = dto.name;
     product.description = dto.description;

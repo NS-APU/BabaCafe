@@ -1,4 +1,3 @@
-import { ShowableError } from "./Error";
 import type { TReservationProduct as BaseTReservationProduct } from "./../../../../server/app/src/reservation/entities/reservation.entity";
 import type { TReservation as BaseTReservation } from "./../../../../server/app/src/reservation/entities/reservation.entity";
 import type { CreateReservationDto } from "./../../../../server/app/src/reservation/dto/create-reservation.dto";
@@ -32,38 +31,22 @@ export class ReservationRepository {
   }
 
   async allReservationProducts(): Promise<TReservationProduct[]> {
-    try {
-      return await baseAPI<TReservationProduct[]>({
-        endpoint: `${this.baseEndpoint}/products`,
-      });
-    } catch (err) {
-      throw new ShowableError(
-        "商品の取得に失敗しました。時間をおいて再度試してください。"
-      );
-    }
+    return await baseAPI<TReservationProduct[]>({
+      endpoint: `${this.baseEndpoint}/products`,
+    });
   }
 
   async findOne(id: string): Promise<TReservationProduct> {
-    try {
-      return await baseAPI<TReservationProduct>({
-        endpoint: `${this.baseEndpoint}/products/${id}`,
-      });
-    } catch (err) {
-      throw new ShowableError(
-        "商品の取得に失敗しました。時間をおいて再度試してください。"
-      );
-    }
+    return await baseAPI<TReservationProduct>({
+      endpoint: `${this.baseEndpoint}/products/${id}`,
+    });
   }
 
   async create(body: TReservationForm): Promise<TReservation> {
-    try {
-      return await baseAPI<TReservation>({
-        endpoint: `${this.baseEndpoint}`,
-        method: "POST",
-        body,
-      });
-    } catch {
-      throw new ShowableError("保存に失敗しました。");
-    }
+    return await baseAPI<TReservation>({
+      endpoint: `${this.baseEndpoint}`,
+      method: "POST",
+      body,
+    });
   }
 }

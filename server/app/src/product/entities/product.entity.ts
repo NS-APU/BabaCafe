@@ -1,7 +1,6 @@
 import { BaseEntityAddHashId } from 'src/common/base-entity-add-hash-id';
 import { ReservationProducts } from 'src/reservation/entities/reservation.entity';
-import { Producer } from 'src/user/entities/producer.entity';
-import { getUrl } from 'src/utils/file';
+import { Account } from 'src/account/entities/account.entity';
 import {
   Column,
   CreateDateColumn,
@@ -13,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Review } from './review.entity';
 
 export const PRODUCT_STATUS = {
   ON_SALE: 'onSale', // 販売中
@@ -26,6 +24,9 @@ export const PRODUCT_STATUS = {
 export class Product extends BaseEntityAddHashId {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
+
+  @Column({ comment: '生産者ID' })
+  producerId: string;
 
   @Column({ default: null })
   name: string;
@@ -67,19 +68,16 @@ export class Product extends BaseEntityAddHashId {
   @JoinColumn()
   reservationProducts: ReservationProducts[];
 
-  @OneToMany(() => Review, (review) => review.product)
-  @JoinColumn()
-  reviews: Review[];
-
-  @ManyToOne(() => Producer, (producer) => producer.products)
-  producer: Producer;
+  @ManyToOne(() => Account, (account) => account.products)
+  @JoinColumn({ name: 'producerId', referencedColumnName: 'id' })
+  producer: Account;
 
   convertTProduct(): TProduct {
     return {
       ...this,
       id: this.hashId,
       image: this.image,
-      producer: this.producer?.convertTProducer(),
+      producer: this.producer,
     };
   }
 }
@@ -99,7 +97,6 @@ export type TProduct = Pick<
   | 'deletedAt'
 > & {
   id: string;
-  reviews: Review[];
-  producer?: Producer;
+  producer: Account;
   reservationProducts: ReservationProducts[];
 };

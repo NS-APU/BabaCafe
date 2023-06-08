@@ -2,19 +2,23 @@ import { writable } from "svelte/store";
 
 export const toasts = writable([]);
 
-export const addToast = (toast) => {
+export const addToast = (options) => {
   const id = Math.floor(Math.random() * 10000);
-
   const defaults = {
     id,
     type: "success",
     dismissible: true,
     timeout: 3000,
   };
+  const toast = { ...defaults, ...options };
 
-  toasts.update((all) => [{ ...defaults, ...toast }, ...all]);
+  toasts.update((all) => [toast, ...all]);
 
-  if (toast.timeout) setTimeout(() => dismissToast(id), toast.timeout);
+  if (toast.timeout) {
+    setTimeout(() => {
+      dismissToast(id);
+    }, toast.timeout);
+  }
 };
 
 export const dismissToast = (id) => {

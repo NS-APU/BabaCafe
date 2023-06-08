@@ -8,8 +8,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { GetAccount } from 'src/auth/get-account.decorator';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { GetAccount } from 'src/account/get-account.decorator';
+import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import {
   ReservationProducts,
@@ -22,7 +22,7 @@ import { ReservationService } from './reservation.service';
 @Controller('reservations')
 @UseGuards(JwtAuthGuard)
 export class ReservationController {
-  constructor(private readonly reservationService: ReservationService) {}
+  constructor(private readonly reservationService: ReservationService) { }
 
   @Get('/products')
   async getReservationProducts(

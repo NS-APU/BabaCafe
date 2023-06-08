@@ -3,19 +3,24 @@
   import Header from "../organizms/Header.svelte";
   import AuthGuard from "../wrappers/AuthGuard.svelte";
   import Toasts from "../atoms/Toasts.svelte";
+  import Drawer, { AppContent, Scrim } from "@smui/drawer";
 
-  let open = true;
+  let isOpen = false;
+  const toggle = () => (isOpen = !isOpen);
+  const close = () => (isOpen = false);
 </script>
 
 <div class="main-layout">
   <AuthGuard>
-    <Header onClick={() => (open = !open)} />
+    <Header {toggle} />
     <div class="sidebar-layout">
-      <Sidebar {open} class="fixed" />
-      <main>
-        <!-- routify:options preload="proximity" -->
-        <slot />
-      </main>
+      <Sidebar {isOpen} {close} />
+      <AppContent class="app-content">
+        <main class="main-content">
+          <!-- routify:options preload="proximity" -->
+          <slot />
+        </main>
+      </AppContent>
     </div>
   </AuthGuard>
 
@@ -23,20 +28,26 @@
 </div>
 
 <style lang="postcss">
-  .main-layout {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    height: 100%;
-  }
-
   .sidebar-layout {
-    @apply mt-14;
-    overflow: auto;
+    position: relative;
+    display: flex;
+    height: calc(100vh - 55px);
+    overflow: hidden;
+    z-index: 0;
+    top: 55px;
   }
 
-  main {
-    @apply ml-[256px];
+  * :global(.app-content) {
+    flex: auto;
+    overflow: auto;
+    position: relative;
+    flex-grow: 1;
+  }
 
-    overflow-y: auto;
+  .main-content {
+    overflow: auto;
+    padding: 16px;
+    height: calc(100vh - 55px);
+    box-sizing: border-box;
   }
 </style>

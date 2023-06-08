@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
-import { Account } from 'src/auth/entities/account.entity';
+import { Account } from 'src/account/entities/account.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Shop } from 'src/shop/entities/shop.entity';
-import { User } from 'src/user/entities/user.entity';
 import {
   DataSource,
   EntityManager,
@@ -32,32 +31,31 @@ export class ReservationService {
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
     @InjectDataSource() private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async getReservationProducts(
-    accountId: string,
+    id: string,
   ): Promise<TReservationProduct[]> {
     let where: FindOptionsWhere<ReservationProducts> = {};
     const account = await this.accountRepository.findOne({
-      where: { hashId: accountId },
-      relations: { user: { producer: true } },
+      where: { id }
     });
 
-    if (account.user.mainStatus === 'producer') {
+    if (account.attribute === 'producer') {
       where = {
         ...where,
         product: {
           producer: {
-            id: account.user.producer.id,
+            id: account.id,
           },
         },
       };
-    } else if (account.user.mainStatus === 'staff') {
+    } else if (account.attribute === 'consumer') {
       where = {
         ...where,
         reservation: {
-          shop: {
-            id: account.user.staff?.shop.id,
+          user: {
+            id: account.id,
           },
         },
       };
@@ -89,18 +87,17 @@ export class ReservationService {
 
   async createReservation(
     dto: CreateReservationDto,
-    accountId: string,
+    id: string,
   ): Promise<TReservation> {
     const account = await this.accountRepository.findOne({
-      where: { hashId: accountId },
-      relations: { user: true },
+      where: { id },
     });
 
     const reservation = new Reservation();
     const shop = await this.shopRepository.findOne({
       where: { hashId: dto.shopId },
     });
-    this.setReservationAttributes(dto, reservation, shop, account.user);
+    this.setReservationAttributes(dto, reservation, shop, account);
 
     await this.dataSource.manager.transaction(async (manager) => {
       // save時にPrimaryGeneratedKeyが発行されるため、一旦save
@@ -118,7 +115,7 @@ export class ReservationService {
     dto: CreateReservationDto,
     reservation: Reservation,
     shop: Shop,
-    user: User,
+    user: Account,
   ) {
     reservation.shippingDate = dayjs(dto.shippingDate).toDate();
     reservation.reservationDate = dayjs(dto.reservationDate).toDate();

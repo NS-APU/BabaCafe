@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { join } from 'path';
+// import { join } from 'path';
 
 export async function putBase64Image(
   fileNamePrefix: string,
@@ -21,7 +21,7 @@ export async function putObject(
   data: string | Buffer,
 ): Promise<string> {
   // if (process.env.NODE_ENV === 'development') {
-  const dir = join(process.cwd(), 'public');
+  // const dir = join(process.cwd(), 'public');
   fs.writeFileSync(`${fileName.replaceAll('/', '-')}`, data);
   // }
   // TODO: 本番環境用にs3バケットに保存する以下処理を実装

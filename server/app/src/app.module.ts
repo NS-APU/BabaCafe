@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getMetadataArgsStorage } from 'typeorm';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { AccountModule } from './account/account.module';
 import * as dotenv from 'dotenv';
 import { ProductModule } from './product/product.module';
 import { ReservationModule } from './reservation/reservation.module';
@@ -28,7 +28,7 @@ dotenv.config();
       // envファイルを組み込むために使用
       isGlobal: true,
     }),
-    AuthModule,
+    AccountModule,
     ProductModule,
     ReservationModule,
     ShopModule,
@@ -36,4 +36,4 @@ dotenv.config();
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
