@@ -13,10 +13,10 @@
     "prepare": "husky install",
     "lint": "eslint \"{server,web}/**/{src,apps,libs,test}/**/*.ts\" --fix",
     "all-install": "yarn install && yarn --cwd web/app install && yarn --cwd server/app install",
-    "all-dev": "run-p dev:* \"db up\"",
+    "all-dev": "run-p dev:*",
     "dev:web": "yarn --cwd web/app dev-docker",
     "dev:server": "yarn --cwd server/app start:dev",
-    "db": "COMPOSE_PROJECT_NAME=baba-cafe-local docker-compose -f docker-compose.db.yml"
+    "dev:db": "COMPOSE_PROJECT_NAME=baba-cafe-local docker-compose -f docker-compose.db.yml up"
   },
   "lint-staged": {
     "*.{js,ts,md,yml,html,json,css}": [
