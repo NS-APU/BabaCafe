@@ -9,8 +9,8 @@
   import { addToast } from "../../stores/Toast";
   import { isLogined, markAsLoginState } from "../../stores/Login";
 
-  let email = "" as string;
-  let password = "" as string;
+  let email: string = "";
+  let password: string = "";
 
   async function login() {
     await new AccountService()
@@ -55,7 +55,7 @@
       label="メールアドレス"
       bind:value={email}
       required
-      input$maxlength={50}
+      input$maxlength={"50"}
       input$type={"email"}
       input$autocomplete="email"
     />
@@ -66,7 +66,7 @@
       label="パスワード"
       bind:value={password}
       required
-      input$maxlength={50}
+      input$maxlength={"50"}
       input$type={"password"}
       input$autocomplete="current-password"
     />

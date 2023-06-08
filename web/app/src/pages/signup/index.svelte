@@ -10,9 +10,9 @@
   import { isLogined } from "../../stores/Login";
   import { AccountService } from "../../services/AccountService";
 
-  let email = "";
-  let password = "";
-  let password_confirm = "";
+  let email: string = "";
+  let password: string = "";
+  let password_confirm: string = "";
 
   const USER_CLASSIFICATION = {
     individual: "individual",
@@ -42,10 +42,10 @@
   let attribute: typeof USER_ATTRIBUTE[keyof typeof USER_ATTRIBUTE] =
     USER_ATTRIBUTE.consumer;
 
-  let name = "";
-  let tel = "";
-  let zipCode = "";
-  let address = "";
+  let name: string = "";
+  let tel: string = "";
+  let zipCode: string = "";
+  let address: string = "";
 
   async function signup() {
     if (password !== password_confirm) {
@@ -100,7 +100,7 @@
       label="メールアドレス"
       bind:value={email}
       required
-      input$maxlength={50}
+      input$maxlength={"50"}
       input$type={"email"}
       input$autocomplete="email"
     >
@@ -113,7 +113,7 @@
       label="パスワード"
       bind:value={password}
       required
-      input$maxlength={50}
+      input$maxlength={"50"}
       input$type={"password"}
       input$autocomplete="new-password"
     />
@@ -124,7 +124,7 @@
       label="パスワード（確認）"
       bind:value={password_confirm}
       required
-      input$maxlength={50}
+      input$maxlength={"50"}
       input$type={"password"}
       input$autocomplete="new-password"
     />
@@ -163,7 +163,7 @@
       label="お名前"
       bind:value={name}
       required
-      input$maxlength={30}
+      input$maxlength={"30"}
       input$type={"text"}
       input$autocomplete="name"
     >
@@ -186,7 +186,7 @@
       label="電話番号"
       bind:value={tel}
       required
-      input$maxlength={14}
+      input$maxlength={"14"}
       input$type={"tel"}
       input$pattern={"\\d{2,4}-\\d{2,4}-\\d{3,4}"}
       input$autocomplete="tel"
@@ -200,8 +200,8 @@
       label="郵便番号"
       bind:value={zipCode}
       required
-      input$minlength={8}
-      input$maxlength={8}
+      input$minlength={"8"}
+      input$maxlength={"8"}
       input$type={"text"}
       input$pattern={"^\\d{3}-\\d{4}$"}
       input$autocomplete="shipping postal-code"
@@ -215,7 +215,7 @@
       label="住所"
       bind:value={address}
       required
-      input$maxlength={100}
+      input$maxlength={"100"}
       input$type={"text"}
       input$autocomplete="shipping address-level1 address-level2 address-level3 address-level4"
     >
