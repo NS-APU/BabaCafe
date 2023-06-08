@@ -100,8 +100,8 @@
       label="メールアドレス"
       bind:value={email}
       required
-      input$maxlength={"50"}
-      input$type={"email"}
+      type={"email"}
+      input$maxlength={50}
       input$autocomplete="email"
     >
       <HelperText slot="helper" persistent>例）example@ex.com</HelperText>
@@ -113,8 +113,8 @@
       label="パスワード"
       bind:value={password}
       required
-      input$maxlength={"50"}
-      input$type={"password"}
+      type={"password"}
+      input$maxlength={50}
       input$autocomplete="new-password"
     />
 
@@ -124,8 +124,8 @@
       label="パスワード（確認）"
       bind:value={password_confirm}
       required
-      input$maxlength={"50"}
-      input$type={"password"}
+      type={"password"}
+      input$maxlength={50}
       input$autocomplete="new-password"
     />
 
@@ -163,8 +163,8 @@
       label="お名前"
       bind:value={name}
       required
-      input$maxlength={"30"}
-      input$type={"text"}
+      type={"text"}
+      input$maxlength={30}
       input$autocomplete="name"
     >
       <HelperText slot="helper" persistent>
@@ -186,8 +186,8 @@
       label="電話番号"
       bind:value={tel}
       required
-      input$maxlength={"14"}
-      input$type={"tel"}
+      type={"tel"}
+      input$maxlength={14}
       input$pattern={"\\d{2,4}-\\d{2,4}-\\d{3,4}"}
       input$autocomplete="tel"
     >
@@ -200,9 +200,9 @@
       label="郵便番号"
       bind:value={zipCode}
       required
-      input$minlength={"8"}
-      input$maxlength={"8"}
-      input$type={"text"}
+      type={"text"}
+      input$minlength={8}
+      input$maxlength={8}
       input$pattern={"^\\d{3}-\\d{4}$"}
       input$autocomplete="shipping postal-code"
     >
@@ -215,8 +215,8 @@
       label="住所"
       bind:value={address}
       required
-      input$maxlength={"100"}
-      input$type={"text"}
+      type={"text"}
+      input$maxlength={100}
       input$autocomplete="shipping address-level1 address-level2 address-level3 address-level4"
     >
       <HelperText slot="helper" persistent

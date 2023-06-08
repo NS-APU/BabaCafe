@@ -55,8 +55,8 @@
       label="メールアドレス"
       bind:value={email}
       required
-      input$maxlength={"50"}
-      input$type={"email"}
+      type={"email"}
+      input$maxlength={50}
       input$autocomplete="email"
     />
 
@@ -66,8 +66,8 @@
       label="パスワード"
       bind:value={password}
       required
-      input$maxlength={"50"}
-      input$type={"password"}
+      type={"password"}
+      input$maxlength={50}
       input$autocomplete="current-password"
     />
 
