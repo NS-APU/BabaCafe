@@ -3,7 +3,7 @@
   import Header from "../organizms/Header.svelte";
   import AuthGuard from "../wrappers/AuthGuard.svelte";
   import Toasts from "../atoms/Toasts.svelte";
-  import Drawer, { AppContent, Scrim } from "@smui/drawer";
+  import { AppContent } from "@smui/drawer";
 
   let isOpen = false;
   const toggle = () => (isOpen = !isOpen);

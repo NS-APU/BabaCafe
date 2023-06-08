@@ -55,7 +55,7 @@
     </div>
 
     <div class="card-display">
-      {#each products as product, i}
+      {#each products as product}
         <div class="card-container">
           <Card class="rounded-[24px]">
             <PrimaryAction on:click={$goto(`./${product.id}`)}>

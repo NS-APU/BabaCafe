@@ -14,17 +14,6 @@
 
   export let onConfirm: (values: Required<TProductForm>) => unknown;
 
-  let loading = false;
-  const productSchema = z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    image: z.string().optional(),
-    saleStartDate: z.string(),
-    unitWeight: z.number(),
-    price: z.number(),
-    totalAmount: z.number(),
-  });
-
   const initialValues = {
     name: "",
     description: "",
@@ -53,16 +42,11 @@
   async function onImgSelect(event: Event) {
     if (event.target instanceof HTMLInputElement) {
       const files = event.target.files;
-
-      loading = true;
-
       try {
         onInput(await encodeFileToBase64(files[0]));
         onBlur();
       } catch {
         throw new ShowableError("画像の読み込みに失敗しました。");
-      } finally {
-        loading = false;
       }
     }
   }
@@ -78,7 +62,6 @@
   let unitWeight = 0;
   let price = 0;
   let totalAmount = 0;
-  let image = "";
 </script>
 
 <div>

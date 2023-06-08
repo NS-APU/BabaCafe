@@ -12,11 +12,6 @@
   let email: string = "";
   let password: string = "";
 
-  type authInfo = {
-    email: string;
-    password: string;
-  };
-
   async function login() {
     await new AccountService()
       .login(email, password)

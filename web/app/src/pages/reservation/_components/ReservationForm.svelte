@@ -57,7 +57,6 @@
   let shippingDate = "";
   let shopId = "";
 
-  let loading = false;
   let totalPrice = 0;
 
   const initialValues = {

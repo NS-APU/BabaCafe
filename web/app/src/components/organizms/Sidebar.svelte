@@ -5,8 +5,8 @@
   import { isLogined, markAsLogoutState } from "../../stores/Login";
   import { addToast } from "../../stores/Toast";
 
-  export let isOpen;
-  export let close;
+  export let isOpen: boolean;
+  export let close: Function;
 
   const DEFAULT_ACTIVE = "reservation";
 

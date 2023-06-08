@@ -65,7 +65,7 @@
           zipCode,
           address,
         })
-        .then((res) => {
+        .then(() => {
           addToast({
             message: "アカウントを作成しました。",
             type: "success",

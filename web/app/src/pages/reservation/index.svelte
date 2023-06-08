@@ -9,7 +9,7 @@
   import { addToast } from "../../stores/Toast";
   import CircularProgress from "@smui/circular-progress";
   import dayjs from "dayjs";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
+  import Dialog, { Content, Actions } from "@smui/dialog";
   import Button from "@smui/button";
   import StatusLabel from "./_components/StatusLabel.svelte";
   import { onMount } from "svelte";

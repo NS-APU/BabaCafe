@@ -3,7 +3,7 @@
   import IconButton from "@smui/icon-button";
   import { isLogined } from "../../stores/Login";
 
-  export let toggle;
+  export let toggle: Function;
 </script>
 
 <TopAppBar variant="short">
