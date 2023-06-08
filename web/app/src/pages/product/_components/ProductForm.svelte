@@ -2,8 +2,7 @@
   import { createField, createForm } from "felte";
   import { goto } from "@roxi/routify";
   import Textfield from "@smui/textfield";
-  import { z } from "zod";
-  import type { TProductForm } from "../../../models/Product";
+    import type { TProductForm } from "../../../models/Product";
   import Button from "@smui/button";
   import TextField from "../../../components/cusstomized/TextField.svelte";
   import NumberField from "../../../components/cusstomized/NumberField.svelte";

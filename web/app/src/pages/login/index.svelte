@@ -9,8 +9,8 @@
   import { addToast } from "../../stores/Toast";
   import { isLogined, markAsLoginState } from "../../stores/Login";
 
-  let email: string = "";
-  let password: string = "";
+  let email = "" as string;
+  let password = "" as string;
 
   async function login() {
     await new AccountService()
