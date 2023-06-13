@@ -62,7 +62,7 @@
               <div>
                 <img
                   class="product-img"
-                  src={product.image ??
+                  src={"./product/" + product.image ??
                     "https://girlydrop.com/wp-content/uploads/post/p5774.jpg"}
                   alt=""
                 />

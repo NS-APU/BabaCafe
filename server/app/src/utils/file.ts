@@ -22,7 +22,7 @@ export async function putObject(
 ): Promise<string> {
   // if (process.env.NODE_ENV === 'development') {
   // const dir = join(process.cwd(), 'public');
-  fs.writeFileSync(`${fileName.replaceAll('/', '-')}`, data);
+  fs.writeFileSync('../../web/app/public/product/' + `${fileName}`, data);
   // }
   // TODO: 本番環境用にs3バケットに保存する以下処理を実装
   // else {

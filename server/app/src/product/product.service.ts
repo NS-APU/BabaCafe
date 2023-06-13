@@ -14,7 +14,7 @@ export class ProductService {
     private productRepository: Repository<Product>,
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
-  ) { }
+  ) {}
 
   async getProducts(): Promise<TProduct[]> {
     return await this.productRepository
@@ -86,10 +86,7 @@ export class ProductService {
   ) {
     // imageの値がbase64である(httpから始まらない)なら，ストレージに保存する処理を行う
     if (dto.image && !dto.image.startsWith('http')) {
-      product.image = await putBase64Image(
-        `product/${product.hashId}`,
-        dto.image,
-      );
+      product.image = await putBase64Image(`${product.hashId}`, dto.image);
       await product.save();
     }
   }
