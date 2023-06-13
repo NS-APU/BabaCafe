@@ -15,6 +15,7 @@
   function setActive(value: string) {
     active = value;
     $goto(`./${value}`);
+    close();
   }
 
   function logout() {
@@ -34,7 +35,7 @@
   });
 </script>
 
-<Drawer fixed={true} variant="dismissible" bind:open={isOpen}>
+<Drawer fixed={true} variant="modal" bind:open={isOpen}>
   <Content>
     <List>
       <Item
