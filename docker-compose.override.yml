@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    restart: always
+
+  backend:
+    restart: always
+
+  database:
+    restart: always
+    volumes:
+      - "psql:/var/lib/postgresql/data"
+
+volumes:
+  psql:
