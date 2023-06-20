@@ -16,6 +16,7 @@ WORKDIR /server
 COPY --from=builder /server/package*.json ./
 COPY --from=builder /server/node_modules ./node_modules
 COPY --from=builder /server/dist ./dist
-COPY --from=builder /server/src ./src
+COPY --from=builder /server/src/data-source.ts ./src/
+COPY --from=builder /server/src/migrations ./src/migrations
 
 CMD ["node", "dist/main.js"]
