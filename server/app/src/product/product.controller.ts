@@ -1,18 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
+import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
-import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -31,10 +22,7 @@ export class ProductController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createProduct(
-    @Body() createProductDto: CreateProductDto,
-    @GetAccount() account: Account,
-  ) {
+  createProduct(@Body() createProductDto: CreateProductDto, @GetAccount() account: Account) {
     return this.productService.createProduct(createProductDto, account);
   }
 }

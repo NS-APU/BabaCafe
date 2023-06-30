@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as dayjs from 'dayjs';
+import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product, TProduct } from './entities/product.entity';
-import * as dayjs from 'dayjs';
-import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 
 @Injectable()
 export class ProductService {
@@ -27,10 +27,7 @@ export class ProductService {
       .then((product) => product.convertTProduct());
   }
 
-  async createProduct(
-    dto: CreateProductDto,
-    account: Account,
-  ): Promise<TProduct> {
+  async createProduct(dto: CreateProductDto, account: Account): Promise<TProduct> {
     const product = new Product();
     let producer: Account;
     account = await this.accountRepository.findOne({
@@ -48,11 +45,7 @@ export class ProductService {
     return product.convertTProduct();
   }
 
-  private static async setProductAttributes(
-    dto: CreateProductDto,
-    product: Product,
-    producer: Account,
-  ) {
+  private static async setProductAttributes(dto: CreateProductDto, product: Product, producer: Account) {
     product.producerId = producer.id;
     product.name = dto.name;
     product.kinds = dto.kinds;

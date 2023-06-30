@@ -1,25 +1,13 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Request,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-} from '@nestjs/common';
-import { AuthService, PasswordOmitAccount } from './auth.service';
+import { Controller, Get, Post, Request, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
 import { AccountService } from './account.service';
-import { LocalAuthGuard } from './local-auth.guard';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthService, PasswordOmitAccount } from './auth.service';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
 
 @Controller('account')
 export class AccountController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly accountService: AccountService,
-  ) {}
+  constructor(private readonly authService: AuthService, private readonly accountService: AccountService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('/login')

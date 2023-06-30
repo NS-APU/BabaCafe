@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { goto } from "@roxi/routify";
-  import CircularProgress from "@smui/circular-progress";
+  import { goto } from '@roxi/routify';
+  import CircularProgress from '@smui/circular-progress';
 
-  $goto("/login");
+  $goto('/login');
 </script>
 
 <div style="display: flex; justify-content: center">
-  <CircularProgress style="height: 160px; width: 32px;" indeterminate />
+  <CircularProgress style="width: 32px; height: 160px;" indeterminate />
 </div>

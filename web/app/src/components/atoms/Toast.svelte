@@ -1,18 +1,18 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  import { fade } from "svelte/transition";
-  import SuccessIcon from "../icon/SuccessIcon.svelte";
-  import ErrorIcon from "../icon/ErrorIcon.svelte";
-  import CloseIcon from "../icon/CloseIcon.svelte";
+  import { createEventDispatcher } from 'svelte';
+  import { fade } from 'svelte/transition';
+  import CloseIcon from '../icon/CloseIcon.svelte';
+  import ErrorIcon from '../icon/ErrorIcon.svelte';
+  import SuccessIcon from '../icon/SuccessIcon.svelte';
 
   const dispatch = createEventDispatcher();
 
-  export let type = "error";
+  export let type = 'error';
   export let dismissible = true;
 </script>
 
 <article class={type} role="alert" transition:fade>
-  {#if type === "success"}
+  {#if type === 'success'}
     <SuccessIcon width="1.1em" />
   {:else}
     <ErrorIcon width="1.1em" />
@@ -23,7 +23,7 @@
   </div>
 
   {#if dismissible}
-    <button class="close" on:click={() => dispatch("dismiss")}>
+    <button class="close" on:click={() => dispatch('dismiss')}>
       <CloseIcon width="0.8em" />
     </button>
   {/if}
@@ -31,29 +31,33 @@
 
 <style lang="postcss">
   article {
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.2rem;
     display: flex;
     align-items: center;
+    padding: 0.75rem 1.5rem;
     margin: 0.5rem 0.5rem 0 auto;
+    color: white;
+    border-radius: 0.2rem;
   }
+
   .error {
-    background: IndianRed;
+    background: indianred;
   }
+
   .success {
-    background: MediumSeaGreen;
+    background: mediumseagreen;
   }
+
   .text {
     margin-left: 1rem;
   }
+
   button {
+    padding: 0;
+    margin: 0 0 0 auto;
+    font-size: 1rem;
+    line-height: 1;
     color: white;
     background: transparent;
     border: 0 none;
-    padding: 0;
-    margin: 0 0 0 auto;
-    line-height: 1;
-    font-size: 1rem;
   }
 </style>

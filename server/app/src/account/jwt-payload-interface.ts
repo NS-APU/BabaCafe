@@ -1,7 +1,4 @@
-import {
-  USER_CLASSIFICATION,
-  USER_ATTRIBUTE,
-} from 'src/account/entities/account.entity';
+import { USER_CLASSIFICATION, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 
 export interface JwtPayload {
   id: string;

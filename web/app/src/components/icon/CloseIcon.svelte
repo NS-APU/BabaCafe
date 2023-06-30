@@ -1,10 +1,10 @@
 <script>
-  export let width = "1em";
+  export let width = '1em';
 </script>
 
 <svg
   {width}
-  style="text-align: center; display: inline-block;"
+  style="display: inline-block; text-align: center;"
   aria-hidden="true"
   focusable="false"
   role="img"

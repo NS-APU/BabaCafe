@@ -1,5 +1,5 @@
-import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AccountService } from 'src/account/account.service';
 import { Account } from 'src/account/entities/account.entity';
@@ -12,16 +12,10 @@ export type PasswordOmitAccount = Omit<Account, 'password'>;
  */
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private accountService: AccountService,
-  ) {}
+  constructor(private jwtService: JwtService, private accountService: AccountService) {}
 
   // ユーザーを認証する
-  async validateAccount(
-    email: Account['email'],
-    pass: Account['password'],
-  ): Promise<PasswordOmitAccount | null> {
+  async validateAccount(email: Account['email'], pass: Account['password']): Promise<PasswordOmitAccount | null> {
     const account = await this.accountService.getAccountByEmail(email); // DBからAccountを取得
 
     if (account && (await bcrypt.compare(pass, account.password))) {

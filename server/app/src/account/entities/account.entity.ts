@@ -1,3 +1,5 @@
+import { Product } from 'src/product/entities/product.entity';
+import { Reservation } from 'src/reservation/entities/reservation.entity';
 import {
   BaseEntity,
   Column,
@@ -8,8 +10,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Product } from 'src/product/entities/product.entity';
-import { Reservation } from 'src/reservation/entities/reservation.entity';
 
 export const USER_CLASSIFICATION = {
   individual: 'individual',

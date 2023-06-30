@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 export const toasts = writable([]);
 
@@ -6,7 +6,7 @@ export const addToast = (options) => {
   const id = Math.floor(Math.random() * 10000);
   const defaults = {
     id,
-    type: "success",
+    type: 'success',
     dismissible: true,
     timeout: 3000,
   };

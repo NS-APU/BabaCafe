@@ -1,16 +1,16 @@
-import type { TResponse } from "./_type";
+import type { TResponse } from './_type';
 
 export async function baseAPI<
   T extends Record<string, unknown> | Array<Record<string, unknown>> | void,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  B = Record<string, any>
+  B = Record<string, any>,
 >({
   endpoint,
-  method = "GET",
+  method = 'GET',
   body,
 }: {
   endpoint: string;
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   body?: B;
 }): Promise<T> {
   const controller = new AbortController();
@@ -20,10 +20,10 @@ export async function baseAPI<
 
   const res = await fetch(`/api/${endpoint}`, {
     method,
-    mode: "cors",
+    mode: 'cors',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
     },
     signal: controller.signal,
     ...(body && { body: JSON.stringify(body) }),

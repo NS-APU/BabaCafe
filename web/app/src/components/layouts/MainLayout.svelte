@@ -1,18 +1,18 @@
 <script lang="ts">
-  import Sidebar from "../organizms/Sidebar.svelte";
-  import Header from "../organizms/Header.svelte";
-  import AuthGuard from "../wrappers/AuthGuard.svelte";
-  import Toasts from "../atoms/Toasts.svelte";
-  import { AppContent, Scrim } from "@smui/drawer";
+  import { AppContent, Scrim } from '@smui/drawer';
+  import Toasts from '../atoms/Toasts.svelte';
+  import Header from '../organizms/Header.svelte';
+  import Sidebar from '../organizms/Sidebar.svelte';
+  import AuthGuard from '../wrappers/AuthGuard.svelte';
 
   let isOpen = false;
   const toggle = () => (isOpen = !isOpen);
   const close = () => (isOpen = false);
   const handleWindowKeyDown = (event: Event) => {
-    if (isOpen && (event instanceof KeyboardEvent) && (event as KeyboardEvent).key === 'Escape') {
+    if (isOpen && event instanceof KeyboardEvent && (event as KeyboardEvent).key === 'Escape') {
       close();
     }
-  }
+  };
 </script>
 
 <svelte:window on:keydown={handleWindowKeyDown} />
@@ -37,24 +37,24 @@
 <style lang="postcss">
   .sidebar-layout {
     position: relative;
+    top: 55px;
+    z-index: 0;
     display: flex;
     height: calc(100vh - 55px);
     overflow: hidden;
-    z-index: 0;
-    top: 55px;
   }
 
   * :global(.app-content) {
-    flex: auto;
-    overflow: auto;
     position: relative;
+    flex: auto;
     flex-grow: 1;
+    overflow: auto;
   }
 
   .main-content {
-    overflow: auto;
-    padding: 16px;
-    height: calc(100vh - 55px);
     box-sizing: border-box;
+    height: calc(100vh - 55px);
+    padding: 16px;
+    overflow: auto;
   }
 </style>

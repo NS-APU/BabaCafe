@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Drawer, { Content } from "@smui/drawer";
-  import List, { Item, Text, Separator } from "@smui/list";
-  import { goto } from "@roxi/routify";
-  import { isLoggedIn, markAsLogoutState } from "../../stores/Login";
-  import { addToast } from "../../stores/Toast";
+  import { goto } from '@roxi/routify';
+  import Drawer, { Content } from '@smui/drawer';
+  import List, { Item, Text, Separator } from '@smui/list';
+  import { isLoggedIn, markAsLogoutState } from '../../stores/Login';
+  import { addToast } from '../../stores/Toast';
 
   export let isOpen: boolean;
   export let close: () => void;
 
-  const DEFAULT_ACTIVE = "reservation";
+  const DEFAULT_ACTIVE = 'reservation';
 
   let active = DEFAULT_ACTIVE;
 
@@ -21,10 +21,10 @@
   function logout() {
     markAsLogoutState();
     addToast({
-      message: "ログアウトしました。",
-      type: "success",
+      message: 'ログアウトしました。',
+      type: 'success',
     });
-    $goto("/login");
+    $goto('/login');
   }
 
   isLoggedIn.subscribe((value) => {
@@ -38,18 +38,10 @@
 <Drawer fixed={true} variant="modal" bind:open={isOpen}>
   <Content>
     <List>
-      <Item
-        href="javascript:void(0)"
-        on:click={() => setActive("reservation")}
-        activated={active === "reservation"}
-      >
+      <Item href="javascript:void(0)" on:click={() => setActive('reservation')} activated={active === 'reservation'}>
         <Text class="text-base">予約一覧</Text>
       </Item>
-      <Item
-        href="javascript:void(0)"
-        on:click={() => setActive("product")}
-        activated={active === "product"}
-      >
+      <Item href="javascript:void(0)" on:click={() => setActive('product')} activated={active === 'product'}>
         <Text class="text-base">出品一覧</Text>
       </Item>
       <!--
@@ -62,11 +54,7 @@
       </Item>
       -->
       <Separator />
-      <Item
-        href="javascript:void(0)"
-        on:click={() => logout()}
-        activated={active === "logout"}
-      >
+      <Item href="javascript:void(0)" on:click={() => logout()} activated={active === 'logout'}>
         <Text class="text-base">ログアウト</Text>
       </Item>
     </List>

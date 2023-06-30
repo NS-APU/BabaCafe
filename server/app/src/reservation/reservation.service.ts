@@ -3,19 +3,10 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { Product } from 'src/product/entities/product.entity';
-import {
-  DataSource,
-  EntityManager,
-  FindOptionsWhere,
-  Repository,
-} from 'typeorm';
+import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationForPackedDto } from './dto/update-reservation-for-packed.dto';
-import {
-  Reservation,
-  RESERVATION_STATUS,
-  TReservation,
-} from './entities/reservation.entity';
+import { Reservation, RESERVATION_STATUS, TReservation } from './entities/reservation.entity';
 
 @Injectable()
 export class ReservationService {
@@ -61,52 +52,33 @@ export class ReservationService {
     return await this.reservationRepository
       .find({
         where,
-        relations: [
-          'consumer',
-          'product',
-          'product.producer',
-          'shipper',
-          'receiveLocation',
-        ],
+        relations: ['consumer', 'product', 'product.producer', 'shipper', 'receiveLocation'],
         order: { createdAt: 'DESC' },
       })
-      .then((reservation) =>
-        reservation?.map((reservation) => reservation.convertTReservation()),
-      );
+      .then((reservation) => reservation?.map((reservation) => reservation.convertTReservation()));
   }
 
   async getReservation(id: string): Promise<TReservation> {
     return await this.reservationRepository
       .findOne({
         where: { id },
-        relations: [
-          'consumer',
-          'product',
-          'product.producer',
-          'shipper',
-          'receiveLocation',
-        ],
+        relations: ['consumer', 'product', 'product.producer', 'shipper', 'receiveLocation'],
       })
       .then((reservation) => reservation.convertTReservation());
   }
 
-  async createReservation(
-    dto: CreateReservationDto,
-    account: Account,
-  ): Promise<TReservation> {
+  async createReservation(dto: CreateReservationDto, account: Account): Promise<TReservation> {
     const reservation = new Reservation();
     const product = await this.productRepository.findOne({
       where: { id: dto.productId },
     });
     this.setReservationAttributes(dto, reservation, product, account);
 
-    await this.dataSource.manager.transaction(
-      async (manager: EntityManager) => {
-        product.remaining -= dto.quantity;
-        await manager.save(product);
-        await manager.save(reservation);
-      },
-    );
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      product.remaining -= dto.quantity;
+      await manager.save(product);
+      await manager.save(reservation);
+    });
 
     return reservation.convertTReservation();
   }
@@ -155,10 +127,7 @@ export class ReservationService {
     return reservation;
   }
 
-  async updateReservationForKept(
-    account: Account,
-    reservationId: string,
-  ): Promise<TReservation> {
+  async updateReservationForKept(account: Account, reservationId: string): Promise<TReservation> {
     const reservation = await this.reservationRepository
       .findOne({ where: { id: reservationId } })
       .then((reservation) => reservation.convertTReservation());
@@ -180,10 +149,7 @@ export class ReservationService {
     return reservation;
   }
 
-  async updateReservationForReceived(
-    account: Account,
-    reservationId: string,
-  ): Promise<TReservation> {
+  async updateReservationForReceived(account: Account, reservationId: string): Promise<TReservation> {
     const reservation = await this.reservationRepository
       .findOne({ where: { id: reservationId } })
       .then((reservation) => reservation.convertTReservation());

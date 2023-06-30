@@ -1,13 +1,10 @@
 <script context="module" lang="ts">
-  import { AccountService } from "../../services/AccountService";
-  import type { GotoHelper, IsActiveHelper } from "@roxi/routify";
-  import { markAsLoginState, markAsLogoutState } from "../../stores/Login";
-  import { setAccountProfile } from "../../stores/Account";
+  import { AccountService } from '../../services/AccountService';
+  import { setAccountProfile } from '../../stores/Account';
+  import { markAsLoginState, markAsLogoutState } from '../../stores/Login';
+  import type { GotoHelper, IsActiveHelper } from '@roxi/routify';
 
-  export async function canEnterPage(
-    redirect: GotoHelper,
-    isActive: IsActiveHelper
-  ): Promise<boolean> {
+  export async function canEnterPage(redirect: GotoHelper, isActive: IsActiveHelper): Promise<boolean> {
     /**
      * 指定したページに遷移する。ただし、指定先のページにすでにいる場合は何もしない
      * @param path 遷移先のページ
@@ -22,7 +19,7 @@
     try {
       const currentAccount = await new AccountService().getProfile();
 
-      if (!currentAccount) return _redirect("/login");
+      if (!currentAccount) return _redirect('/login');
 
       setAccountProfile(currentAccount);
 
@@ -30,7 +27,7 @@
     } catch (err) {
       addToast({
         message: err.message,
-        type: "error",
+        type: 'error',
       });
       return false;
     }
@@ -38,10 +35,10 @@
 </script>
 
 <script lang="ts">
-  import { onMount } from "svelte";
-  import CircularProgress from "@smui/circular-progress";
-  import { isActive, redirect } from "@roxi/routify";
-  import { addToast } from "../../stores/Toast";
+  import { isActive, redirect } from '@roxi/routify';
+  import CircularProgress from '@smui/circular-progress';
+  import { onMount } from 'svelte';
+  import { addToast } from '../../stores/Toast';
 
   // 外部に処理を切り出すためにstoreを使うと"TypeError: Cannot read property 'component' of null"エラーがでてしまう。
   let loading = true;
@@ -54,14 +51,14 @@
     } else {
       loading = false;
       markAsLogoutState();
-      $redirect("./login");
+      $redirect('./login');
     }
   });
 </script>
 
 {#if loading}
   <div style="display: flex; justify-content: center">
-    <CircularProgress style="height: 160px; width: 32px;" indeterminate />
+    <CircularProgress style="width: 32px; height: 160px;" indeterminate />
   </div>
 {:else}
   <slot />

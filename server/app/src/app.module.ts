@@ -1,11 +1,11 @@
-import { AppController } from './app.controller';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { getMetadataArgsStorage } from 'typeorm';
-import { AppService } from './app.service';
-import { AccountModule } from './account/account.module';
 import * as dotenv from 'dotenv';
+import { getMetadataArgsStorage } from 'typeorm';
+import { AccountModule } from './account/account.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { ProductModule } from './product/product.module';
 import { ReservationModule } from './reservation/reservation.module';
 dotenv.config();
