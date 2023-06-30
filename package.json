@@ -19,11 +19,13 @@
     "dev:db": "COMPOSE_PROJECT_NAME=baba-cafe-local docker-compose -f docker-compose.db.yml up"
   },
   "lint-staged": {
-    "*.{js,ts,md,yml,html,json,css,svelte}": [
-      "prettier --write"
+    "server/app/**/*.{js,ts,json}": [
+      "yarn --cwd server/app run prettier --write",
+      "yarn --cwd server/app run eslint --fix"
     ],
-    "*.{js,ts,svelte}": [
-      "eslint --fix"
+    "web/app/**/*.{js,ts,json,svelte}": [
+      "yarn --cwd web/app run prettier --write",
+      "yarn --cwd web/app run eslint --fix"
     ]
   }
 }
