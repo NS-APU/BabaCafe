@@ -4,6 +4,12 @@ module.exports = {
   rules: {
     ['selector-class-pattern']: '^[a-z][a-zA-Z0-9-]+$',
     ['function-no-unknown']: [true, { ignoreFunctions: ['/\\${/'] }],
+    ['selector-pseudo-class-no-unknown']: [
+      true,
+      {
+        ignorePseudoClasses: ['global'],
+      },
+    ],
   },
   overrides: [
     {

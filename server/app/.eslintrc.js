@@ -3,11 +3,10 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier', './tsconfig.json'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   overrides: [],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json',
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
@@ -17,7 +16,7 @@ module.exports = {
       'error',
       {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
-        'newlines-between': 'always',
+        'newlines-between': 'never',
         alphabetize: {
           order: 'asc',
         },

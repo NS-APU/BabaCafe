@@ -4,13 +4,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:svelte/recommended',
-    'prettier',
-    './tsconfig.json',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:svelte/recommended', 'prettier'],
   overrides: [
     {
       files: ['*.svelte'],
@@ -22,7 +16,6 @@ module.exports = {
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: './tsconfig.json',
     ecmaVersion: 'latest',
     sourceType: 'module',
     extraFileExtensions: ['.svelte'],
@@ -34,7 +27,7 @@ module.exports = {
       'error',
       {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
-        'newlines-between': 'always',
+        'newlines-between': 'never',
         alphabetize: {
           order: 'asc',
         },
