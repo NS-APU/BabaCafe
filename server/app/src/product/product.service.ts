@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, TProduct } from './entities/product.entity';
 import * as dayjs from 'dayjs';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
@@ -39,7 +40,7 @@ export class ProductService {
     if (account.attribute === USER_ATTRIBUTE.producer) {
       producer = account;
     } else {
-      // 農家以外の場合はエラーを表示。
+      // 生産者以外の場合はエラーを表示。
       throw new BadRequestException();
     }
     await ProductService.setProductAttributes(dto, product, producer);
@@ -48,8 +49,26 @@ export class ProductService {
     return product.convertTProduct();
   }
 
+  async updateProduct(
+    dto: UpdateProductDto,
+    account: Account,
+    productId: string,
+  ): Promise<TProduct> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      // 作成者以外の場合はエラーを表示。
+      throw new BadRequestException();
+    }
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+    await ProductService.setProductAttributes(dto, product, account);
+    await product.save();
+
+    return product.convertTProduct();
+  }
+
   private static async setProductAttributes(
-    dto: CreateProductDto,
+    dto: CreateProductDto | UpdateProductDto,
     product: Product,
     producer: Account,
   ) {

@@ -5,12 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductService } from './product.service';
 import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 
@@ -31,10 +33,23 @@ export class ProductController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  createProduct(
+  async createProduct(
     @Body() createProductDto: CreateProductDto,
     @GetAccount() account: Account,
   ) {
     return this.productService.createProduct(createProductDto, account);
+  }
+
+  @Patch('/:productId')
+  async updateProduct(
+    @Body() updateProductDto: UpdateProductDto,
+    @GetAccount() account: Account,
+    @Param('productId') productId: string,
+  ) {
+    return this.productService.updateProduct(
+      updateProductDto,
+      account,
+      productId,
+    );
   }
 }
