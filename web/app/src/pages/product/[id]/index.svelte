@@ -124,6 +124,17 @@
           <p class="black">予約</p>
         </Button>
       </div>
+    {:else if $profile.attribute === USER_ATTRIBUTE.producer}
+      <div class="flex justify-center">
+        <Button
+          variant="raised"
+          class="w-[150px] px-4 py-2 mt-10 rounded-full"
+          color="secondary"
+          on:click={$goto("../../product/:id/edit", { id: $params.id })}
+        >
+          <p class="black">編集</p>
+        </Button>
+      </div>
     {/if}
   </div>
 {/await}

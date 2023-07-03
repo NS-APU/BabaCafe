@@ -39,5 +39,5 @@
 </script>
 
 <div>
-  <ProductForm {onConfirm} />
+  <ProductForm pageType='new' {onConfirm} />
 </div>
