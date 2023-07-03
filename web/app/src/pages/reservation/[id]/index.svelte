@@ -178,13 +178,13 @@
           {:else if reservationData.product.producer.classification === "individual"}
             <img
               class="w-[40px] h-[40px] rounded-[50%]"
-              src="./../../../public/images/farmer.png"
+              src="/images/farmer.png"
               alt=""
             />
           {:else if reservationData.product.producer.classification === "corporate"}
             <img
               class="w-[40px] h-[40px] rounded-[50%]"
-              src="./../../../public/images/house.png"
+              src="/images/house.png"
               alt=""
             />
           {/if}
@@ -211,7 +211,7 @@
           <img
             class="absolute top-0 bottom-0 left-0 right-0 h-auto w-auto max-h-full max-w-full m-auto"
             src={reservationData.product.image ??
-              "./../../../public/images/default_product_image.png"}
+              "/images/default_product_image.png"}
             alt=""
           />
         </div>

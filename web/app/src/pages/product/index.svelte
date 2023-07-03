@@ -75,13 +75,13 @@
                     {:else if product.producer.classification === "corporate"}
                       <img
                         class="absolute top-0 w-[30px] h-[30px] rounded-[50%]"
-                        src="./../../../../public/images/house.png"
+                        src="/images/house.png"
                         alt=""
                       />
                     {:else}
                       <img
                         class="absolute top-0 w-[30px] h-[30px] rounded-[50%]"
-                        src="./../../../public/images/farmer.png"
+                        src="/images/farmer.png"
                         alt=""
                       />
                     {/if}
@@ -99,7 +99,7 @@
                   <img
                     class="block h-48 w-96 object-contain"
                     src={product.image ??
-                      "./../../../public/images/default_product_image.png"}
+                      "/images/default_product_image.png"}
                     alt=""
                   />
                 </div>

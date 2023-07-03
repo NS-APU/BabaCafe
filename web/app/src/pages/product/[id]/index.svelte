@@ -58,13 +58,13 @@
         {:else if product.producer.classification === "individual"}
           <img
             class="w-[40px] h-[40px] rounded-[50%]"
-            src="./../../../public/images/farmer.png"
+            src="/images/farmer.png"
             alt=""
           />
         {:else if product.producer.classification === "corporate"}
           <img
             class="w-[40px] h-[40px] rounded-[50%]"
-            src="./../../../public/images/house.png"
+            src="/images/house.png"
             alt=""
           />
         {/if}
@@ -84,7 +84,7 @@
       </div>
       <img
         src={product.image ??
-          "./../../../public/images/default_product_image.png"}
+          "/images/default_product_image.png"}
         alt=""
         width="300"
         class="mt-3"
