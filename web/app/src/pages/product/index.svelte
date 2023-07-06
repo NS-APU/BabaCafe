@@ -8,6 +8,8 @@
   import { markAsLogoutState } from "../../stores/Login";
   import { CROP_UNITS_LABEL } from "../../constants/product";
   import dayjs from "dayjs";
+  import { USER_ATTRIBUTE } from "../../constants/account";
+  import { profile } from "../../stores/Account";
 
   $: productRepository = new ProductRepository();
 
@@ -44,16 +46,18 @@
   </div>
 {:then products}
   <div class="m-6">
-    <div class="flex justify-center">
-      <Button
-        color="secondary"
-        variant="raised"
-        class="w-[150px] px-4 py-2 mt-10 rounded-full"
-        on:click={() => $goto("./new")}
-      >
-        <p class="black">出品</p>
-      </Button>
-    </div>
+    {#if $profile.attribute === USER_ATTRIBUTE.PRODUCER }
+      <div class="flex justify-center">
+        <Button
+          color="secondary"
+          variant="raised"
+          class="w-[150px] px-4 py-2 mt-10 rounded-full"
+          on:click={() => $goto("./new")}
+        >
+          <p class="black">出品</p>
+        </Button>
+      </div>
+    {/if}
 
     <div class="container my-12 mx-auto md:px-12">
       <div class="flex flex-wrap -mx-1 lg:-mx-4">
