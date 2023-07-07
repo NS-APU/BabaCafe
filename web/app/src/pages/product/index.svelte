@@ -4,8 +4,10 @@
   import Card, { Content, PrimaryAction } from '@smui/card';
   import CircularProgress from '@smui/circular-progress';
   import dayjs from 'dayjs';
+  import { USER_ATTRIBUTE } from '../../constants/account';
   import { CROP_UNITS_LABEL } from '../../constants/product';
   import { ProductRepository, type TProduct } from '../../models/Product';
+  import { profile } from '../../stores/Account';
   import { markAsLogoutState } from '../../stores/Login';
   import { addToast } from '../../stores/Toast';
 
@@ -43,16 +45,18 @@
   </div>
 {:then products}
   <div class="m-6">
-    <div class="flex justify-center">
-      <Button
-        color="secondary"
-        variant="raised"
-        class="mt-10 w-[150px] rounded-full px-4 py-2"
-        on:click={() => $goto('./new')}
-      >
-        <p class="black">出品</p>
-      </Button>
-    </div>
+    {#if $profile.attribute === USER_ATTRIBUTE.producer}
+      <div class="flex justify-center">
+        <Button
+          color="secondary"
+          variant="raised"
+          class="mt-10 w-[150px] rounded-full px-4 py-2"
+          on:click={() => $goto('./new')}
+        >
+          <p class="black">出品</p>
+        </Button>
+      </div>
+    {/if}
 
     <div class="container mx-auto my-12 md:px-12">
       <div class="-mx-1 flex flex-wrap lg:-mx-4">
