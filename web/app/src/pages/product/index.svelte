@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { goto } from "@roxi/routify";
-  import Card, { Content, PrimaryAction } from "@smui/card";
-  import Button from "@smui/button";
-  import { ProductRepository, type TProduct } from "../../models/Product";
-  import CircularProgress from "@smui/circular-progress";
-  import { addToast } from "../../stores/Toast";
-  import { markAsLogoutState } from "../../stores/Login";
-  import { CROP_UNITS_LABEL } from "../../constants/product";
-  import dayjs from "dayjs";
-  import { USER_ATTRIBUTE } from "../../constants/account";
-  import { profile } from "../../stores/Account";
+  import { goto } from '@roxi/routify';
+  import Button from '@smui/button';
+  import Card, { Content, PrimaryAction } from '@smui/card';
+  import CircularProgress from '@smui/circular-progress';
+  import dayjs from 'dayjs';
+  import { USER_ATTRIBUTE } from '../../constants/account';
+  import { CROP_UNITS_LABEL } from '../../constants/product';
+  import { ProductRepository, type TProduct } from '../../models/Product';
+  import { profile } from '../../stores/Account';
+  import { markAsLogoutState } from '../../stores/Login';
+  import { addToast } from '../../stores/Toast';
 
   $: productRepository = new ProductRepository();
 
@@ -19,19 +19,18 @@
       return products;
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
+        case 'Unauthorized':
           markAsLogoutState();
           addToast({
-            message: "認証が切れました。再度ログインしてください。",
-            type: "error",
+            message: '認証が切れました。再度ログインしてください。',
+            type: 'error',
           });
-          $goto("/login");
+          $goto('/login');
           break;
         default:
           addToast({
-            message:
-              "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-            type: "error",
+            message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
+            type: 'error',
           });
           break;
       }
@@ -46,55 +45,47 @@
   </div>
 {:then products}
   <div class="m-6">
-    {#if $profile.attribute === USER_ATTRIBUTE.PRODUCER }
+    {#if $profile.attribute === USER_ATTRIBUTE.producer}
       <div class="flex justify-center">
         <Button
           color="secondary"
           variant="raised"
-          class="w-[150px] px-4 py-2 mt-10 rounded-full"
-          on:click={() => $goto("./new")}
+          class="mt-10 w-[150px] rounded-full px-4 py-2"
+          on:click={() => $goto('./new')}
         >
           <p class="black">出品</p>
         </Button>
       </div>
     {/if}
 
-    <div class="container my-12 mx-auto md:px-12">
-      <div class="flex flex-wrap -mx-1 lg:-mx-4">
+    <div class="container mx-auto my-12 md:px-12">
+      <div class="-mx-1 flex flex-wrap lg:-mx-4">
         {#each products as product}
-          <div
-            class="my-1 px-1 sm:justify-center md:w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3 xl:w-1/4 flex"
-          >
+          <div class="my-1 flex px-1 sm:justify-center md:w-1/2 md:w-full lg:my-4 lg:w-1/3 lg:px-4 xl:w-1/4">
             <Card class="rounded-[24px]">
               <PrimaryAction on:click={$goto(`./${product.id}`)} class="h-full">
                 <Content class="mdc-typography--body2 relative top-[10px]">
                   <div>
                     <!-- TODO: imageタグ内の重複コードを解消する -->
                     {#if product.producer.image}
+                      <img class="absolute top-0 h-[30px] w-[30px] rounded-[50%]" src={product.producer.image} alt="" />
+                    {:else if product.producer.classification === 'corporate'}
                       <img
-                        class="absolute top-0 w-[30px] h-[30px] rounded-[50%]"
-                        src={product.producer.image}
-                        alt=""
-                      />
-                    {:else if product.producer.classification === "corporate"}
-                      <img
-                        class="absolute top-0 w-[30px] h-[30px] rounded-[50%]"
+                        class="absolute top-0 h-[30px] w-[30px] rounded-[50%]"
                         src="./../../../../public/images/house.png"
                         alt=""
                       />
                     {:else}
                       <img
-                        class="absolute top-0 w-[30px] h-[30px] rounded-[50%]"
+                        class="absolute top-0 h-[30px] w-[30px] rounded-[50%]"
                         src="./../../../public/images/farmer.png"
                         alt=""
                       />
                     {/if}
-                    <div
-                      class="absolute text-sm top-[6%] left-[60px] text-[#4A4A4A]"
-                    >
+                    <div class="absolute left-[60px] top-[6%] text-sm text-[#4A4A4A]">
                       {product.producer.name}
                     </div>
-                    <div class="text-xl font-bold mt-4 truncate w-[260px]">
+                    <div class="mt-4 w-[260px] truncate text-xl font-bold">
                       {product.name}
                     </div>
                   </div>
@@ -102,25 +93,24 @@
                 <div>
                   <img
                     class="block h-48 w-96 object-contain"
-                    src={product.image ??
-                      "./../../../public/images/default_product_image.png"}
+                    src={product.image ?? './../../../public/images/default_product_image.png'}
                     alt=""
                   />
                 </div>
                 <Content class="mdc-typography--body2 relative">
                   <div class="flex justify-center">
-                    <div class="text-lg text-[#4A4A4A] mt-1">
+                    <div class="mt-1 text-lg text-[#4A4A4A]">
                       {product.unitQuantity}{CROP_UNITS_LABEL[product.unit]}
                     </div>
-                    <div class="text-2xl text-[#4A4A4A] ml-5">
+                    <div class="ml-5 text-2xl text-[#4A4A4A]">
                       {product.unitPrice} 円
                     </div>
                   </div>
-                  <div class="text-lg text-[#4A4A4A] mt-1 flex justify-center">
+                  <div class="mt-1 flex justify-center text-lg text-[#4A4A4A]">
                     予約期間：
-                    <div>{dayjs(product.startAt).format("MM/DD")}</div>
+                    <div>{dayjs(product.startAt).format('MM/DD')}</div>
                     <div>〜</div>
-                    <div>{dayjs(product.endAt).format("MM/DD")}</div>
+                    <div>{dayjs(product.endAt).format('MM/DD')}</div>
                   </div>
                 </Content>
               </PrimaryAction>
@@ -131,4 +121,3 @@
     </div>
   </div>
 {/await}
-

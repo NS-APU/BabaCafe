@@ -1,16 +1,13 @@
 <script lang="ts">
-  import { goto } from "@roxi/routify";
-  import DataTable, { Head, Body, Row, Cell } from "@smui/data-table";
-  import {
-    ReservationRepository,
-    statusToText,
-  } from "../../models/Reservation";
-  import { addToast } from "../../stores/Toast";
-  import CircularProgress from "@smui/circular-progress";
-  import dayjs from "dayjs";
-  import { markAsLogoutState } from "../../stores/Login";
-  import { profile } from "../../stores/Account";
-  import { USER_ATTRIBUTE } from "../../constants/account";
+  import { goto } from '@roxi/routify';
+  import CircularProgress from '@smui/circular-progress';
+  import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
+  import dayjs from 'dayjs';
+  import { USER_ATTRIBUTE } from '../../constants/account';
+  import { ReservationRepository, statusToText } from '../../models/Reservation';
+  import { profile } from '../../stores/Account';
+  import { markAsLogoutState } from '../../stores/Login';
+  import { addToast } from '../../stores/Toast';
 
   $: reservationRepository = new ReservationRepository();
 
@@ -19,19 +16,18 @@
       return await reservationRepository.allReservations();
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
+        case 'Unauthorized':
           markAsLogoutState();
           addToast({
-            message: "認証が切れました。再度ログインしてください。",
-            type: "error",
+            message: '認証が切れました。再度ログインしてください。',
+            type: 'error',
           });
-          $goto("/login");
+          $goto('/login');
           break;
         default:
           addToast({
-            message:
-              "予約の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-            type: "error",
+            message: '予約の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
+            type: 'error',
           });
           break;
       }
@@ -42,7 +38,7 @@
 
 {#await fetchReservationProducts()}
   <div style="display: flex; justify-content: center">
-    <CircularProgress style="height: 160px; width: 32px;" indeterminate />
+    <CircularProgress style="width: 32px; height: 160px;" indeterminate />
   </div>
 {:then items}
   <div class="m-6">
@@ -70,9 +66,7 @@
         <Body class="cell">
           <Row on:click={$goto(`./${item.id}`)}>
             {#if $profile.attribute !== USER_ATTRIBUTE.producer}
-              <Cell class="text-center"
-                >{item.product.producer.name}</Cell
-              >
+              <Cell class="text-center">{item.product.producer.name}</Cell>
             {/if}
             <Cell class="text-center">{item.product.name}</Cell>
             <Cell class="text-center">{item.quantity}</Cell>
@@ -80,11 +74,9 @@
             {#if $profile.attribute !== USER_ATTRIBUTE.consumer}
               <Cell class="text-center">{item.consumer.name}</Cell>
             {/if}
-            <Cell class="text-center"
-              >{dayjs(item.desiredAt).format("YYYY/MM/DD")}</Cell
-            >
+            <Cell class="text-center">{dayjs(item.desiredAt).format('YYYY/MM/DD')}</Cell>
             <Cell class="text-center">{item.receiveLocation.name}</Cell>
-            <Cell class="text-center">{item.shipper?.name ?? ""}</Cell>
+            <Cell class="text-center">{item.shipper?.name ?? ''}</Cell>
             <Cell class="text-center">{statusToText[item.status]}</Cell>
           </Row>
         </Body>

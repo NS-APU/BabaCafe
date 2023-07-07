@@ -46,27 +46,13 @@ export class migrations1686869965014 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "product" DROP CONSTRAINT "FK_d478a408853788d463d987149eb"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reservation" DROP CONSTRAINT "FK_853c7fb75ea5f225c0ed93d26f1"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reservation" DROP CONSTRAINT "FK_2a4f99f2e0071cb0907e5808692"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reservation" DROP CONSTRAINT "FK_8d50e21bc2ac13e92bddb624513"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "reservation" DROP CONSTRAINT "FK_05479378153afa1bea219866f96"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "liff_config" DROP CONSTRAINT "FK_082e0df3c86af2ba3e64b846e44"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "line_config" DROP CONSTRAINT "FK_cf9314bedecaf6ab45ebb3db1ef"`,
-    );
+    await queryRunner.query(`ALTER TABLE "product" DROP CONSTRAINT "FK_d478a408853788d463d987149eb"`);
+    await queryRunner.query(`ALTER TABLE "reservation" DROP CONSTRAINT "FK_853c7fb75ea5f225c0ed93d26f1"`);
+    await queryRunner.query(`ALTER TABLE "reservation" DROP CONSTRAINT "FK_2a4f99f2e0071cb0907e5808692"`);
+    await queryRunner.query(`ALTER TABLE "reservation" DROP CONSTRAINT "FK_8d50e21bc2ac13e92bddb624513"`);
+    await queryRunner.query(`ALTER TABLE "reservation" DROP CONSTRAINT "FK_05479378153afa1bea219866f96"`);
+    await queryRunner.query(`ALTER TABLE "liff_config" DROP CONSTRAINT "FK_082e0df3c86af2ba3e64b846e44"`);
+    await queryRunner.query(`ALTER TABLE "line_config" DROP CONSTRAINT "FK_cf9314bedecaf6ab45ebb3db1ef"`);
     await queryRunner.query(`DROP TABLE "account"`);
     await queryRunner.query(`DROP TABLE "product"`);
     await queryRunner.query(`DROP TABLE "reservation"`);

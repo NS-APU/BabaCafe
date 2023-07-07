@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Account, USER_ATTRIBUTE } from './entities/account.entity';
+import { Repository, IsNull } from 'typeorm';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { Account, USER_ATTRIBUTE } from './entities/account.entity';
 
 @Injectable()
 export class AccountService {

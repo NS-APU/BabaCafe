@@ -1,11 +1,4 @@
-import {
-  IsOptional,
-  IsNotEmpty,
-  IsString,
-  IsInt,
-  IsEnum,
-  IsDateString,
-} from 'class-validator';
+import { IsOptional, IsNotEmpty, IsString, IsInt, IsEnum, IsDateString } from 'class-validator';
 import { CROP_KINDS, CROP_UNITS } from '../entities/product.entity';
 
 export class CreateProductDto {

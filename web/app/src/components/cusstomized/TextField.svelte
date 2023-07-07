@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Textfield from "@smui/textfield";
-  import HelperText from "@smui/textfield/helper-text";
-  import { createField } from "felte";
+  import Textfield from '@smui/textfield';
+  import HelperText from '@smui/textfield/helper-text';
+  import { createField } from 'felte';
 
   export let name: string;
   export let helperText: string;
-  export let label = "";
-  export let textValue = "";
+  export let label = '';
+  export let textValue = '';
 
   const { field, onInput, onBlur } = createField(name);
 

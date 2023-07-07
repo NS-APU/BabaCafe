@@ -24,9 +24,7 @@ export class GetKeyValidationPipe {
     })) as T;
 
     if (!row) {
-      throw new NotFoundException(
-        `${entity.constructor.name} with ${key}: "${value}" is not found`,
-      );
+      throw new NotFoundException(`${entity.constructor.name} with ${key}: "${value}" is not found`);
     }
 
     return row;

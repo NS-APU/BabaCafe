@@ -1,34 +1,33 @@
 <script lang="ts">
-  import { goto, params } from "@roxi/routify";
-  import { ProductRepository, type TProduct } from "../../../models/Product";
-  import CircularProgress from "@smui/circular-progress";
-  import Paper from "@smui/paper";
-  import Button from "@smui/button";
-  import { addToast } from "../../../stores/Toast";
-  import { markAsLogoutState } from "../../../stores/Login";
-  import { CROP_UNITS_LABEL } from "../../../constants/product";
-  import dayjs from "dayjs";
-  import { USER_ATTRIBUTE } from "../../../constants/account";
-  import { profile } from "../../../stores/Account";
+  import { goto, params } from '@roxi/routify';
+  import Button from '@smui/button';
+  import CircularProgress from '@smui/circular-progress';
+  import Paper from '@smui/paper';
+  import dayjs from 'dayjs';
+  import { USER_ATTRIBUTE } from '../../../constants/account';
+  import { CROP_UNITS_LABEL } from '../../../constants/product';
+  import { ProductRepository, type TProduct } from '../../../models/Product';
+  import { profile } from '../../../stores/Account';
+  import { markAsLogoutState } from '../../../stores/Login';
+  import { addToast } from '../../../stores/Toast';
 
   async function fetchProduct(): Promise<TProduct> {
     try {
       return await new ProductRepository().findOne($params.id);
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
+        case 'Unauthorized':
           markAsLogoutState();
           addToast({
-            message: "認証が切れました。再度ログインしてください。",
-            type: "error",
+            message: '認証が切れました。再度ログインしてください。',
+            type: 'error',
           });
-          $goto("/login");
+          $goto('/login');
           break;
         default:
           addToast({
-            message:
-              "商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。",
-            type: "error",
+            message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
+            type: 'error',
           });
           break;
       }
@@ -43,30 +42,18 @@
 
 {#await fetchProduct()}
   <div class="flex justify-center">
-    <CircularProgress style="height: 160px; width: 32px;" indeterminate />
+    <CircularProgress style="width: 32px; height: 160px;" indeterminate />
   </div>
 {:then product}
   <div class="grid justify-center">
     <div class="container">
       <div class="flex">
         {#if product.producer.image}
-          <img
-            class="w-[40px] h-[40px] rounded-[50%]"
-            src={product.producer.image}
-            alt=""
-          />
-        {:else if product.producer.classification === "individual"}
-          <img
-            class="w-[40px] h-[40px] rounded-[50%]"
-            src="./../../../public/images/farmer.png"
-            alt=""
-          />
-        {:else if product.producer.classification === "corporate"}
-          <img
-            class="w-[40px] h-[40px] rounded-[50%]"
-            src="./../../../public/images/house.png"
-            alt=""
-          />
+          <img class="h-[40px] w-[40px] rounded-[50%]" src={product.producer.image} alt="" />
+        {:else if product.producer.classification === 'individual'}
+          <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/farmer.png" alt="" />
+        {:else if product.producer.classification === 'corporate'}
+          <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/house.png" alt="" />
         {/if}
         <div class="ml-4 mt-3">
           <div class="text-xl text-[#8A8A8A]">
@@ -74,42 +61,39 @@
           </div>
         </div>
       </div>
-      <div class="mt-3 flex justify-between items-center">
+      <div class="mt-3 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-[#5A5A5A]">
           {product.name}
         </h1>
         {#if isOutOfStock(product)}
-          <p class="text-[#ff0000] text-xl">終了</p>
+          <p class="text-xl text-[#ff0000]">終了</p>
         {/if}
       </div>
       <img
-        src={product.image ??
-          "./../../../public/images/default_product_image.png"}
+        src={product.image ?? './../../../public/images/default_product_image.png'}
         alt=""
         width="300"
         class="mt-3"
       />
     </div>
 
-    <fieldset class="p-3 w-[300px] border border-secondary rounded">
+    <fieldset class="w-[300px] rounded border border-secondary p-3">
       <legend>説明</legend>
       {product.description}
     </fieldset>
 
     <Paper class="mt-3 w-[300px]" color="secondary" variant="outlined">
-      <div class="text-center text-base text-[#5A5A5A] mt-2">
-        {product.unitQuantity}{CROP_UNITS_LABEL[
-          product.unit
-        ]}あたり{product.unitPrice}円
+      <div class="mt-2 text-center text-base text-[#5A5A5A]">
+        {product.unitQuantity}{CROP_UNITS_LABEL[product.unit]}あたり{product.unitPrice}円
       </div>
-      <div class="text-center text-base text-[#5A5A5A] mt-2">
+      <div class="mt-2 text-center text-base text-[#5A5A5A]">
         残りあと{product.remaining}点
       </div>
-      <div class="text-center text-base text-[#5A5A5A] mt-2">
+      <div class="mt-2 text-center text-base text-[#5A5A5A]">
         予約期間：
-        {dayjs(product.startAt).format("MM/DD HH:mm")}
+        {dayjs(product.startAt).format('MM/DD HH:mm')}
         -
-        {dayjs(product.endAt).format("MM/DD HH:mm")}
+        {dayjs(product.endAt).format('MM/DD HH:mm')}
       </div>
     </Paper>
 
@@ -117,9 +101,9 @@
       <div class="flex justify-center">
         <Button
           variant="raised"
-          class="w-[150px] px-4 py-2 mt-10 rounded-full"
+          class="mt-10 w-[150px] rounded-full px-4 py-2"
           color="secondary"
-          on:click={$goto("../../reservation/new", { productId: $params.id })}
+          on:click={$goto('../../reservation/new', { productId: $params.id })}
         >
           <p class="black">予約</p>
         </Button>

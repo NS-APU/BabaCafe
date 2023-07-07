@@ -1,28 +1,23 @@
 <script lang="ts">
-  import { goto } from "@roxi/routify";
-  import { addToast } from "../../../stores/Toast";
-  import {
-    ReservationRepository,
-    type TReservation,
-    RESERVATION_STATUS,
-  } from "../../../models/Reservation";
-  import CircularProgress from "@smui/circular-progress";
-  import { params } from "@roxi/routify";
-  import dayjs from "dayjs";
-  import Button from "@smui/button";
-  import Dialog, { Title, Content, Actions } from "@smui/dialog";
-  import List, { Item, Graphic, Text } from "@smui/list";
-  import Radio from "@smui/radio";
-  import StatusLabel from ".././_components/StatusLabel.svelte";
-  import { markAsLogoutState } from "../../../stores/Login";
-  import { CROP_UNITS_LABEL } from "../../../constants/product";
-  import { profile } from "../../../stores/Account";
-  import { AccountService } from "../../../services/AccountService";
-  import Paper from "@smui/paper";
+  import { goto, params } from '@roxi/routify';
+  import Button from '@smui/button';
+  import CircularProgress from '@smui/circular-progress';
+  import Dialog, { Title, Content, Actions } from '@smui/dialog';
+  import List, { Item, Graphic, Text } from '@smui/list';
+  import Paper from '@smui/paper';
+  import Radio from '@smui/radio';
+  import dayjs from 'dayjs';
+  import StatusLabel from '.././_components/StatusLabel.svelte';
+  import { CROP_UNITS_LABEL } from '../../../constants/product';
+  import { ReservationRepository, type TReservation, RESERVATION_STATUS } from '../../../models/Reservation';
+  import { AccountService } from '../../../services/AccountService';
+  import { profile } from '../../../stores/Account';
+  import { markAsLogoutState } from '../../../stores/Login';
+  import { addToast } from '../../../stores/Toast';
 
   $: reservationRepository = new ReservationRepository();
 
-  let reservationStatus: TReservation["status"];
+  let reservationStatus: TReservation['status'];
 
   async function fetchReservationProducts() {
     try {
@@ -36,31 +31,22 @@
   }
 
   $: isShowPackedButton = (reservation) => {
-    return (
-      RESERVATION_STATUS.packking === reservationStatus &&
-      reservation.product.producerId === $profile.id
-    );
+    return RESERVATION_STATUS.packking === reservationStatus && reservation.product.producerId === $profile.id;
   };
 
   $: isShowKeptButton = (reservation) => {
-    return (
-      RESERVATION_STATUS.shipping === reservationStatus &&
-      reservation.receiveLocationId === $profile.id
-    );
+    return RESERVATION_STATUS.shipping === reservationStatus && reservation.receiveLocationId === $profile.id;
   };
 
   $: isShowReceivedButton = (reservation) => {
-    return (
-      RESERVATION_STATUS.keeping === reservationStatus &&
-      reservation.consumerId === $profile.id
-    );
+    return RESERVATION_STATUS.keeping === reservationStatus && reservation.consumerId === $profile.id;
   };
 
   let isOpenPackedConfirmDialog = false;
   let isOpenKeptConfirmDialog = false;
   let isOpenReceivedConfirmDialog = false;
 
-  let selectedShipperId = "";
+  let selectedShipperId = '';
 
   async function fetchLogistics() {
     try {
@@ -75,13 +61,13 @@
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
-      case "packed":
+      case 'packed':
         await packed();
         break;
-      case "kept":
+      case 'kept':
         await kept();
         break;
-      case "received":
+      case 'received':
         await received();
         break;
       default:
@@ -92,13 +78,10 @@
 
   async function packed() {
     try {
-      const updateReservationData = await reservationRepository.packed(
-        $params.id,
-        { shipperId: selectedShipperId }
-      );
+      const updateReservationData = await reservationRepository.packed($params.id, { shipperId: selectedShipperId });
       reservationStatus = updateReservationData.status;
       addToast({
-        message: "予約作物の出荷が完了しました。",
+        message: '予約作物の出荷が完了しました。',
       });
     } catch (err) {
       handleError(err);
@@ -107,12 +90,10 @@
 
   async function kept() {
     try {
-      const updateReservationData = await reservationRepository.kept(
-        $params.id
-      );
+      const updateReservationData = await reservationRepository.kept($params.id);
       reservationStatus = updateReservationData.status;
       addToast({
-        message: "予約作物を店舗で保管しています。",
+        message: '予約作物を店舗で保管しています。',
       });
     } catch (err) {
       handleError(err);
@@ -121,12 +102,10 @@
 
   async function received() {
     try {
-      const updateReservationData = await reservationRepository.received(
-        $params.id
-      );
+      const updateReservationData = await reservationRepository.received($params.id);
       reservationStatus = updateReservationData.status;
       addToast({
-        message: "予約作物を受取りました。",
+        message: '予約作物を受取りました。',
       });
     } catch (err) {
       handleError(err);
@@ -135,25 +114,24 @@
 
   function handleError(err) {
     switch (err.error || err.message) {
-      case "Bad Request":
+      case 'Bad Request':
         addToast({
-          message: "予約の更新に失敗しました。開発者へお問い合わせください。",
-          type: "error",
+          message: '予約の更新に失敗しました。開発者へお問い合わせください。',
+          type: 'error',
         });
         break;
-      case "Unauthorized":
+      case 'Unauthorized':
         markAsLogoutState();
         addToast({
-          message: "認証が切れました。再度ログインしてください。",
-          type: "error",
+          message: '認証が切れました。再度ログインしてください。',
+          type: 'error',
         });
-        $goto("/login");
+        $goto('/login');
         break;
       default:
         addToast({
-          message:
-            "予約の更新に失敗しました。もう一度時間をおいて再読み込みしてください。",
-          type: "error",
+          message: '予約の更新に失敗しました。もう一度時間をおいて再読み込みしてください。',
+          type: 'error',
         });
         break;
     }
@@ -162,7 +140,7 @@
 
 {#await fetchReservationProducts()}
   <div class="flex justify-center">
-    <CircularProgress style="height: 160px; width: 32px;" indeterminate />
+    <CircularProgress style="width: 32px; height: 160px;" indeterminate />
   </div>
 {:then reservationData}
   <div class="grid justify-center">
@@ -170,23 +148,11 @@
       <div class="text-lg">
         <p class="inline-block align-middle">
           {#if reservationData.product.producer.image}
-            <img
-              class="w-[40px] h-[40px] rounded-[50%]"
-              src={reservationData.product.producer.image}
-              alt=""
-            />
-          {:else if reservationData.product.producer.classification === "individual"}
-            <img
-              class="w-[40px] h-[40px] rounded-[50%]"
-              src="./../../../public/images/farmer.png"
-              alt=""
-            />
-          {:else if reservationData.product.producer.classification === "corporate"}
-            <img
-              class="w-[40px] h-[40px] rounded-[50%]"
-              src="./../../../public/images/house.png"
-              alt=""
-            />
+            <img class="h-[40px] w-[40px] rounded-[50%]" src={reservationData.product.producer.image} alt="" />
+          {:else if reservationData.product.producer.classification === 'individual'}
+            <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/farmer.png" alt="" />
+          {:else if reservationData.product.producer.classification === 'corporate'}
+            <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/house.png" alt="" />
           {/if}
         </p>
         <p class="inline-block align-middle">
@@ -194,24 +160,21 @@
         </p>
       </div>
       <div class="relative mb-5 mt-5 flex w-[280px] justify-between font-bold">
-        <p
-          class="flex w-[260px] flex-row flex-wrap items-end text-left text-xl"
-        >
+        <p class="flex w-[260px] flex-row flex-wrap items-end text-left text-xl">
           {reservationData.product.name}
         </p>
-        <p class="align-middle text-right">
+        <p class="text-right align-middle">
           <StatusLabel bind:status={reservationStatus} />
         </p>
       </div>
     </div>
 
     <div>
-      <div class="flex justify-center items-center mb-2">
-        <div class="relative w-[300px] h-[300px] object-contain">
+      <div class="mb-2 flex items-center justify-center">
+        <div class="relative h-[300px] w-[300px] object-contain">
           <img
-            class="absolute top-0 bottom-0 left-0 right-0 h-auto w-auto max-h-full max-w-full m-auto"
-            src={reservationData.product.image ??
-              "./../../../public/images/default_product_image.png"}
+            class="absolute bottom-0 left-0 right-0 top-0 m-auto h-auto max-h-full w-auto max-w-full"
+            src={reservationData.product.image ?? './../../../public/images/default_product_image.png'}
             alt=""
           />
         </div>
@@ -229,9 +192,7 @@
           </div>
           <div class="ml-5">
             <p>
-              {reservationData.quantity}{CROP_UNITS_LABEL[
-                reservationData.product.unit
-              ]}
+              {reservationData.quantity}{CROP_UNITS_LABEL[reservationData.product.unit]}
             </p>
             <p>
               {reservationData.product.unitPrice * reservationData.quantity}円
@@ -256,7 +217,7 @@
               {reservationData.consumer.name}
             </p>
             <p>
-              {dayjs(reservationData.desiredAt).format("YYYY/MM/DD")}
+              {dayjs(reservationData.desiredAt).format('YYYY/MM/DD')}
             </p>
             <p class="flex w-[200px] flex-row flex-wrap">
               {reservationData.receiveLocation.name}
@@ -267,29 +228,22 @@
         </div>
       </Paper>
     </div>
-    <div class="grid justify-center p-3 mt-3">
+    <div class="mt-3 grid justify-center p-3">
       {#if isShowPackedButton(reservationData)}
         <Button
-          class="w-[150px]  px-4 py-2 rounded-full"
+          class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
           variant="raised"
           on:click={() => (isOpenPackedConfirmDialog = true)}
         >
           <p class="text-lg font-bold">出荷</p>
         </Button>
-        <Dialog
-          selection
-          bind:open={isOpenPackedConfirmDialog}
-          on:SMUIDialog:closed={onDialogClosedHandle}
-        >
+        <Dialog selection bind:open={isOpenPackedConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
           <Title>配送者を選択して出荷しますか？</Title>
           <Content>
             {#await fetchLogistics()}
               <div style="display: flex; justify-content: center">
-                <CircularProgress
-                  style="height: 160px; width: 32px;"
-                  indeterminate
-                />
+                <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
               </div>
             {:then logistics}
               <div class="max-h-[300px]">
@@ -307,89 +261,59 @@
             {/await}
           </Content>
           <Actions>
-            <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
-              color="secondary"
-              variant="outlined"
-            >
-              <p class="font-bold text-lg">キャンセル</p>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
             </Button>
             <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
+              class="w-[150px]  rounded-full px-4 py-2"
               color="secondary"
               variant="raised"
               action="packed"
               disabled={!selectedShipperId}
             >
-              <p class="font-bold text-lg">出荷</p>
+              <p class="text-lg font-bold">出荷</p>
             </Button>
           </Actions>
         </Dialog>
       {/if}
       {#if isShowKeptButton(reservationData)}
         <Button
-          class="w-[150px]  px-4 py-2 rounded-full"
+          class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
           variant="raised"
           on:click={() => (isOpenKeptConfirmDialog = true)}
         >
           <p class="text-lg font-bold">店舗預かり</p>
         </Button>
-        <Dialog
-          selection
-          bind:open={isOpenKeptConfirmDialog}
-          on:SMUIDialog:closed={onDialogClosedHandle}
-        >
+        <Dialog selection bind:open={isOpenKeptConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
           <Title>店舗で作物を預かりましたか？</Title>
           <Actions>
-            <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
-              color="secondary"
-              variant="outlined"
-            >
-              <p class="font-bold text-lg">キャンセル</p>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
             </Button>
-            <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
-              color="secondary"
-              variant="raised"
-              action="kept"
-            >
-              <p class="font-bold text-lg">店舗預かり</p>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="kept">
+              <p class="text-lg font-bold">店舗預かり</p>
             </Button>
           </Actions>
         </Dialog>
       {/if}
       {#if isShowReceivedButton(reservationData)}
         <Button
-          class="w-[150px]  px-4 py-2 rounded-full"
+          class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
           variant="raised"
           on:click={() => (isOpenReceivedConfirmDialog = true)}
         >
           <p class="text-lg font-bold">受取り</p>
         </Button>
-        <Dialog
-          selection
-          bind:open={isOpenReceivedConfirmDialog}
-          on:SMUIDialog:closed={onDialogClosedHandle}
-        >
+        <Dialog selection bind:open={isOpenReceivedConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
           <Title>作物を受取りましたか？</Title>
           <Actions>
-            <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
-              color="secondary"
-              variant="outlined"
-            >
-              <p class="font-bold text-lg">キャンセル</p>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
             </Button>
-            <Button
-              class="w-[150px]  px-4 py-2 rounded-full"
-              color="secondary"
-              variant="raised"
-              action="received"
-            >
-              <p class="font-bold text-lg">受取り</p>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
+              <p class="text-lg font-bold">受取り</p>
             </Button>
           </Actions>
         </Dialog>

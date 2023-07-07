@@ -1,10 +1,7 @@
 import * as fs from 'fs';
 // import { join } from 'path';
 
-export async function putBase64Image(
-  fileNamePrefix: string,
-  data: string,
-): Promise<string> {
+export async function putBase64Image(fileNamePrefix: string, data: string): Promise<string> {
   const res = data.match(/^data:\w+\/(\w+);base64,(.+)$/);
   const fileExtension = res[1];
   const fileData = res[2];
@@ -16,10 +13,7 @@ export async function putBase64Image(
   return fileName;
 }
 
-export async function putObject(
-  fileName: string,
-  data: string | Buffer,
-): Promise<string> {
+export async function putObject(fileName: string, data: string | Buffer): Promise<string> {
   // if (process.env.NODE_ENV === 'development') {
   // const dir = join(process.cwd(), 'public');
   fs.writeFileSync(`${fileName.replaceAll('/', '-')}`, data);

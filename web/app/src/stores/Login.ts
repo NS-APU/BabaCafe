@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 export const isLoggedIn = writable(false);
 
@@ -8,5 +8,5 @@ export const markAsLoginState = () => {
 
 export const markAsLogoutState = () => {
   isLoggedIn.set(false);
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem('accessToken');
 };

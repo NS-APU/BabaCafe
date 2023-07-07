@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Select, { Option } from "@smui/select";
-  import { createField } from "felte";
+  import Select, { Option } from '@smui/select';
+  import { createField } from 'felte';
 
   export let name: string;
   export let selectSelected: string;

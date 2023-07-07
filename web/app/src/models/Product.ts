@@ -1,14 +1,14 @@
-import type { TProduct as BaseTProduct } from "./../../../../server/app/src/product/entities/product.entity";
-import type { CreateProductDto } from "./../../../../server/app/src/product/dto/create-product.dto";
-import type { Jsonify } from "type-fest";
-import { baseAPI } from "../api/base";
+import { baseAPI } from '../api/base';
+import type { CreateProductDto } from './../../../../server/app/src/product/dto/create-product.dto';
+import type { TProduct as BaseTProduct } from './../../../../server/app/src/product/entities/product.entity';
+import type { Jsonify } from 'type-fest';
 
 export type TProduct = Jsonify<BaseTProduct>;
 export type TProductForm = Jsonify<CreateProductDto>;
 
 export class ProductRepository {
   get baseEndpoint(): string {
-    return "products";
+    return 'products';
   }
 
   async all(): Promise<TProduct[]> {
@@ -24,7 +24,7 @@ export class ProductRepository {
   async create(body: TProductForm): Promise<TProduct> {
     return await baseAPI<TProduct>({
       endpoint: `${this.baseEndpoint}`,
-      method: "POST",
+      method: 'POST',
       body,
     });
   }

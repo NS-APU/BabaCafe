@@ -1,15 +1,5 @@
-import {
-  IsString,
-  IsEnum,
-  IsNotEmpty,
-  IsEmail,
-  Matches,
-  IsOptional,
-} from 'class-validator';
-import {
-  USER_CLASSIFICATION,
-  USER_ATTRIBUTE,
-} from '../entities/account.entity';
+import { IsString, IsEnum, IsNotEmpty, IsEmail, Matches, IsOptional } from 'class-validator';
+import { USER_CLASSIFICATION, USER_ATTRIBUTE } from '../entities/account.entity';
 
 export class CreateAccountDto {
   @IsNotEmpty()

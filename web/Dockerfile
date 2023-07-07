@@ -1,6 +1,6 @@
 # prepare svelte project
 # make,python3,g++ -> node-gyp required
-FROM node:16.6.1-slim AS builder
+FROM node:16.13.1-slim AS builder
 WORKDIR /svelte_app
 ENV LIB="git curl wget make python3 g++"
 RUN apt update \
@@ -8,7 +8,7 @@ RUN apt update \
 RUN mkdir public
 COPY app/src/theme ./src/theme
 COPY app/package.json app/yarn.lock ./
-RUN yarn install --network-timeout 180000
+RUN yarn install --frozen-lockfile --network-timeout 180000
 COPY app ./
 RUN yarn build
 

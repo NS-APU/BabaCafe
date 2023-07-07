@@ -1,6 +1,6 @@
 // import crypto from 'crypto';
-import { BaseEntity, BeforeInsert, Column, DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { BaseEntity, BeforeInsert, Column, DataSource } from 'typeorm';
 
 export class BaseEntityAddHashId extends BaseEntity {
   constructor(@InjectDataSource() private dataSource?: DataSource) {

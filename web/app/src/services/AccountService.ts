@@ -1,15 +1,12 @@
-import { baseAPI } from "../api/base";
-import { ShowableError } from "../models/Error";
+import { baseAPI } from '../api/base';
+import { ShowableError } from '../models/Error';
 
 export class AccountService {
-  async login(
-    username: string,
-    password: string
-  ): Promise<Record<string, string>> {
+  async login(username: string, password: string): Promise<Record<string, string>> {
     try {
       return await baseAPI<Record<string, string>>({
-        endpoint: "account/login",
-        method: "POST",
+        endpoint: 'account/login',
+        method: 'POST',
         body: {
           username,
           password,
@@ -17,14 +14,10 @@ export class AccountService {
       });
     } catch (err) {
       switch (err.message) {
-        case "Unauthorized":
-          throw new ShowableError(
-            "メールアドレスまたはパスワードに誤りがあります。"
-          );
+        case 'Unauthorized':
+          throw new ShowableError('メールアドレスまたはパスワードに誤りがあります。');
         default:
-          throw new ShowableError(
-            "エラーが発生しました。時間をおいて再読み込みしてください。"
-          );
+          throw new ShowableError('エラーが発生しました。時間をおいて再読み込みしてください。');
       }
     }
   }
@@ -32,17 +25,15 @@ export class AccountService {
   async getProfile(): Promise<Record<string, string>> {
     try {
       return await baseAPI<Record<string, string>>({
-        endpoint: "account/profile",
-        method: "GET",
+        endpoint: 'account/profile',
+        method: 'GET',
       });
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
-          throw new ShowableError("ログインしてください。");
+        case 'Unauthorized':
+          throw new ShowableError('ログインしてください。');
         default:
-          throw new ShowableError(
-            "エラーが発生しました。時間をおいて再読み込みしてください。"
-          );
+          throw new ShowableError('エラーが発生しました。時間をおいて再読み込みしてください。');
       }
     }
   }
@@ -50,20 +41,18 @@ export class AccountService {
   async signup(body): Promise<Record<string, string>> {
     try {
       return await baseAPI<Record<string, string>>({
-        endpoint: "account/signup",
-        method: "POST",
+        endpoint: 'account/signup',
+        method: 'POST',
         body,
       });
     } catch (err) {
       switch (err.error || err.message) {
-        case "BadRequest":
-          throw new ShowableError("入力項目に誤りがあります。");
-        case "Conflict":
-          throw new ShowableError("すでにアカウントが存在しています。");
+        case 'BadRequest':
+          throw new ShowableError('入力項目に誤りがあります。');
+        case 'Conflict':
+          throw new ShowableError('すでにアカウントが存在しています。');
         default:
-          throw new ShowableError(
-            "エラーが発生しました。時間をおいて再読み込みしてください。"
-          );
+          throw new ShowableError('エラーが発生しました。時間をおいて再読み込みしてください。');
       }
     }
   }
@@ -71,19 +60,15 @@ export class AccountService {
   async getShops(): Promise<Record<string, string>[]> {
     try {
       return await baseAPI<Record<string, string>[]>({
-        endpoint: "account/shops",
-        method: "GET",
+        endpoint: 'account/shops',
+        method: 'GET',
       });
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
-          throw new ShowableError(
-            "認証が切れました。再度ログインしてください。"
-          );
+        case 'Unauthorized':
+          throw new ShowableError('認証が切れました。再度ログインしてください。');
         default:
-          throw new ShowableError(
-            "エラーが発生しました。時間をおいて再読み込みしてください。"
-          );
+          throw new ShowableError('エラーが発生しました。時間をおいて再読み込みしてください。');
       }
     }
   }
@@ -91,19 +76,15 @@ export class AccountService {
   async getLogistics(): Promise<Record<string, string>[]> {
     try {
       return await baseAPI<Record<string, string>[]>({
-        endpoint: "account/logistics",
-        method: "GET",
+        endpoint: 'account/logistics',
+        method: 'GET',
       });
     } catch (err) {
       switch (err.error || err.message) {
-        case "Unauthorized":
-          throw new ShowableError(
-            "認証が切れました。再度ログインしてください。"
-          );
+        case 'Unauthorized':
+          throw new ShowableError('認証が切れました。再度ログインしてください。');
         default:
-          throw new ShowableError(
-            "エラーが発生しました。時間をおいて再読み込みしてください。"
-          );
+          throw new ShowableError('エラーが発生しました。時間をおいて再読み込みしてください。');
       }
     }
   }
