@@ -42,6 +42,7 @@
     return RESERVATION_STATUS.keeping === reservationStatus && reservation.consumerId === $profile.id;
   };
 
+  // TODO:編集と取り消しの条件が同じなのでまとめたい（変数名が思いつかなかったので保留）
   $: isShowCanceledButton = (reservation) => {
     return RESERVATION_STATUS.packking === reservationStatus && reservation.consumerId === $profile.id;
   };
@@ -74,6 +75,9 @@
         break;
       case 'received':
         await received();
+        break;
+      case 'canceled':
+        await canceled();
         break;
       default:
         // NOP
@@ -328,25 +332,32 @@
         </Dialog>
       {/if}
       {#if isShowCanceledButton(reservationData)}
-        <Button
-          class="w-[150px]  rounded-full px-4 py-2"
-          color="secondary"
-          variant="raised"
-          on:click={() => (isOpenCanceledConfirmDialog = true)}
-        >
-          <p class="text-lg font-bold">予約取り消し</p>
-        </Button>
-        <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>予約を取り消しますか？</Title>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
-              <p class="text-lg font-bold">取り消し</p>
-            </Button>
-          </Actions>
-        </Dialog>
+        <div>
+          <Button class="  mr-2 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
+            <!-- TODO:編集ページに遷移 -->
+            <p class="text-lg font-bold">編集</p>
+          </Button>
+
+          <Button
+            class="w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isOpenCanceledConfirmDialog = true)}
+          >
+            <p class="text-lg font-bold">予約取り消し</p>
+          </Button>
+          <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
+            <Title>予約を取り消しますか？</Title>
+            <Actions>
+              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+                <p class="text-lg font-bold">キャンセル</p>
+              </Button>
+              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="canceled">
+                <p class="text-lg font-bold">取り消し</p>
+              </Button>
+            </Actions>
+          </Dialog>
+        </div>
       {/if}
     </div>
   </div>
