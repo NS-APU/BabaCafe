@@ -30,20 +30,19 @@
     }
   }
 
-  $: isShowPackedButton = (reservation) => {
+  $: canPacked = (reservation) => {
     return RESERVATION_STATUS.packking === reservationStatus && reservation.product.producerId === $profile.id;
   };
 
-  $: isShowKeptButton = (reservation) => {
+  $: canKept = (reservation) => {
     return RESERVATION_STATUS.shipping === reservationStatus && reservation.receiveLocationId === $profile.id;
   };
 
-  $: isShowReceivedButton = (reservation) => {
+  $: canReceived = (reservation) => {
     return RESERVATION_STATUS.keeping === reservationStatus && reservation.consumerId === $profile.id;
   };
 
-  // TODO:編集と取り消しの条件が同じなのでまとめたい（変数名が思いつかなかったので保留）
-  $: isShowCanceledButton = (reservation) => {
+  $: canEdit = (reservation) => {
     return RESERVATION_STATUS.packking === reservationStatus && reservation.consumerId === $profile.id;
   };
 
@@ -250,7 +249,7 @@
       </Paper>
     </div>
     <div class="mt-3 grid justify-center p-3">
-      {#if isShowPackedButton(reservationData)}
+      {#if canPacked(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -297,7 +296,7 @@
           </Actions>
         </Dialog>
       {/if}
-      {#if isShowKeptButton(reservationData)}
+      {#if canKept(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -318,7 +317,7 @@
           </Actions>
         </Dialog>
       {/if}
-      {#if isShowReceivedButton(reservationData)}
+      {#if canReceived(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -339,7 +338,7 @@
           </Actions>
         </Dialog>
       {/if}
-      {#if isShowCanceledButton(reservationData)}
+      {#if canEdit(reservationData)}
         <div>
           <Button class="  mr-2 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
             <!-- TODO:編集ページに遷移 -->
