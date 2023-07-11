@@ -122,7 +122,15 @@
   }
 
   async function canceled() {
-    //TODO:削除APIを使用する
+    try {
+      const updateReservationData = await reservationRepository.canceled($params.id);
+      reservationStatus = updateReservationData.status;
+      addToast({
+        message: '予約をキャンセルしました。',
+      });
+    } catch (err) {
+      handleError(err);
+    }
   }
 
   function handleError(err) {
