@@ -42,9 +42,14 @@
     return RESERVATION_STATUS.keeping === reservationStatus && reservation.consumerId === $profile.id;
   };
 
+  $: isShowCanceledButton = (reservation) => {
+    return RESERVATION_STATUS.packking === reservationStatus && reservation.consumerId === $profile.id;
+  };
+
   let isOpenPackedConfirmDialog = false;
   let isOpenKeptConfirmDialog = false;
   let isOpenReceivedConfirmDialog = false;
+  let isOpenCanceledConfirmDialog = false;
 
   let selectedShipperId = '';
 
@@ -110,6 +115,10 @@
     } catch (err) {
       handleError(err);
     }
+  }
+
+  async function canceled() {
+    //TODO:削除APIを使用する
   }
 
   function handleError(err) {
@@ -314,6 +323,27 @@
             </Button>
             <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
               <p class="text-lg font-bold">受取り</p>
+            </Button>
+          </Actions>
+        </Dialog>
+      {/if}
+      {#if isShowCanceledButton(reservationData)}
+        <Button
+          class="w-[150px]  rounded-full px-4 py-2"
+          color="secondary"
+          variant="raised"
+          on:click={() => (isOpenCanceledConfirmDialog = true)}
+        >
+          <p class="text-lg font-bold">予約取り消し</p>
+        </Button>
+        <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
+          <Title>予約を取り消しますか？</Title>
+          <Actions>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
+            </Button>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
+              <p class="text-lg font-bold">取り消し</p>
             </Button>
           </Actions>
         </Dialog>
