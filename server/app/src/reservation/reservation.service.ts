@@ -169,4 +169,31 @@ export class ReservationService {
     this.reservationRepository.save(reservation);
     return reservation;
   }
+
+  async updateReservationForCanceled(account: Account, reservationId: string): Promise<TReservation> {
+    const reservation = await this.reservationRepository.findOne({ where: { id: reservationId } });
+
+    if (!reservation) {
+      throw new BadRequestException();
+    }
+    if (account.id !== reservation.consumerId) {
+      throw new BadRequestException();
+    }
+    if (reservation.status !== RESERVATION_STATUS.packking) {
+      throw new BadRequestException();
+    }
+
+    const product = await this.productRepository.findOne({
+      where: { id: reservation.productId },
+    });
+
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      product.remaining += reservation.quantity;
+      reservation.status = RESERVATION_STATUS.canceled;
+      await manager.save(product);
+      await manager.save(reservation);
+    });
+
+    return reservation.convertTReservation();
+  }
 }

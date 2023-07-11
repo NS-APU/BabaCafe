@@ -75,6 +75,9 @@
       case 'received':
         await received();
         break;
+      case 'canceled':
+        await canceled();
+        break;
       default:
         // NOP
         break;
@@ -118,7 +121,15 @@
   }
 
   async function canceled() {
-    //TODO:削除APIを使用する
+    try {
+      const updateReservationData = await reservationRepository.canceled($params.id);
+      reservationStatus = updateReservationData.status;
+      addToast({
+        message: '予約をキャンセルしました。',
+      });
+    } catch (err) {
+      handleError(err);
+    }
   }
 
   function handleError(err) {
@@ -342,7 +353,7 @@
             <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
               <p class="text-lg font-bold">キャンセル</p>
             </Button>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="canceled">
               <p class="text-lg font-bold">取り消し</p>
             </Button>
           </Actions>

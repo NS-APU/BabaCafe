@@ -70,4 +70,11 @@ export class ReservationRepository {
       method: 'PUT',
     });
   }
+
+  async canceled(id: string): Promise<TReservation> {
+    return await baseAPI<TReservation>({
+      endpoint: `${this.baseEndpoint}/products/${id}/canceled`,
+      method: 'PUT',
+    });
+  }
 }
