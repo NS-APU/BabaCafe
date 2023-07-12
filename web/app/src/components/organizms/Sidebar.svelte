@@ -2,6 +2,8 @@
   import { goto } from '@roxi/routify';
   import Drawer, { Content } from '@smui/drawer';
   import List, { Item, Text, Separator } from '@smui/list';
+  import { USER_ATTRIBUTE } from '../../constants/account';
+  import { profile } from '../../stores/Account';
   import { isLoggedIn, markAsLogoutState } from '../../stores/Login';
   import { addToast } from '../../stores/Toast';
 
@@ -41,9 +43,11 @@
       <Item href="javascript:void(0)" on:click={() => setActive('reservation')} activated={active === 'reservation'}>
         <Text class="text-base">予約一覧</Text>
       </Item>
-      <Item href="javascript:void(0)" on:click={() => setActive('product')} activated={active === 'product'}>
-        <Text class="text-base">出品一覧</Text>
-      </Item>
+      {#if [USER_ATTRIBUTE.producer, USER_ATTRIBUTE.consumer].includes($profile.attribute)}
+        <Item href="javascript:void(0)" on:click={() => setActive('product')} activated={active === 'product'}>
+          <Text class="text-base">出品一覧</Text>
+        </Item>
+      {/if}
       <!--
       <Item
         href="javascript:void(0)"

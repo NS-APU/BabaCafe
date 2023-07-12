@@ -11,8 +11,8 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  async getProducts() {
-    return this.productService.getProducts();
+  async getProducts(@GetAccount() account: Account) {
+    return this.productService.getProducts(account);
   }
 
   @Get('/:productId')
