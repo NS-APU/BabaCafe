@@ -125,7 +125,7 @@
       const updateReservationData = await reservationRepository.canceled($params.id);
       reservationStatus = updateReservationData.status;
       addToast({
-        message: '予約をキャンセルしました。',
+        message: '予約を取り消しました。',
       });
     } catch (err) {
       handleError(err);
@@ -340,10 +340,10 @@
       {/if}
       {#if canEdit(reservationData)}
         <div>
+          <!-- TODO:ボタン配置しただけなので要ページ遷移処理。
           <Button class="  mr-2 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
-            <!-- TODO:編集ページに遷移 -->
             <p class="text-lg font-bold">編集</p>
-          </Button>
+          </Button> -->
 
           <Button
             class="w-[150px] rounded-full px-4 py-2"
