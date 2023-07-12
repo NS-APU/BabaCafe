@@ -9,7 +9,7 @@ export type TReservationForm = Jsonify<CreateReservationDto>;
 export type TReservationPackedForm = Jsonify<UpdateReservationForPackedDto>;
 
 export const statusToText: Record<TReservation['status'], string> = {
-  canceled: 'キャンセル',
+  canceled: '予約取り消し',
   packking: '出荷準備中',
   shipping: '配送中',
   keeping: '店舗保管中',
@@ -67,6 +67,13 @@ export class ReservationRepository {
   async received(id: string): Promise<TReservation> {
     return await baseAPI<TReservation>({
       endpoint: `${this.baseEndpoint}/products/${id}/received`,
+      method: 'PUT',
+    });
+  }
+
+  async canceled(id: string): Promise<TReservation> {
+    return await baseAPI<TReservation>({
+      endpoint: `${this.baseEndpoint}/products/${id}/canceled`,
       method: 'PUT',
     });
   }

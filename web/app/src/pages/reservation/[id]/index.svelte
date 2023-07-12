@@ -30,21 +30,26 @@
     }
   }
 
-  $: isShowPackedButton = (reservation) => {
+  $: canPacked = (reservation) => {
     return RESERVATION_STATUS.packking === reservationStatus && reservation.product.producerId === $profile.id;
   };
 
-  $: isShowKeptButton = (reservation) => {
+  $: canKept = (reservation) => {
     return RESERVATION_STATUS.shipping === reservationStatus && reservation.receiveLocationId === $profile.id;
   };
 
-  $: isShowReceivedButton = (reservation) => {
+  $: canReceived = (reservation) => {
     return RESERVATION_STATUS.keeping === reservationStatus && reservation.consumerId === $profile.id;
+  };
+
+  $: canEdit = (reservation) => {
+    return RESERVATION_STATUS.packking === reservationStatus && reservation.consumerId === $profile.id;
   };
 
   let isOpenPackedConfirmDialog = false;
   let isOpenKeptConfirmDialog = false;
   let isOpenReceivedConfirmDialog = false;
+  let isOpenCanceledConfirmDialog = false;
 
   let selectedShipperId = '';
 
@@ -69,6 +74,9 @@
         break;
       case 'received':
         await received();
+        break;
+      case 'canceled':
+        await canceled();
         break;
       default:
         // NOP
@@ -106,6 +114,18 @@
       reservationStatus = updateReservationData.status;
       addToast({
         message: '予約作物を受取りました。',
+      });
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  async function canceled() {
+    try {
+      const updateReservationData = await reservationRepository.canceled($params.id);
+      reservationStatus = updateReservationData.status;
+      addToast({
+        message: '予約を取り消しました。',
       });
     } catch (err) {
       handleError(err);
@@ -229,7 +249,7 @@
       </Paper>
     </div>
     <div class="mt-3 grid justify-center p-3">
-      {#if isShowPackedButton(reservationData)}
+      {#if canPacked(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -276,7 +296,7 @@
           </Actions>
         </Dialog>
       {/if}
-      {#if isShowKeptButton(reservationData)}
+      {#if canKept(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -297,7 +317,7 @@
           </Actions>
         </Dialog>
       {/if}
-      {#if isShowReceivedButton(reservationData)}
+      {#if canReceived(reservationData)}
         <Button
           class="w-[150px]  rounded-full px-4 py-2"
           color="secondary"
@@ -317,6 +337,34 @@
             </Button>
           </Actions>
         </Dialog>
+      {/if}
+      {#if canEdit(reservationData)}
+        <div>
+          <!-- TODO:ボタン配置しただけなので要ページ遷移処理。
+          <Button class="  mr-2 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
+            <p class="text-lg font-bold">編集</p>
+          </Button> -->
+
+          <Button
+            class="w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isOpenCanceledConfirmDialog = true)}
+          >
+            <p class="text-lg font-bold">予約取り消し</p>
+          </Button>
+          <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
+            <Title>予約を取り消しますか？</Title>
+            <Actions>
+              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+                <p class="text-lg font-bold">キャンセル</p>
+              </Button>
+              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="canceled">
+                <p class="text-lg font-bold">取り消し</p>
+              </Button>
+            </Actions>
+          </Dialog>
+        </div>
       {/if}
     </div>
   </div>

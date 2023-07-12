@@ -55,4 +55,12 @@ export class ReservationController {
   ): Promise<TReservation> {
     return this.reservationService.updateReservationForReceived(account, reservationId);
   }
+
+  @Put('/products/:reservationId/canceled')
+  async updateReservationForCanceled(
+    @GetAccount() account: Account,
+    @Param('reservationId') reservationId: string,
+  ): Promise<TReservation> {
+    return this.reservationService.updateReservationForCanceled(account, reservationId);
+  }
 }
