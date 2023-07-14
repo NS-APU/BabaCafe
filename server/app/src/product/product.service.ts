@@ -63,4 +63,19 @@ export class ProductService {
     product.quantity = dto.quantity;
     product.remaining = dto.quantity;
   }
+
+  async updateProductForCanceled(account: Account, productId: string): Promise<TProduct> {
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+
+    if (!product) {
+      throw new BadRequestException();
+    }
+    if (account.id !== product.producerId) {
+      throw new BadRequestException();
+    }
+
+    this.productRepository.softRemove(product);
+
+    return product.convertTProduct();
+  }
 }

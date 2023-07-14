@@ -28,4 +28,11 @@ export class ProductRepository {
       body,
     });
   }
+
+  async canceled(id: string): Promise<TProduct> {
+    return await baseAPI<TProduct>({
+      endpoint: `${this.baseEndpoint}/${id}/canceled`,
+      method: 'DELETE',
+    });
+  }
 }

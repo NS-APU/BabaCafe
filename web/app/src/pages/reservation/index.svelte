@@ -64,21 +64,23 @@
       </Head>
       {#each items as item (item.id)}
         <Body class="cell">
-          <Row on:click={$goto(`./${item.id}`)}>
-            {#if $profile.attribute !== USER_ATTRIBUTE.producer}
-              <Cell class="text-center">{item.product.producer.name}</Cell>
-            {/if}
-            <Cell class="text-center">{item.product.name}</Cell>
-            <Cell class="text-center">{item.quantity}</Cell>
-            <Cell class="text-center">{item.totalPrice}円</Cell>
-            {#if $profile.attribute !== USER_ATTRIBUTE.consumer}
-              <Cell class="text-center">{item.consumer.name}</Cell>
-            {/if}
-            <Cell class="text-center">{dayjs(item.desiredAt).format('YYYY/MM/DD')}</Cell>
-            <Cell class="text-center">{item.receiveLocation.name}</Cell>
-            <Cell class="text-center">{item.shipper?.name ?? ''}</Cell>
-            <Cell class="text-center">{statusToText[item.status]}</Cell>
-          </Row>
+          {#if item.product !== null}
+            <Row on:click={$goto(`./${item.id}`)}>
+              {#if $profile.attribute !== USER_ATTRIBUTE.producer}
+                <Cell class="text-center">{item.product.producer.name}</Cell>
+              {/if}
+              <Cell class="text-center">{item.product.name}</Cell>
+              <Cell class="text-center">{item.quantity}</Cell>
+              <Cell class="text-center">{item.totalPrice}円</Cell>
+              {#if $profile.attribute !== USER_ATTRIBUTE.consumer}
+                <Cell class="text-center">{item.consumer.name}</Cell>
+              {/if}
+              <Cell class="text-center">{dayjs(item.desiredAt).format('YYYY/MM/DD')}</Cell>
+              <Cell class="text-center">{item.receiveLocation.name}</Cell>
+              <Cell class="text-center">{item.shipper?.name ?? ''}</Cell>
+              <Cell class="text-center">{statusToText[item.status]}</Cell>
+            </Row>
+          {/if}
         </Body>
       {/each}
     </DataTable>

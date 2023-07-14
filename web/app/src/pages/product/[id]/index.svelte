@@ -2,37 +2,90 @@
   import { goto, params } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
+  import Dialog, { Title, Actions } from '@smui/dialog';
   import Paper from '@smui/paper';
   import dayjs from 'dayjs';
   import { USER_ATTRIBUTE } from '../../../constants/account';
   import { CROP_UNITS_LABEL } from '../../../constants/product';
   import { ProductRepository, type TProduct } from '../../../models/Product';
+  import { ReservationRepository, RESERVATION_STATUS } from '../../../models/Reservation';
   import { profile } from '../../../stores/Account';
   import { markAsLogoutState } from '../../../stores/Login';
   import { addToast } from '../../../stores/Toast';
 
+  $: productRepository = new ProductRepository();
+  $: reservationRepository = new ReservationRepository();
+
   async function fetchProduct(): Promise<TProduct> {
     try {
-      return await new ProductRepository().findOne($params.id);
+      const product = await productRepository.findOne($params.id);
+      updateCancelButtonVisibility(product);
+      return product;
     } catch (err) {
-      switch (err.error || err.message) {
-        case 'Unauthorized':
-          markAsLogoutState();
-          addToast({
-            message: '認証が切れました。再度ログインしてください。',
-            type: 'error',
-          });
-          $goto('/login');
-          break;
-        default:
-          addToast({
-            message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
-            type: 'error',
-          });
-          break;
-      }
+      handleError(err);
       return null;
     }
+  }
+
+  async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
+    switch (e.detail.action) {
+      case 'canceled':
+        await canceled();
+        break;
+      default:
+        // NOP
+        break;
+    }
+  }
+
+  async function canceled() {
+    try {
+      await productRepository.canceled($params.id);
+      addToast({
+        message: '出品を取りやめました。',
+      });
+      $goto('/product');
+    } catch (err) {
+      handleError(err);
+    }
+  }
+
+  function handleError(err) {
+    switch (err.error || err.message) {
+      case 'Bad Request':
+        addToast({
+          message: '商品の更新に失敗しました。開発者へお問い合わせください。',
+          type: 'error',
+        });
+        break;
+      case 'Unauthorized':
+        markAsLogoutState();
+        addToast({
+          message: '認証が切れました。再度ログインしてください。',
+          type: 'error',
+        });
+        $goto('/login');
+        break;
+      default:
+        addToast({
+          message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
+          type: 'error',
+        });
+        break;
+    }
+  }
+
+  let cancelButtonVisibility = false;
+  let isOpenCanceledConfirmDialog = false;
+
+  async function updateCancelButtonVisibility(product: TProduct) {
+    const result = (await reservationRepository.allReservations()).some(
+      (v) =>
+        v.productId === product.id &&
+        v.status !== RESERVATION_STATUS.completed &&
+        v.status !== RESERVATION_STATUS.canceled,
+    );
+    cancelButtonVisibility = !result;
   }
 
   function isOutOfStock(product: TProduct): boolean {
@@ -107,6 +160,30 @@
         >
           <p class="black">予約</p>
         </Button>
+      </div>
+    {/if}
+
+    {#if $profile.attribute === USER_ATTRIBUTE.producer && cancelButtonVisibility}
+      <div class="flex justify-center">
+        <Button
+          variant="raised"
+          class="mt-10 w-[150px] rounded-full px-4 py-2"
+          color="secondary"
+          on:click={() => (isOpenCanceledConfirmDialog = true)}
+        >
+          <p class="black">出品取りやめ</p>
+        </Button>
+        <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
+          <Title>出品を取りやめますか？</Title>
+          <Actions>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
+            </Button>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="canceled">
+              <p class="text-lg font-bold">出品取りやめ</p>
+            </Button>
+          </Actions>
+        </Dialog>
       </div>
     {/if}
   </div>
