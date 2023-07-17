@@ -43,7 +43,7 @@
       <Item href="javascript:void(0)" on:click={() => setActive('reservation')} activated={active === 'reservation'}>
         <Text class="text-base">予約一覧</Text>
       </Item>
-      {#if [USER_ATTRIBUTE.producer, USER_ATTRIBUTE.consumer].includes($profile.attribute)}
+      {#if [USER_ATTRIBUTE.producer, USER_ATTRIBUTE.consumer].includes($profile?.attribute)}
         <Item href="javascript:void(0)" on:click={() => setActive('product')} activated={active === 'product'}>
           <Text class="text-base">出品一覧</Text>
         </Item>
