@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
-import { Repository } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product, TProduct } from './entities/product.entity';
 
@@ -15,9 +15,17 @@ export class ProductService {
     private accountRepository: Repository<Account>,
   ) {}
 
-  async getProducts(): Promise<TProduct[]> {
+  async getProducts(account: Account): Promise<TProduct[]> {
+    let where: FindOptionsWhere<Product> = {};
+    if (account.attribute === USER_ATTRIBUTE.producer) {
+      where = {
+        producer: {
+          id: account.id,
+        },
+      };
+    }
     return await this.productRepository
-      .find({ relations: { producer: true }, order: { id: 'ASC' } })
+      .find({ where, relations: { producer: true }, order: { id: 'ASC' } })
       .then((products) => products.map((product) => product.convertTProduct()));
   }
 
