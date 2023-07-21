@@ -8,7 +8,7 @@
   import { USER_ATTRIBUTE } from '../../../constants/account';
   import { CROP_UNITS_LABEL } from '../../../constants/product';
   import { ProductRepository, type TProduct } from '../../../models/Product';
-  import { ReservationRepository, RESERVATION_STATUS } from '../../../models/Reservation';
+  import { ReservationRepository } from '../../../models/Reservation';
   import { profile } from '../../../stores/Account';
   import { markAsLogoutState } from '../../../stores/Login';
   import { addToast } from '../../../stores/Toast';
@@ -79,12 +79,7 @@
   let isOpenCanceledConfirmDialog = false;
 
   async function updateCancelButtonVisibility(product: TProduct) {
-    const result = (await reservationRepository.allReservations()).some(
-      (v) =>
-        v.productId === product.id &&
-        v.status !== RESERVATION_STATUS.completed &&
-        v.status !== RESERVATION_STATUS.canceled,
-    );
+    const result = (await reservationRepository.allReservations()).some((v) => v.productId === product.id);
     cancelButtonVisibility = !result;
   }
 
