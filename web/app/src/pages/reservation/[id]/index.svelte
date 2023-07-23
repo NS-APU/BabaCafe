@@ -53,6 +53,52 @@
 
   let selectedShipperId = '';
 
+  enum LOGISTICS_PROGRESS {
+    SELECT_SHIPPER,
+    SELECT_ROUTE,
+    CONFIRM,
+  }
+
+  let logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+  let hasRoute = false;
+
+  async function nextLogisticsProgress() {
+    switch (logisticsProgress) {
+      case LOGISTICS_PROGRESS.SELECT_SHIPPER:
+        // TODO: 配送ルートがあるかどうかを判定する
+        logisticsProgress = LOGISTICS_PROGRESS.SELECT_ROUTE;
+        hasRoute = true;
+        break;
+      case LOGISTICS_PROGRESS.SELECT_ROUTE:
+        logisticsProgress = LOGISTICS_PROGRESS.CONFIRM;
+        break;
+      default:
+        // Reset to initial state
+        logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+        break;
+    }
+  }
+
+  async function prevLogisticsProgress() {
+    switch (logisticsProgress) {
+      case LOGISTICS_PROGRESS.SELECT_ROUTE:
+        logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+        break;
+      case LOGISTICS_PROGRESS.CONFIRM:
+        if (hasRoute) {
+          logisticsProgress = LOGISTICS_PROGRESS.SELECT_ROUTE;
+        } else {
+          logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+        }
+        break;
+      default:
+        // Reset to initial state
+        logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+        hasRoute = false;
+        break;
+    }
+  }
+
   async function fetchLogistics() {
     try {
       const logistics = await new AccountService().getLogistics();
@@ -79,7 +125,9 @@
         await canceled();
         break;
       default:
-        // NOP
+        // Reset logistics progress
+        logisticsProgress = LOGISTICS_PROGRESS.SELECT_SHIPPER;
+        hasRoute = false;
         break;
     }
   }
@@ -258,42 +306,92 @@
         >
           <p class="text-lg font-bold">出荷</p>
         </Button>
+        <!-- TODO: 配送ウィザードに変更する -->
         <Dialog selection bind:open={isOpenPackedConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>配送者を選択して出荷しますか？</Title>
-          <Content>
-            {#await fetchLogistics()}
-              <div style="display: flex; justify-content: center">
-                <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
-              </div>
-            {:then logistics}
-              <div class="max-h-[300px]">
-                <List radioList>
-                  {#each Object.keys(logistics) as shipper}
-                    <Item>
-                      <Graphic>
-                        <Radio bind:group={selectedShipperId} value={shipper} />
-                      </Graphic>
-                      <Text>{logistics[shipper]}</Text>
-                    </Item>
-                  {/each}
-                </List>
-              </div>
-            {/await}
-          </Content>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button
-              class="w-[150px]  rounded-full px-4 py-2"
-              color="secondary"
-              variant="raised"
-              action="packed"
-              disabled={!selectedShipperId}
-            >
-              <p class="text-lg font-bold">出荷</p>
-            </Button>
-          </Actions>
+          <Title>配送者を選択してください。</Title>
+          <!-- 配送者を選択 -->
+          {#if logisticsProgress === LOGISTICS_PROGRESS.SELECT_SHIPPER}
+            <Content>
+              {#await fetchLogistics()}
+                <div style="display: flex; justify-content: center">
+                  <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+                </div>
+              {:then logistics}
+                <div class="max-h-[300px]">
+                  <List radioList>
+                    {#each Object.keys(logistics) as shipper}
+                      <Item>
+                        <Graphic>
+                          <Radio bind:group={selectedShipperId} value={shipper} />
+                        </Graphic>
+                        <Text>{logistics[shipper]}</Text>
+                      </Item>
+                    {/each}
+                  </List>
+                </div>
+              {/await}
+            </Content>
+            <Actions>
+              <Button
+                class="w-[150px] rounded-full px-4 py-2"
+                color="secondary"
+                variant="outlined"
+                on:click={prevLogisticsProgress}
+              >
+                <p class="text-lg font-bold">キャンセル</p>
+              </Button>
+              <Button
+                class="w-[150px]  rounded-full px-4 py-2"
+                color="secondary"
+                variant="raised"
+                on:click={nextLogisticsProgress}
+                disabled={!selectedShipperId}
+              >
+                <p class="text-lg font-bold">次へ</p>
+              </Button>
+            </Actions>
+          {:else if logisticsProgress == LOGISTICS_PROGRESS.SELECT_ROUTE}
+            <!-- 配送ルートを選択 -->
+            <Content>
+              <p>配送ルートを選択してください。</p>
+            </Content>
+            <Actions>
+              <Button
+                class="w-[150px]  rounded-full px-4 py-2"
+                color="secondary"
+                variant="outlined"
+                on:click={prevLogisticsProgress}
+              >
+                <p class="text-lg font-bold">戻る</p>
+              </Button>
+              <Button
+                class="w-[150px]  rounded-full px-4 py-2"
+                color="secondary"
+                variant="raised"
+                on:click={nextLogisticsProgress}
+              >
+                <p class="text-lg font-bold">次へ</p>
+              </Button>
+            </Actions>
+          {:else if logisticsProgress == LOGISTICS_PROGRESS.CONFIRM}
+            <!-- 配送ルートを確認 -->
+            <Content>
+              <p>配送ルートを確認してください。</p>
+            </Content>
+            <Actions>
+              <Button
+                class="w-[150px]  rounded-full px-4 py-2"
+                color="secondary"
+                variant="outlined"
+                on:click={prevLogisticsProgress}
+              >
+                <p class="text-lg font-bold">戻る</p>
+              </Button>
+              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="packed">
+                <p class="text-lg font-bold">出荷</p>
+              </Button>
+            </Actions>
+          {/if}
         </Dialog>
       {/if}
       {#if canKept(reservationData)}
