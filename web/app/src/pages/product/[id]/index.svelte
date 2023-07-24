@@ -15,11 +15,15 @@
 
   $: productRepository = new ProductRepository();
   $: reservationRepository = new ReservationRepository();
+  $: canCanceled = false;
+  let isOpenCanceledConfirmDialog = false;
 
   async function fetchProduct(): Promise<TProduct> {
     try {
       const product = await productRepository.findOne($params.id);
-      updateCancelButtonVisibility(product);
+      canCanceled = !(await reservationRepository.allReservations()).some(
+        (reservation) => reservation.productId === product.id,
+      );
       return product;
     } catch (err) {
       handleError(err);
@@ -73,14 +77,6 @@
         });
         break;
     }
-  }
-
-  let cancelButtonVisibility = false;
-  let isOpenCanceledConfirmDialog = false;
-
-  async function updateCancelButtonVisibility(product: TProduct) {
-    const result = (await reservationRepository.allReservations()).some((v) => v.productId === product.id);
-    cancelButtonVisibility = !result;
   }
 
   function isOutOfStock(product: TProduct): boolean {
@@ -158,7 +154,7 @@
       </div>
     {/if}
 
-    {#if $profile.attribute === USER_ATTRIBUTE.producer && cancelButtonVisibility}
+    {#if $profile.attribute === USER_ATTRIBUTE.producer && canCanceled}
       <div class="flex justify-center">
         <Button
           variant="raised"
