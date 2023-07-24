@@ -80,6 +80,9 @@ export class Product extends BaseEntity {
   @Column({ comment: '残数量', type: 'int', default: 1 })
   remaining: number;
 
+  @Column({ comment: '衝撃度合い', type: 'int', name: 'shock_level' })
+  shockLevel: number;
+
   @CreateDateColumn({
     comment: '作成日時',
     type: 'timestamptz',

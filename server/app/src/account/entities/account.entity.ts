@@ -1,3 +1,6 @@
+import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
+import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
+import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { Reservation } from 'src/reservation/entities/reservation.entity';
 import {
@@ -9,6 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 
 export const USER_CLASSIFICATION = {
@@ -89,4 +93,13 @@ export class Account extends BaseEntity {
 
   @OneToMany(() => Reservation, (reservation) => reservation.consumer)
   reservations: Reservation[];
+
+  @OneToOne(() => LogisticsSettingForProducer, (setting) => setting.producer)
+  logisticsSettingForProducer?: LogisticsSettingForProducer;
+
+  @OneToOne(() => LogisticsSettingForLogistics, (setting) => setting.logistics)
+  logisticsSettingForLogistics?: LogisticsSettingForLogistics;
+
+  @OneToOne(() => LogisticsSettingForIntermediary, (setting) => setting.intermediary)
+  logisticsSettingForIntermediary?: LogisticsSettingForIntermediary;
 }
