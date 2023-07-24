@@ -2,6 +2,15 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository, IsNull } from 'typeorm';
+import {
+  LogisticsSettingForIntermediary,
+  INTERMEDIARY_DEFAULT_BUS_STOP,
+} from '../logistics/setting/intermediary/entities/setting.entity';
+import { LogisticsSettingForLogistics, DELIVERY_TYPE } from '../logistics/setting/logistics/entities/setting.entity';
+import {
+  LogisticsSettingForProducer,
+  PRODUCER_DEFAULT_BUS_STOP,
+} from '../logistics/setting/producer/entities/setting.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account, USER_ATTRIBUTE } from './entities/account.entity';
 
@@ -10,6 +19,12 @@ export class AccountService {
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
+    @InjectRepository(LogisticsSettingForProducer)
+    private logisticsSettingForProducerRepository: Repository<LogisticsSettingForProducer>,
+    @InjectRepository(LogisticsSettingForLogistics)
+    private logisticsSettingForLogisticsRepository: Repository<LogisticsSettingForLogistics>,
+    @InjectRepository(LogisticsSettingForIntermediary)
+    private logisticsSettingForIntermediaryRepository: Repository<LogisticsSettingForIntermediary>,
   ) {}
 
   async getAccountByEmail(email: string): Promise<Account | undefined> {
@@ -26,11 +41,37 @@ export class AccountService {
       const salt = await bcrypt.genSalt();
       const hashPassword = await bcrypt.hash(createAccountDto.password, salt);
       createAccountDto.password = hashPassword;
-      this.accountRepository.save(createAccountDto);
+      const account: Account = await this.accountRepository.save(createAccountDto);
+      await this.setupLogisticsSetting(account);
     } catch (e) {
       throw new InternalServerErrorException(e);
     }
     return;
+  }
+
+  async setupLogisticsSetting(account: Account) {
+    const id = account.id;
+    const attribute = account.attribute;
+    switch (attribute) {
+      case USER_ATTRIBUTE.producer:
+        await this.logisticsSettingForProducerRepository.save({
+          producerId: id,
+          busStop: PRODUCER_DEFAULT_BUS_STOP,
+        });
+        break;
+      case USER_ATTRIBUTE.logistics:
+        await this.logisticsSettingForLogisticsRepository.save({
+          logisticsId: id,
+          deliveryType: DELIVERY_TYPE.direct,
+        });
+        break;
+      case USER_ATTRIBUTE.intermediary:
+        await this.logisticsSettingForIntermediaryRepository.save({
+          intermediaryId: id,
+          busStop: INTERMEDIARY_DEFAULT_BUS_STOP,
+        });
+        break;
+    }
   }
 
   async getShops(): Promise<Account[] | undefined> {
