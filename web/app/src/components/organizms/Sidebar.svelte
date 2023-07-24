@@ -48,6 +48,15 @@
           <Text class="text-base">出品一覧</Text>
         </Item>
       {/if}
+      {#if [USER_ATTRIBUTE.producer, USER_ATTRIBUTE.logistics, USER_ATTRIBUTE.intermediary].includes($profile?.attribute)}
+        <Item
+          href="javascript:void(0)"
+          on:click={() => setActive('logistics/setting')}
+          activated={active === 'logistics/setting'}
+        >
+          <Text class="text-base">物流設定</Text>
+        </Item>
+      {/if}
       <!--
       <Item
         href="javascript:void(0)"
