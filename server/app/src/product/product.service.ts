@@ -31,7 +31,7 @@ export class ProductService {
 
   async getProduct(id: string): Promise<TProduct> {
     return await this.productRepository
-      .findOne({ where: { id }, relations: { producer: true } })
+      .findOne({ where: { id }, relations: { producer: true, reservations: true } })
       .then((product) => product.convertTProduct());
   }
 
@@ -71,5 +71,17 @@ export class ProductService {
     product.quantity = dto.quantity;
     product.remaining = dto.quantity;
     product.shockLevel = dto.shockLevel;
+  }
+
+  async deleteProduct(account: Account, productId: string): Promise<TProduct> {
+    const product = await this.productRepository.findOne({ where: { id: productId } });
+
+    if (!product || account.id !== product.producerId) {
+      throw new BadRequestException();
+    }
+
+    await this.productRepository.softRemove(product);
+
+    return product.convertTProduct();
   }
 }
