@@ -1,4 +1,5 @@
 import { Account } from 'src/account/entities/account.entity';
+import { ShippingSchedule } from 'src/logistics/schedule/entities/shipping-schedule.entity';
 import { Product } from 'src/product/entities/product.entity';
 import {
   Column,
@@ -8,6 +9,7 @@ import {
   BaseEntity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -54,6 +56,16 @@ export class Reservation extends BaseEntity {
     nullable: true,
   })
   shipperId: string;
+
+  @Column({
+    comment: '出荷スケジュールID',
+    type: 'uuid',
+    name: 'shipping_schedule_id',
+    default: null,
+    nullable: true,
+  })
+  @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
+  shippingScheduleId?: string;
 
   @Column({
     comment: '出荷日時',
@@ -128,6 +140,9 @@ export class Reservation extends BaseEntity {
   @JoinColumn({ name: 'shipper_id', referencedColumnName: 'id' })
   shipper: Account;
 
+  @OneToOne(() => ShippingSchedule, (schedule) => schedule.reservation)
+  shippingSchedule?: ShippingSchedule;
+
   convertTReservation(): TReservation {
     return {
       ...this,
@@ -135,6 +150,7 @@ export class Reservation extends BaseEntity {
       product: this.product,
       receiveLocation: this.receiveLocation,
       shipper: this.shipper,
+      shippingSchedule: this.shippingSchedule,
     };
   }
 }
@@ -149,6 +165,7 @@ export type TReservation = Pick<
   | 'receiveLocationId'
   | 'status'
   | 'shipperId'
+  | 'shippingScheduleId'
   | 'packedAt'
   | 'shippedAt'
   | 'keptAt'
@@ -162,4 +179,5 @@ export type TReservation = Pick<
   product: Product;
   receiveLocation: Account;
   shipper: Account;
+  shippingSchedule: ShippingSchedule;
 };

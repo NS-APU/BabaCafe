@@ -6,7 +6,7 @@
   import Textfield from '@smui/textfield';
   import { createField, createForm } from 'felte';
   import CloseIcon from '../../../components/icon/CloseIcon.svelte';
-  import { CROP_KINDS, CROP_KINDS_LABEL, CROP_UNITS, CROP_UNITS_LABEL } from '../../../constants/product';
+  import { CROP_KINDS, CROP_KINDS_LABEL, CROP_UNITS, CROP_UNITS_LABEL, SHOCK_LEVEL } from '../../../constants/product';
   import { ShowableError } from '../../../models/Error';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
@@ -58,6 +58,7 @@
     unitPrice: 0,
     image: '',
     quantity: 1,
+    shockLevel: SHOCK_LEVEL.strong,
   };
 
   const { form, data } = createForm({
@@ -75,6 +76,7 @@
         unitPrice: Number(unitPrice),
         image: $data.image,
         quantity: Number(quantity),
+        shockLevel: Number(shockLevel),
       });
     },
   });
@@ -115,6 +117,7 @@
   let unitQuantity = 1;
   let unitPrice = 0;
   let quantity = 1;
+  let shockLevel = SHOCK_LEVEL.strong;
 </script>
 
 <div>

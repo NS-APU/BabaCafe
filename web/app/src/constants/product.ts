@@ -39,3 +39,10 @@ export const CROP_UNITS_LABEL = {
   pack: 'パック',
   bag: '袋',
 };
+
+export const SHOCK_LEVEL = {
+  very_strong: 90,
+  strong: 60,
+  weak: 45,
+  very_weak: 30,
+};

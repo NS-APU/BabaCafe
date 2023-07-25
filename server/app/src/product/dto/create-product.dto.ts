@@ -41,4 +41,8 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsInt()
   quantity: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  shockLevel: number;
 }

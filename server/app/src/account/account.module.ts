@@ -3,6 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LogisticsSettingForIntermediary } from '../logistics/setting/intermediary/entities/setting.entity';
+import { LogisticsSettingForLogistics } from '../logistics/setting/logistics/entities/setting.entity';
+import { LogisticsSettingForProducer } from '../logistics/setting/producer/entities/setting.entity';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { AuthService } from './auth.service';
@@ -29,7 +32,12 @@ import { LocalStrategy } from './local.strategy';
       inject: [ConfigService], // useFactoryで使う為にConfigServiceを注入する
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([Account]),
+    TypeOrmModule.forFeature([
+      Account,
+      LogisticsSettingForProducer,
+      LogisticsSettingForLogistics,
+      LogisticsSettingForIntermediary,
+    ]),
   ],
   controllers: [AccountController],
   providers: [AuthService, AccountService, JwtStrategy, LocalStrategy],
