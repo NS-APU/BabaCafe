@@ -1,6 +1,91 @@
 <script lang="ts">
+  import { goto } from '@roxi/routify';
+  import Button from '@smui/button';
+  import CircularProgress from '@smui/circular-progress';
+  import { onMount } from 'svelte';
+  import { LogisticsRepository } from '../../../../models/Logistics';
+  import { profile } from '../../../../stores/Account';
+  import { markAsLogoutState } from '../../../../stores/Login';
+  import { addToast } from '../../../../stores/Toast';
+  import StopSelectWizardDialog from './StopSelectWizardDialog.svelte';
+
+  $: logisticsRepository = new LogisticsRepository();
+
+  let isOpen = false;
+  let selectedStop = 'Unselected';
+  let selectedAction = (stop: string) => {
+    try {
+      selectedStop = stop;
+      logisticsRepository.updateIntermediarySetting($profile.id, { stop });
+    } catch (err) {
+      handleError(err, '物流設定の更新');
+    }
+  };
+
+  let isMounted = false;
+
+  onMount(async () => {
+    try {
+      const setting = await logisticsRepository.getIntermediarySetting($profile.id);
+      selectedStop = setting.stop;
+    } catch (err) {
+      handleError(err, '物流設定の取得');
+    } finally {
+      isMounted = true;
+    }
+  });
+
+  function handleError(err, operation) {
+    switch (err.error || err.message) {
+      case 'Bad Request':
+        addToast({
+          message: `${operation}に失敗しました。開発者へお問い合わせください。`,
+          type: 'error',
+        });
+        break;
+      case 'Unauthorized':
+        markAsLogoutState();
+        addToast({
+          message: '認証が切れました。再度ログインしてください。',
+          type: 'error',
+        });
+        $goto('/login');
+        break;
+      default:
+        addToast({
+          message: `${operation}に失敗しました。もう一度時間をおいて再読み込みしてください。`,
+          type: 'error',
+        });
+        break;
+    }
+  }
 </script>
 
-<div>
-  <p class="text-base">引渡し業者向け物流設定</p>
-</div>
+{#if !isMounted}
+  <div style="display: flex; justify-content: center">
+    <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+  </div>
+{:else}
+  <div class="flex justify-center">
+    <div class="w-full lg:w-2/3 xl:w-1/2">
+      <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
+        最寄りのバス停
+      </h1>
+      <div class="relative mx-5 my-3">
+        <p class="py-1 text-base">{selectedStop === 'Unselected' ? '未選択' : selectedStop}</p>
+        <div class="absolute inset-y-0 right-1 flex">
+          <Button
+            variant="raised"
+            class="w-[100px] rounded-full text-base "
+            color="secondary"
+            type="button"
+            on:click={() => (isOpen = true)}
+          >
+            <p>変更</p>
+          </Button>
+          <StopSelectWizardDialog bind:open={isOpen} bind:selectedAction />
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}

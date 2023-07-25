@@ -22,3 +22,8 @@ export class LogisticsSettingForIntermediary extends BaseEntity {
   @JoinColumn({ name: 'intermediary_id', referencedColumnName: 'id' })
   intermediary: Account;
 }
+
+export type TLogisticsSettingForIntermediary = Pick<LogisticsSettingForIntermediary, 'intermediaryId' | 'stop'> & {
+  id: string;
+  intermediary: Account;
+};
