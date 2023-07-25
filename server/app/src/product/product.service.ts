@@ -72,7 +72,7 @@ export class ProductService {
     product.remaining = dto.quantity;
   }
 
-  async cancelProduct(account: Account, productId: string): Promise<TProduct> {
+  async deleteProduct(account: Account, productId: string): Promise<TProduct> {
     const product = await this.productRepository.findOne({ where: { id: productId } });
 
     if (!product || account.id !== product.producerId) {
