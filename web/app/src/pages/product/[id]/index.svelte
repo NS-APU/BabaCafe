@@ -22,7 +22,7 @@
       canCanceled = product.reservations.length === 0;
       return product;
     } catch (err) {
-      handleError(err, '');
+      handleError(err, '商品の取得');
       return null;
     }
   }
@@ -68,7 +68,7 @@
         break;
       default:
         addToast({
-          message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
+          message: `${operation}に失敗しました。もう一度時間をおいて再読み込みしてください。`,
           type: 'error',
         });
         break;

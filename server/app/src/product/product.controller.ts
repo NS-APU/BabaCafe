@@ -27,7 +27,7 @@ export class ProductController {
     return this.productService.createProduct(createProductDto, account);
   }
 
-  @Delete('/:productId/canceled')
+  @Delete('/:productId')
   async cancelProduct(@GetAccount() account: Account, @Param('productId') productId: string): Promise<TProduct> {
     return this.productService.cancelProduct(account, productId);
   }
