@@ -4,12 +4,12 @@ import * as bcrypt from 'bcrypt';
 import { Repository, IsNull } from 'typeorm';
 import {
   LogisticsSettingForIntermediary,
-  INTERMEDIARY_DEFAULT_BUS_STOP,
+  INTERMEDIARY_DEFAULT_STOP,
 } from '../logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics, DELIVERY_TYPE } from '../logistics/setting/logistics/entities/setting.entity';
 import {
   LogisticsSettingForProducer,
-  PRODUCER_DEFAULT_BUS_STOP,
+  PRODUCER_DEFAULT_STOP,
 } from '../logistics/setting/producer/entities/setting.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account, USER_ATTRIBUTE } from './entities/account.entity';
@@ -56,7 +56,7 @@ export class AccountService {
       case USER_ATTRIBUTE.producer:
         await this.logisticsSettingForProducerRepository.save({
           producerId: id,
-          busStop: PRODUCER_DEFAULT_BUS_STOP,
+          stop: PRODUCER_DEFAULT_STOP,
         });
         break;
       case USER_ATTRIBUTE.logistics:
@@ -68,7 +68,7 @@ export class AccountService {
       case USER_ATTRIBUTE.intermediary:
         await this.logisticsSettingForIntermediaryRepository.save({
           intermediaryId: id,
-          busStop: INTERMEDIARY_DEFAULT_BUS_STOP,
+          stop: INTERMEDIARY_DEFAULT_STOP,
         });
         break;
     }

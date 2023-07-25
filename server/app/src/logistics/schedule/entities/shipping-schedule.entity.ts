@@ -18,20 +18,20 @@ export class ShippingSchedule extends BaseEntity {
   @Column({ comment: '路線名', type: 'varchar', length: 50, name: 'route_name' })
   routeName!: string;
 
-  @Column({ comment: '便ID', type: 'uuid', name: 'flight_id' })
-  flightId!: string;
+  @Column({ comment: '便ID', type: 'uuid', name: 'trip_id' })
+  tripId!: string;
 
-  @Column({ comment: '便名', type: 'varchar', length: 50, name: 'flight_name' })
-  flightName!: string;
+  @Column({ comment: '便名', type: 'varchar', length: 50, name: 'trip_name' })
+  tripName!: string;
 
-  @Column({ comment: '集荷先バス停', type: 'varchar', length: 50, name: 'pickup_bus_stop' })
-  pickupBusStop!: string;
+  @Column({ comment: '集荷場所', type: 'varchar', length: 50, name: 'pickup_stop' })
+  pickupStop!: string;
 
   @Column({ comment: '集荷予定時刻', type: 'timestamp', name: 'pickup_time' })
   pickupTime!: Date;
 
-  @Column({ comment: '配送先バス停', type: 'varchar', length: 50, name: 'delivery_bus_stop' })
-  deliveryBusStop!: string;
+  @Column({ comment: '配送場所', type: 'varchar', length: 50, name: 'delivery_stop' })
+  deliveryStop!: string;
 
   @Column({ comment: '配送予定時刻', type: 'timestamp', name: 'delivery_time' })
   deliveryTime!: Date;

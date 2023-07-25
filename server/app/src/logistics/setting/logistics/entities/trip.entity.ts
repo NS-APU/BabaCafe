@@ -3,7 +3,7 @@ import { Timetable } from 'src/logistics/setting/logistics/entities/timetable.en
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity()
-export class Flight extends BaseEntity {
+export class Trip extends BaseEntity {
   @PrimaryGeneratedColumn('uuid', { comment: 'ID' })
   readonly id!: string;
 
@@ -19,7 +19,7 @@ export class Flight extends BaseEntity {
   @Column({ comment: '最大取扱量', type: 'int', name: 'capacity' })
   capacity!: number;
 
-  @ManyToOne(() => Route, (route) => route.flights, {
+  @ManyToOne(() => Route, (route) => route.trips, {
     cascade: ['remove'],
     onDelete: 'CASCADE',
     nullable: false,
@@ -27,6 +27,6 @@ export class Flight extends BaseEntity {
   @JoinColumn({ name: 'route_id', referencedColumnName: 'id' })
   route: Route;
 
-  @OneToMany(() => Timetable, (timetable) => timetable.flight)
+  @OneToMany(() => Timetable, (timetable) => timetable.trip)
   timetables: Timetable[];
 }

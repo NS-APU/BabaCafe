@@ -1,5 +1,5 @@
-import { Flight } from 'src/logistics/setting/logistics/entities/flight.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
+import { Trip } from 'src/logistics/setting/logistics/entities/trip.entity';
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 @Entity()
@@ -21,6 +21,6 @@ export class Route extends BaseEntity {
   @JoinColumn({ name: 'logistics_setting_id', referencedColumnName: 'id' })
   setting: LogisticsSettingForLogistics;
 
-  @OneToMany(() => Flight, (flight) => flight.route)
-  flights: Flight[];
+  @OneToMany(() => Trip, (trip) => trip.route)
+  trips: Trip[];
 }
