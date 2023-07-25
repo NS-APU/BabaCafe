@@ -31,7 +31,7 @@ export class ProductService {
 
   async getProduct(id: string): Promise<TProduct> {
     return await this.productRepository
-      .findOne({ where: { id }, relations: { producer: true } })
+      .findOne({ where: { id }, relations: { producer: true, reservations: true } })
       .then((product) => product.convertTProduct());
   }
 
@@ -72,17 +72,14 @@ export class ProductService {
     product.remaining = dto.quantity;
   }
 
-  async updateProductForCanceled(account: Account, productId: string): Promise<TProduct> {
+  async cancelProduct(account: Account, productId: string): Promise<TProduct> {
     const product = await this.productRepository.findOne({ where: { id: productId } });
 
-    if (!product) {
-      throw new BadRequestException();
-    }
-    if (account.id !== product.producerId) {
+    if (!product || account.id !== product.producerId) {
       throw new BadRequestException();
     }
 
-    this.productRepository.softRemove(product);
+    await this.productRepository.softRemove(product);
 
     return product.convertTProduct();
   }

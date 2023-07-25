@@ -8,25 +8,21 @@
   import { USER_ATTRIBUTE } from '../../../constants/account';
   import { CROP_UNITS_LABEL } from '../../../constants/product';
   import { ProductRepository, type TProduct } from '../../../models/Product';
-  import { ReservationRepository } from '../../../models/Reservation';
   import { profile } from '../../../stores/Account';
   import { markAsLogoutState } from '../../../stores/Login';
   import { addToast } from '../../../stores/Toast';
 
   $: productRepository = new ProductRepository();
-  $: reservationRepository = new ReservationRepository();
   $: canCanceled = false;
   let isOpenCanceledConfirmDialog = false;
 
   async function fetchProduct(): Promise<TProduct> {
     try {
       const product = await productRepository.findOne($params.id);
-      canCanceled = !(await reservationRepository.allReservations()).some(
-        (reservation) => reservation.productId === product.id,
-      );
+      canCanceled = product.reservations.length === 0;
       return product;
     } catch (err) {
-      handleError(err);
+      handleError(err, '');
       return null;
     }
   }
@@ -50,15 +46,15 @@
       });
       $goto('/product');
     } catch (err) {
-      handleError(err);
+      handleError(err, '出品のとりやめ');
     }
   }
 
-  function handleError(err) {
+  function handleError(err, operation: string) {
     switch (err.error || err.message) {
       case 'Bad Request':
         addToast({
-          message: '商品の更新に失敗しました。開発者へお問い合わせください。',
+          message: `${operation}に失敗しました。開発者へお問い合わせください。`,
           type: 'error',
         });
         break;

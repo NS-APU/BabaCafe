@@ -28,10 +28,7 @@ export class ProductController {
   }
 
   @Delete('/:productId/canceled')
-  async updateProductForCanceled(
-    @GetAccount() account: Account,
-    @Param('productId') productId: string,
-  ): Promise<TProduct> {
-    return this.productService.updateProductForCanceled(account, productId);
+  async cancelProduct(@GetAccount() account: Account, @Param('productId') productId: string): Promise<TProduct> {
+    return this.productService.cancelProduct(account, productId);
   }
 }
