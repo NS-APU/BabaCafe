@@ -6,6 +6,7 @@ import { getMetadataArgsStorage } from 'typeorm';
 import { AccountModule } from './account/account.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { LogisticsModule } from './logistics/logistics.module';
 import { ProductModule } from './product/product.module';
 import { ReservationModule } from './reservation/reservation.module';
 dotenv.config();
@@ -30,6 +31,7 @@ dotenv.config();
     AccountModule,
     ProductModule,
     ReservationModule,
+    LogisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
