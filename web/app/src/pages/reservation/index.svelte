@@ -34,6 +34,10 @@
       return [];
     }
   }
+
+  function formatPickupTime(timeString) {
+    return timeString !== undefined && timeString !== null ? dayjs(timeString).format('YYYY/MM/DD HH:mm') : '';
+  }
 </script>
 
 {#await fetchReservationProducts()}
@@ -59,6 +63,10 @@
           <Cell class="text-center">受取り希望日</Cell>
           <Cell class="text-center">受取り場所</Cell>
           <Cell class="text-center">配送者</Cell>
+          <Cell class="text-center">路線</Cell>
+          <Cell class="text-center">便名</Cell>
+          <Cell class="text-center">集荷場所</Cell>
+          <Cell class="text-center">集荷予定日時</Cell>
           <Cell class="text-center">ステータス</Cell>
         </Row>
       </Head>
@@ -77,6 +85,10 @@
             <Cell class="text-center">{dayjs(item.desiredAt).format('YYYY/MM/DD')}</Cell>
             <Cell class="text-center">{item.receiveLocation.name}</Cell>
             <Cell class="text-center">{item.shipper?.name ?? ''}</Cell>
+            <Cell class="text-center">{item.shippingSchedule?.routeName ?? ''}</Cell>
+            <Cell class="text-center">{item.shippingSchedule?.tripName ?? ''}</Cell>
+            <Cell class="text-center">{item.shippingSchedule?.pickupStop ?? ''}</Cell>
+            <Cell class="text-center">{formatPickupTime(item.shippingSchedule?.pickupTime)}</Cell>
             <Cell class="text-center">{statusToText[item.status]}</Cell>
           </Row>
         </Body>
