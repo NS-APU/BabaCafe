@@ -64,8 +64,7 @@ export class Reservation extends BaseEntity {
     default: null,
     nullable: true,
   })
-  @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
-  shippingScheduleId?: string;
+  shippingScheduleId: string;
 
   @Column({
     comment: '出荷日時',
@@ -141,7 +140,8 @@ export class Reservation extends BaseEntity {
   shipper: Account;
 
   @OneToOne(() => ShippingSchedule, (schedule) => schedule.reservation)
-  shippingSchedule?: ShippingSchedule;
+  @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
+  shippingSchedule: ShippingSchedule;
 
   convertTReservation(): TReservation {
     return {
