@@ -5,6 +5,10 @@ import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
 import { Repository } from 'typeorm';
+import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
+import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
+import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { Route } from './setting/logistics/entities/route.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -45,6 +49,40 @@ export class LogisticsService {
 
     setting.stop = dto.stop;
     this.intermediarySettingRepository.save(setting);
+    return setting;
+  }
+
+  async createRoute(dto: CreateRouteDto): Promise<Route> {
+    const route = new Route();
+
+    await LogisticsService.setProductAttributes(dto, route);
+    await route.save();
+
+    return route;
+  }
+
+  private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
+    route.logisticsSettingId = dto.logisticsSettingId;
+    route.name = dto.name;
+  }
+
+  async createTrip(account: Account, dto: CreateTripDto) {
+    // TODO 便追加の処理
+  }
+
+  async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    setting.deliveryType = dto.deliveryType;
+    this.logisticsSettingRepository.save(setting);
     return setting;
   }
 }
