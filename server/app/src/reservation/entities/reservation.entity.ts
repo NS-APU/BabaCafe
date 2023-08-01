@@ -9,7 +9,6 @@ import {
   BaseEntity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -139,7 +138,7 @@ export class Reservation extends BaseEntity {
   @JoinColumn({ name: 'shipper_id', referencedColumnName: 'id' })
   shipper: Account;
 
-  @OneToOne(() => ShippingSchedule, (schedule) => schedule.reservation)
+  @ManyToOne(() => ShippingSchedule, (schedule) => schedule.reservations)
   @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
   shippingSchedule: ShippingSchedule;
 

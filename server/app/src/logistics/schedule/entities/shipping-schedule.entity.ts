@@ -1,5 +1,5 @@
 import { Reservation } from 'src/reservation/entities/reservation.entity';
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToOne } from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class ShippingSchedule extends BaseEntity {
@@ -36,8 +36,8 @@ export class ShippingSchedule extends BaseEntity {
   @Column({ comment: '配送予定時刻', type: 'timestamp', name: 'delivery_time' })
   deliveryTime!: Date;
 
-  @Column({ comment: '出荷予約ID一覧', type: 'simple-array' })
-  reservations!: string[];
+  @Column({ comment: '出荷予約ID一覧', type: 'simple-array', name: 'reservation_ids' })
+  reservationIds!: string[];
 
   @CreateDateColumn({
     comment: '作成日時',
@@ -46,6 +46,6 @@ export class ShippingSchedule extends BaseEntity {
   })
   readonly createdAt?: Date;
 
-  @OneToOne(() => Reservation, (reservation) => reservation.shippingSchedule)
-  reservation: Reservation;
+  @OneToMany(() => Reservation, (reservation) => reservation.shippingSchedule)
+  reservations: Reservation[];
 }
