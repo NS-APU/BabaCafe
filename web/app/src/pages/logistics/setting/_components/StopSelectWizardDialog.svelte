@@ -6,10 +6,9 @@
   import List, { Item, Graphic, Text } from '@smui/list';
   import Radio from '@smui/radio';
   import { Steps } from 'svelte-steps';
-  import { USER_ATTRIBUTE } from '../../../../constants/account';
+  import { DELIVERY_TYPE } from '../../../../constants/account';
   import { LogisticsRepository } from '../../../../models/Logistics';
   import { AccountService } from '../../../../services/AccountService';
-  import { profile } from '../../../../stores/Account';
   import { markAsLogoutState } from '../../../../stores/Login';
   import { addToast } from '../../../../stores/Toast';
 
@@ -70,10 +69,7 @@
 
   async function fetchLogistics() {
     try {
-      const logistics = await new AccountService().getLogistics();
-      if ($profile.attribute === USER_ATTRIBUTE.producer) {
-        logistics.push($profile);
-      }
+      const logistics = await new AccountService().getLogistics(DELIVERY_TYPE.route);
       return Object.fromEntries(logistics.map(({ id, name }) => [id, name]));
     } catch (err) {
       handleError(err, '物流業者の取得');
