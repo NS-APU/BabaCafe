@@ -36,7 +36,7 @@
   }
 
   function formatPickupTime(timeString) {
-    return timeString !== undefined && timeString !== null ? dayjs(timeString).format('YYYY/MM/DD HH:mm') : '';
+    return timeString ? dayjs(timeString).format('YYYY/MM/DD HH:mm') : '';
   }
 </script>
 
