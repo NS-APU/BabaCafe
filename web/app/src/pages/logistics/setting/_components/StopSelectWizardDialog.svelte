@@ -6,7 +6,7 @@
   import List, { Item, Graphic, Text } from '@smui/list';
   import Radio from '@smui/radio';
   import { Steps } from 'svelte-steps';
-  import { DELIVERY_TYPE } from '../../../../constants/account';
+  import { DELIVERY_TYPE } from '../../../../constants/logistics';
   import { LogisticsRepository } from '../../../../models/Logistics';
   import { AccountService } from '../../../../services/AccountService';
   import { markAsLogoutState } from '../../../../stores/Login';

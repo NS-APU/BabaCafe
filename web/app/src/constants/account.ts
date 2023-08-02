@@ -21,8 +21,3 @@ export const USER_ATTRIBUTE_LABEL = {
   logistics: '物流業者',
   intermediary: '引渡し業者',
 };
-
-export const DELIVERY_TYPE = {
-  route: 'route',
-  direct: 'direct',
-};
