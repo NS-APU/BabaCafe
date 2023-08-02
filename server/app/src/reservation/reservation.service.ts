@@ -52,7 +52,7 @@ export class ReservationService {
     return await this.reservationRepository
       .find({
         where,
-        relations: ['consumer', 'product', 'product.producer', 'shipper', 'receiveLocation'],
+        relations: ['consumer', 'product', 'product.producer', 'shipper', 'receiveLocation', 'shippingSchedule'],
         order: { createdAt: 'DESC' },
       })
       .then((reservation) => reservation?.map((reservation) => reservation.convertTReservation()));
