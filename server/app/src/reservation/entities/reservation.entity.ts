@@ -9,7 +9,6 @@ import {
   BaseEntity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -64,8 +63,7 @@ export class Reservation extends BaseEntity {
     default: null,
     nullable: true,
   })
-  @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
-  shippingScheduleId?: string;
+  shippingScheduleId: string;
 
   @Column({
     comment: '出荷日時',
@@ -140,8 +138,9 @@ export class Reservation extends BaseEntity {
   @JoinColumn({ name: 'shipper_id', referencedColumnName: 'id' })
   shipper: Account;
 
-  @OneToOne(() => ShippingSchedule, (schedule) => schedule.reservation)
-  shippingSchedule?: ShippingSchedule;
+  @ManyToOne(() => ShippingSchedule, (schedule) => schedule.reservations)
+  @JoinColumn({ name: 'shipping_schedule_id', referencedColumnName: 'id' })
+  shippingSchedule: ShippingSchedule;
 
   convertTReservation(): TReservation {
     return {
