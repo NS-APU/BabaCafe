@@ -17,7 +17,7 @@ import {
 export const RESERVATION_STATUS = {
   canceled: 'canceled', // キャンセル
   packking: 'packking', // 出荷準備中
-  shipping: 'shipping', // 配送中
+  shipping: 'shipping', // 集荷配送中
   keeping: 'keeping', // 店舗保管中
   completed: 'completed', // 受取完了
 } as const;

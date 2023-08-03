@@ -20,6 +20,7 @@
   let shopIds: Record<string, string> | undefined = undefined;
   let selectedProduct: TProduct;
   let totalPrice = 0;
+  let reservationMax: number;
 
   onMount(async () => {
     try {
@@ -28,7 +29,7 @@
         new AccountService().getShops(),
       ]);
       shopIds = Object.fromEntries(shops.map(({ id, name }) => [id, name]));
-
+      reservationMax = selectedProduct.remaining > 100 ? 100 : selectedProduct.remaining;
       totalPrice = selectedProduct.unitPrice;
     } catch (err) {
       switch (err.error || err.message) {
@@ -143,7 +144,7 @@
           type={'number'}
           suffix="点"
           input$min={1}
-          input$max={selectedProduct.remaining}
+          input$max={reservationMax}
           on:change={calcTotalPrice}
         />
       </div>
