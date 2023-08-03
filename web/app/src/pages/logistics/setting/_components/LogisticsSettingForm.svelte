@@ -3,21 +3,20 @@
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
   import IconButton from '@smui/icon-button';
-  import { LogisticsRepository } from '../../../../models/Logistics';
+  import { LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
   import { profile } from '../../../../stores/Account';
   import { markAsLogoutState } from '../../../../stores/Login';
   import { addToast } from '../../../../stores/Toast';
   import LogisticsRouteAccordion from './LogisticsRouteAccordion.svelte';
+  
+let logisticsRepository: LogisticsRepository = new LogisticsRepository();
 
-  let logisticsRepository: LogisticsRepository = new LogisticsRepository();
-
-  // async function fetchLogisticsSetting(): Promise<TLogisticsSetting> {
-  async function fetchLogisticsSetting() {
+  async function fetchLogisticsSetting(): Promise<TLogisticsSetting> {
     try {
       return await logisticsRepository.getLogisticsSetting($profile.id);
     } catch (err) {
       handleError(err, '物流設定の取得');
-      return [];
+      return null;
     }
   }
 
@@ -45,6 +44,9 @@
         break;
     }
   }
+
+  // ダミーデータ
+  const routes = [{ name: '下岩川ふれあいバス（養助号）上り' }, { name: '下岩川ふれあいバス（養助号）下り' }];
 </script>
 
 {#await fetchLogisticsSetting()}
@@ -63,7 +65,7 @@
           <IconButton class="material-icons inline-block align-middle">edit</IconButton>
         </div>
         <!-- TODO -->
-        <!-- <p class="mt-4">### 集荷・配送方法の設定表示欄 ###</p> -->
+        <p class="mt-4">### 集荷・配送方法の設定表示欄 ###</p>
         <!-- {#if logisticsSetting.} -->
         <p class="mt-4" />
 
@@ -72,12 +74,15 @@
         </p>
 
         <!-- TODO: roop処理 -->
-        <LogisticsRouteAccordion routeName={'路線アコーディオン 上り'} />
-        <LogisticsRouteAccordion routeName={'路線アコーディオン 下り'} />
+        {#each routes as route}
+          <LogisticsRouteAccordion routeName={route.name} />
+        {/each}
 
-        <Button class="w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
-          <p class="text-lg font-bold">路線追加</p>
-        </Button>
+        <div style="display: flex; justify-content: center">
+          <Button class="mt-4 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
+            <p class="text-lg">路線追加</p>
+          </Button>
+        </div>
       </div>
     </div>
   </div>
