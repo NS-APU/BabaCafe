@@ -12,6 +12,11 @@ export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermed
 export type TRouteForm = Jsonify<CreateRouteDto>;
 export type TDeliveryTypeForm = Jsonify<UpdateDeliveryTypeDto>;
 
+export const DELIVERY_TYPE = {
+  route: 'route',
+  direct: 'direct',
+} as const;
+
 export class LogisticsRepository {
   get baseEndpoint(): string {
     return 'logistics';
