@@ -6,7 +6,14 @@
   import Textfield from '@smui/textfield';
   import { createField, createForm } from 'felte';
   import CloseIcon from '../../../components/icon/CloseIcon.svelte';
-  import { CROP_KINDS, CROP_KINDS_LABEL, CROP_UNITS, CROP_UNITS_LABEL, SHOCK_LEVEL } from '../../../constants/product';
+  import {
+    CROP_KINDS,
+    CROP_KINDS_LABEL,
+    CROP_UNITS,
+    CROP_UNITS_LABEL,
+    SHOCK_LEVEL,
+    SHOCK_LEVEL_LABEL,
+  } from '../../../constants/product';
   import { ShowableError } from '../../../models/Error';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
@@ -122,6 +129,12 @@
 
 <div>
   <form use:form class="grid justify-center">
+    <div class="w-full lg:w-2/3 xl:w-1/2">
+      <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
+        作物について
+      </h1>
+    </div>
+
     <div>
       <Textfield
         class="m-3 w-[300px]"
@@ -257,6 +270,20 @@
         </div>
         <div class="text-sm text-text-lightGray">最大アップロードサイズ:5MB</div>
       </div>
+    </div>
+
+    <div class="w-full lg:w-2/3 xl:w-1/2">
+      <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
+        混載について
+      </h1>
+    </div>
+
+    <div>
+      <Select class="m-3 w-[300px]" variant="standard" label="衝撃" bind:value={shockLevel} required>
+        {#each Object.keys(SHOCK_LEVEL) as shockLevel}
+          <Option value={SHOCK_LEVEL[shockLevel]}>{SHOCK_LEVEL_LABEL[shockLevel]}</Option>
+        {/each}
+      </Select>
     </div>
 
     <div class="flex justify-center">

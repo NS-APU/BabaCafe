@@ -46,3 +46,10 @@ export const SHOCK_LEVEL = {
   weak: 45,
   very_weak: 30,
 };
+
+export const SHOCK_LEVEL_LABEL = {
+  very_strong: 'とても強い',
+  strong: '強い',
+  weak: '弱い',
+  very_weak: 'とても弱い',
+};
