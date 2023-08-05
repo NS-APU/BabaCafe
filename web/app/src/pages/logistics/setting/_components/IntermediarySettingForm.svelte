@@ -13,12 +13,16 @@
 
   let isOpen = false;
   let selectedStop = 'Unselected';
-  let selectedAction = (stop: string) => {
+  let selectedAction = async (stop: string) => {
+    const operation = '物流設定の更新';
     try {
       selectedStop = stop;
-      logisticsRepository.updateIntermediarySetting($profile.id, { stop });
+      await logisticsRepository.updateIntermediarySetting($profile.id, { stop });
+      addToast({
+        message: `${operation}が完了しました。`,
+      });
     } catch (err) {
-      handleError(err, '物流設定の更新');
+      handleError(err, operation);
     }
   };
 

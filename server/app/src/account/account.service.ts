@@ -1,7 +1,7 @@
 import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, FindOptionsWhere } from 'typeorm';
 import {
   LogisticsSettingForIntermediary,
   INTERMEDIARY_DEFAULT_STOP,
@@ -80,9 +80,19 @@ export class AccountService {
     });
   }
 
-  async getLogistics(): Promise<Account[] | undefined> {
+  async getLogistics(deliveryType: string): Promise<Account[] | undefined> {
+    let where: FindOptionsWhere<Account> = { attribute: USER_ATTRIBUTE.logistics, deletedAt: IsNull() };
+    if (deliveryType && DELIVERY_TYPE[deliveryType]) {
+      where = {
+        ...where,
+        logisticsSettingForLogistics: {
+          deliveryType: DELIVERY_TYPE[deliveryType],
+        },
+      };
+    }
     return await this.accountRepository.find({
-      where: { attribute: USER_ATTRIBUTE.logistics, deletedAt: IsNull() },
+      where,
+      relations: { logisticsSettingForLogistics: true },
     });
   }
 }

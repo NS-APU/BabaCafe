@@ -73,10 +73,11 @@ export class AccountService {
     }
   }
 
-  async getLogistics(): Promise<Record<string, string>[]> {
+  async getLogistics(deliveryType?: string): Promise<Record<string, string>[]> {
     try {
+      const endpoint = 'account/logistics' + (deliveryType ? `?delivery-type=${deliveryType}` : '');
       return await baseAPI<Record<string, string>[]>({
-        endpoint: 'account/logistics',
+        endpoint: endpoint,
         method: 'GET',
       });
     } catch (err) {
