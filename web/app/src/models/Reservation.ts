@@ -11,7 +11,7 @@ export type TReservationPackedForm = Jsonify<UpdateReservationForPackedDto>;
 export const statusToText: Record<TReservation['status'], string> = {
   canceled: '予約取り消し',
   packking: '出荷準備中',
-  shipping: '配送中',
+  shipping: '集荷配送中',
   keeping: '店舗保管中',
   completed: '受取完了',
 };
@@ -19,7 +19,7 @@ export const statusToText: Record<TReservation['status'], string> = {
 export const RESERVATION_STATUS = {
   canceled: 'canceled', // キャンセル
   packking: 'packking', // 出荷準備中
-  shipping: 'shipping', // 配送中
+  shipping: 'shipping', // 集荷配送中
   keeping: 'keeping', // 店舗保管中
   completed: 'completed', // 受取完了
 } as const;
