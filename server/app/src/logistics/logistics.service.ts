@@ -82,7 +82,7 @@ export class LogisticsService {
     return setting;
   }
 
-  async getTripSuggestions(pickupStop: string, deliveryStop: string): Promise<TSuggestTrip[]> {
+  async getTripSuggestions(pickupStop: string, deliveryStop: string, count: number): Promise<TSuggestTrip[]> {
     const trips = await this.tripRepository
       .createQueryBuilder('trip')
       .innerJoinAndSelect('trip.timetables', 'deliverytimetable', 'deliverytimetable.stop = :deliveryStop', {
@@ -93,28 +93,28 @@ export class LogisticsService {
       .orderBy('pickuptimetable.time', 'ASC')
       .getMany();
 
-    const suggestTrips = trips.filter((trip) => {
+    let suggestTrips = trips.filter((trip) => {
       const pickupTime = trip.timetables[0].time.getHours() * 60 + trip.timetables[0].time.getMinutes();
       const now = new Date();
       return pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
     });
 
-    if (suggestTrips.length < 3) {
-      suggestTrips.push(...trips.slice(0, 3 - suggestTrips.length));
+    if (suggestTrips.length < count) {
+      suggestTrips.push(...trips.slice(0, count - suggestTrips.length));
+    } else if (suggestTrips.length > count) {
+      suggestTrips = suggestTrips.slice(0, count);
     }
 
-    return suggestTrips
-      .map((trip): TSuggestTrip => {
-        return {
-          routeId: trip.route.id,
-          routeName: trip.route.name,
-          tripId: trip.id,
-          tripName: trip.name,
-          pickupStop: trip.timetables[0].stop,
-          pickupTime: trip.timetables[0].time,
-        };
-      })
-      .slice(0, 3);
+    return suggestTrips.map((trip): TSuggestTrip => {
+      return {
+        routeId: trip.route.id,
+        routeName: trip.route.name,
+        tripId: trip.id,
+        tripName: trip.name,
+        pickupStop: trip.timetables[0].stop,
+        pickupTime: trip.timetables[0].time,
+      };
+    });
   }
 }
 
