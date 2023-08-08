@@ -90,18 +90,31 @@ export class LogisticsService {
       })
       .innerJoinAndSelect('trip.timetables', 'pickuptimetable', 'pickuptimetable.stop = :pickupStop', { pickupStop })
       .leftJoinAndSelect('trip.route', 'route')
+      .orderBy('pickuptimetable.time', 'ASC')
       .getMany();
 
-    return trips.map((trip): TSuggestTrip => {
-      return {
-        routeId: trip.route.id,
-        routeName: trip.route.name,
-        tripId: trip.id,
-        tripName: trip.name,
-        pickupStop: trip.timetables[0].stop,
-        pickupTime: trip.timetables[0].time,
-      };
+    const suggestTrips = trips.filter((trip) => {
+      const pickupTime = trip.timetables[0].time.getHours() * 60 + trip.timetables[0].time.getMinutes();
+      const now = new Date();
+      return pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
     });
+
+    if (suggestTrips.length < 3) {
+      suggestTrips.push(...trips.slice(0, 3 - suggestTrips.length));
+    }
+
+    return suggestTrips
+      .map((trip): TSuggestTrip => {
+        return {
+          routeId: trip.route.id,
+          routeName: trip.route.name,
+          tripId: trip.id,
+          tripName: trip.name,
+          pickupStop: trip.timetables[0].stop,
+          pickupTime: trip.timetables[0].time,
+        };
+      })
+      .slice(0, 3);
   }
 }
 
