@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Put, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Param, UseGuards, Query } from '@nestjs/common';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
 import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
@@ -42,5 +42,10 @@ export class LogisticsController {
     @GetAccount() account: Account,
   ) {
     return this.logisticService.updateIntermediarySetting(account, intermediaryId, dto);
+  }
+
+  @Get('/tripsuggestions')
+  async getTripSuggestions(@Query('pickup-stop') pickupStop: string, @Query('delivery-stop') deliveryStop: string) {
+    return await this.logisticService.getTripSuggestions(pickupStop, deliveryStop);
   }
 }

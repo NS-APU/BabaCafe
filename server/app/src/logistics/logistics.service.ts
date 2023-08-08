@@ -7,6 +7,7 @@ import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/en
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
 import { Repository } from 'typeorm';
+import { Trip } from './setting/logistics/entities/trip.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -17,6 +18,8 @@ export class LogisticsService {
     private logisticsSettingRepository: Repository<LogisticsSettingForLogistics>,
     @InjectRepository(LogisticsSettingForIntermediary)
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
+    @InjectRepository(Trip)
+    private tripRepository: Repository<Trip>,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -78,4 +81,35 @@ export class LogisticsService {
     this.intermediarySettingRepository.save(setting);
     return setting;
   }
+
+  async getTripSuggestions(pickupStop: string, deliveryStop: string): Promise<TSuggestTrip[]> {
+    const trips = await this.tripRepository
+      .createQueryBuilder('trip')
+      .innerJoinAndSelect('trip.timetables', 'deliverytimetable', 'deliverytimetable.stop = :deliveryStop', {
+        deliveryStop,
+      })
+      .innerJoinAndSelect('trip.timetables', 'pickuptimetable', 'pickuptimetable.stop = :pickupStop', { pickupStop })
+      .leftJoinAndSelect('trip.route', 'route')
+      .getMany();
+
+    return trips.map((trip): TSuggestTrip => {
+      return {
+        routeId: trip.route.id,
+        routeName: trip.route.name,
+        tripId: trip.id,
+        tripName: trip.name,
+        pickupStop: trip.timetables[0].stop,
+        pickupTime: trip.timetables[0].time,
+      };
+    });
+  }
 }
+
+export type TSuggestTrip = {
+  routeId: string;
+  routeName: string;
+  tripId: string;
+  tripName: string;
+  pickupStop: string;
+  pickupTime: Date;
+};
