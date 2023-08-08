@@ -4,10 +4,14 @@ import type { TLogisticsSettingForIntermediary } from './../../../../server/app/
 import type { CreateRouteDto } from './../../../../server/app/src/logistics/setting/logistics/dto/create-route.dto';
 import type { UpdateDeliveryTypeDto } from './../../../../server/app/src/logistics/setting/logistics/dto/update-delivery-type.dto';
 import type { TLogisticsSettingForLogistics } from './../../../../server/app/src/logistics/setting/logistics/entities/setting.entity';
+import type { CreateLogisticsSettingForProducerDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-setting.dto';
+import type { TLogisticsSettingForProducer } from './../../../../server/app/src/logistics/setting/producer/entities/setting.entity';
 import type { Jsonify } from 'type-fest';
 
+export type TProducerSetting = Jsonify<TLogisticsSettingForProducer>;
 export type TLogisticsSetting = Jsonify<TLogisticsSettingForLogistics>;
 export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
+export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
 export type TRouteForm = Jsonify<CreateRouteDto>;
 export type TDeliveryTypeForm = Jsonify<UpdateDeliveryTypeDto>;
@@ -22,6 +26,12 @@ export class LogisticsRepository {
     return 'logistics';
   }
 
+  async getProducerSetting(id: string): Promise<TProducerSetting> {
+    return await baseAPI<TProducerSetting>({
+      endpoint: `${this.baseEndpoint}/setting/producer/${id}`,
+    });
+  }
+
   async getLogisticsSetting(id: string): Promise<TLogisticsSetting> {
     return await baseAPI<TLogisticsSetting>({
       endpoint: `${this.baseEndpoint}/setting/logistics/${id}`,
@@ -31,6 +41,14 @@ export class LogisticsRepository {
   async getIntermediarySetting(id: string): Promise<TIntermediarySetting> {
     return await baseAPI<TIntermediarySetting>({
       endpoint: `${this.baseEndpoint}/setting/intermediary/${id}`,
+    });
+  }
+
+  async updateProducerSetting(id: string, body: TProducerSettingForm): Promise<TProducerSetting> {
+    return await baseAPI<TProducerSetting>({
+      endpoint: `${this.baseEndpoint}/setting/producer/${id}`,
+      method: 'PUT',
+      body,
     });
   }
 

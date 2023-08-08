@@ -26,3 +26,8 @@ export class LogisticsSettingForProducer extends BaseEntity {
   @OneToMany(() => UserConsolidationDefine, (consolidation) => consolidation.setting)
   consolidations: UserConsolidationDefine[];
 }
+
+export type TLogisticsSettingForProducer = Pick<LogisticsSettingForProducer, 'producerId' | 'stop'> & {
+  id: string;
+  producer: Account;
+};

@@ -17,8 +17,8 @@
   <details class="mt-4 mr-2 outline outline-1 outline-offset-2 outline-[#000000]">
     <summary class="bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
       {tripName}
-      <IconButton class="material-icons align-right inline-block align-middle">edit</IconButton>
-      <IconButton class="material-icons align-right inline-block align-middle">delete</IconButton>
+      <IconButton class="material-icons align-right inline-block align-middle" disabled>edit</IconButton>
+      <IconButton class="material-icons align-right inline-block align-middle" disabled>delete</IconButton>
     </summary>
     <p class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">車両</p>
 

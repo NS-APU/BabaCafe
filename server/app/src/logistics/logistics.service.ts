@@ -4,6 +4,8 @@ import { Account } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
+import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
+import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
 import { Repository } from 'typeorm';
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
@@ -13,6 +15,8 @@ import { Route } from './setting/logistics/entities/route.entity';
 @Injectable()
 export class LogisticsService {
   constructor(
+    @InjectRepository(LogisticsSettingForProducer)
+    private producerSettingRepository: Repository<LogisticsSettingForProducer>,
     @InjectRepository(LogisticsSettingForLogistics)
     private logisticsSettingRepository: Repository<LogisticsSettingForLogistics>,
     @InjectRepository(LogisticsSettingForIntermediary)
@@ -25,8 +29,35 @@ export class LogisticsService {
       .then((setting) => setting);
   }
 
+  async getProducerSetting(producerId: string): Promise<LogisticsSettingForProducer> {
+    return await this.producerSettingRepository.findOne({ where: { producerId } }).then((setting) => setting);
+  }
+
   async getIntermediarySetting(intermediaryId: string): Promise<LogisticsSettingForIntermediary> {
     return await this.intermediarySettingRepository.findOne({ where: { intermediaryId } }).then((setting) => setting);
+  }
+
+  async updateProducerSetting(
+    account: Account,
+    producerId: string,
+    dto: CreateLogisticsSettingForProducerDto,
+  ): Promise<LogisticsSettingForProducer> {
+    const setting = await this.producerSettingRepository
+      .findOne({
+        where: { producerId },
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+    if (setting.producerId !== account.id) {
+      throw new BadRequestException();
+    }
+
+    setting.stop = dto.stop;
+    this.producerSettingRepository.save(setting);
+    return setting;
   }
 
   async updateIntermediarySetting(

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Request, Body, HttpCode, HttpStatus, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Request, Body, HttpCode, HttpStatus, UseGuards, Query } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { AuthService, PasswordOmitAccount } from './auth.service';
 import { CreateAccountDto } from './dto/create-account.dto';
@@ -35,7 +35,7 @@ export class AccountController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/logistics')
-  async getLogistics() {
-    return await this.accountService.getLogistics();
+  async getLogistics(@Query('delivery-type') deliveryType: string) {
+    return await this.accountService.getLogistics(deliveryType);
   }
 }

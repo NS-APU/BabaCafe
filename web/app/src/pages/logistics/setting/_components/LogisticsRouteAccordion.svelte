@@ -13,8 +13,8 @@
   <details class="mt-4 outline outline-1 outline-offset-2 outline-[#000000]">
     <summary class="bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
       {routeName}
-      <IconButton class="material-icons inline-block align-middle">edit</IconButton>
-      <IconButton class="material-icons inline-block align-middle">delete</IconButton>
+      <IconButton class="material-icons inline-block align-middle" disabled>edit</IconButton>
+      <IconButton class="material-icons inline-block align-middle" disabled>delete</IconButton>
     </summary>
 
     {#each trips as trip}

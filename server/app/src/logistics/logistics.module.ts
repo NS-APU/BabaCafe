@@ -5,9 +5,17 @@ import { LogisticsController } from './logistics.controller';
 import { LogisticsService } from './logistics.service';
 import { LogisticsSettingForIntermediary } from './setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from './setting/logistics/entities/setting.entity';
+import { LogisticsSettingForProducer } from './setting/producer/entities/setting.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([LogisticsSettingForLogistics, LogisticsSettingForIntermediary, Account])],
+  imports: [
+    TypeOrmModule.forFeature([
+      LogisticsSettingForProducer,
+      LogisticsSettingForLogistics,
+      LogisticsSettingForIntermediary,
+      Account,
+    ]),
+  ],
   controllers: [LogisticsController],
   providers: [LogisticsService],
   exports: [LogisticsService],
