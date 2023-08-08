@@ -7,6 +7,7 @@ import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/en
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
 import { Repository } from 'typeorm';
+import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 
 @Injectable()
@@ -20,6 +21,8 @@ export class LogisticsService {
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
+    @InjectRepository(ShippingSchedule)
+    private shippingScheduleRepository: Repository<ShippingSchedule>,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -93,11 +96,29 @@ export class LogisticsService {
       .orderBy('pickuptimetable.time', 'ASC')
       .getMany();
 
-    let suggestTrips = trips.filter((trip) => {
-      const pickupTime = trip.timetables[0].time.getHours() * 60 + trip.timetables[0].time.getMinutes();
-      const now = new Date();
-      return pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
-    });
+    const tripFilter = await Promise.all(
+      trips.map(async (trip) => {
+        const pickupTime = trip.timetables[0].time.getHours() * 60 + trip.timetables[0].time.getMinutes();
+        const now = new Date();
+        const isAvailableTime = pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
+
+        const shippingScheduleReservations = await this.shippingScheduleRepository
+          .find({
+            relations: ['reservations'],
+            where: { tripId: trip.id },
+          })
+          .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
+
+        const reservationCount = shippingScheduleReservations.reduce(
+          (acc, reservations) => acc + reservations.length,
+          0,
+        );
+
+        return isAvailableTime && reservationCount <= trip.capacity;
+      }),
+    );
+
+    let suggestTrips = trips.filter((_, index) => tripFilter[index]);
 
     if (suggestTrips.length < count) {
       suggestTrips.push(...trips.slice(0, count - suggestTrips.length));
