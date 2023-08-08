@@ -159,14 +159,16 @@
           <LogisticsRouteAccordion routeName={route.name} />
         {/each}
 
-        <Button
-          class="mt-4 w-[150px] rounded-full px-4 py-2"
-          color="secondary"
-          variant="raised"
-          on:click={() => (isCreateRouteDialogOpen = true)}
-        >
-          <p class="text-lg">路線追加</p>
-        </Button>
+        <div style="display: flex; justify-content: center">
+          <Button
+            class="mt-4 w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isCreateRouteDialogOpen = true)}
+          >
+            <p class="text-lg">路線追加</p>
+          </Button>
+        </div>
         <Dialog selection bind:open={isCreateRouteDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
           <Title>路線を追加します。</Title>
           <input type="text" class="justfy-center mx-3 flex" bind:value={routeName} />
