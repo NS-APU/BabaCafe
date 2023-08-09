@@ -7,6 +7,7 @@ import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/en
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
 import { Repository } from 'typeorm';
+import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 
@@ -83,6 +84,11 @@ export class LogisticsService {
     setting.stop = dto.stop;
     this.intermediarySettingRepository.save(setting);
     return setting;
+  }
+
+  async createShippingSchedule(dto: CreateShippingScheduleDto): Promise<ShippingSchedule> {
+    const shippingSchedule = this.shippingScheduleRepository.create(dto);
+    return await this.shippingScheduleRepository.save(shippingSchedule);
   }
 
   async getTripSuggestions(pickupStop: string, deliveryStop: string, count: number): Promise<TSuggestTrip[]> {
