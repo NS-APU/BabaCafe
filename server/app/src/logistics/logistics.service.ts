@@ -6,7 +6,7 @@ import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermedi
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
@@ -109,9 +109,9 @@ export class LogisticsService {
         const isAvailableTime = pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
 
         const shippingScheduleReservations = await this.shippingScheduleRepository
-          .find({
-            relations: ['reservations'],
-            where: { tripId: trip.id },
+          .findBy({
+            tripId: trip.id,
+            pickupTime: MoreThan(now),
           })
           .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
 
