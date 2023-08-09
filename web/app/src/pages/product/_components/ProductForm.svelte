@@ -284,22 +284,22 @@
           {/each}
         </Select>
       </div>
+    </div>
 
-      <div class="flex justify-center">
-        <Button
-          color="secondary"
-          variant="raised"
-          class="mr-4  mt-10 w-[150px] rounded-full px-4 py-2"
-          on:click={() => $goto('./')}
-          type="button"
-        >
-          <p class="black">キャンセル</p>
-        </Button>
+    <div class="flex justify-center">
+      <Button
+        color="secondary"
+        variant="raised"
+        class="mr-4  mt-10 w-[150px] rounded-full px-4 py-2"
+        on:click={() => $goto('./')}
+        type="button"
+      >
+        <p class="black">キャンセル</p>
+      </Button>
 
-        <Button variant="raised" class="mt-10 w-[150px] rounded-full px-4 py-2" color="secondary" type="submit">
-          <p class="black">出品</p>
-        </Button>
-      </div>
+      <Button variant="raised" class="mt-10 w-[150px] rounded-full px-4 py-2" color="secondary" type="submit">
+        <p class="black">出品</p>
+      </Button>
     </div>
   </form>
 </div>
