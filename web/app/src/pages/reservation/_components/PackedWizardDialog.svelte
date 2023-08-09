@@ -1,21 +1,28 @@
 <script lang="ts">
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
+  import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import List, { Item, Graphic, Text } from '@smui/list';
   import Radio from '@smui/radio';
+  import dayjs from 'dayjs';
   import { Steps } from 'svelte-steps';
   import { USER_ATTRIBUTE } from '../../../constants/account';
   import { DELIVERY_TYPE } from '../../../constants/logistics';
+  import { LogisticsRepository } from '../../../models/Logistics';
   import { ReservationRepository, type TReservation } from '../../../models/Reservation';
   import { AccountService } from '../../../services/AccountService';
   import { profile } from '../../../stores/Account';
   import { addToast } from '../../../stores/Toast';
   import { handleError } from '../../../utils/error-handle-helper';
 
+  const MAX_SUGGEST_TRIP_COUNT = 3;
+
   export let open: boolean;
   export let reservationId: string;
   export let reservationStatus: TReservation['status'];
+  export let pickupStop: string;
+  export let deliveryStop: string;
 
   $: reservationRepository = new ReservationRepository();
 
@@ -65,6 +72,20 @@
       selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
       selectedShipper.logisticsSettingForLogistics.deliveryType === DELIVERY_TYPE.route
     );
+  }
+
+  async function fetchTripSuggestions(): Promise<{ [k: string]: string }> {
+    try {
+      const trips = await new LogisticsRepository().getTripSuggestions(
+        pickupStop,
+        deliveryStop,
+        MAX_SUGGEST_TRIP_COUNT,
+      );
+      return trips;
+    } catch (err) {
+      handleError(err);
+      return [];
+    }
   }
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
@@ -133,7 +154,32 @@
         {:else if PACKED_STEPS.select_trip.index === currentStep}
           <div />
           {#if isTripSelectionRequired(selectedShipperId)}
-            <div />
+            {#await fetchTripSuggestions()}
+              <div style="display: flex; justify-content: center">
+                <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+              </div>
+            {:then suggestions}
+              <DataTable>
+                <Head>
+                  <Row>
+                    <Cell class="text-center">路線</Cell>
+                    <Cell class="text-center">便名</Cell>
+                    <Cell class="text-center">集荷場所</Cell>
+                    <Cell class="text-center">集荷予定日時</Cell>
+                  </Row>
+                </Head>
+                {#each suggestions as suggest}
+                  <Body class="cell">
+                    <Row>
+                      <Cell class="text-center">{suggest.routeName}</Cell>
+                      <Cell class="text-center">{suggest.tripName}</Cell>
+                      <Cell class="text-center">{suggest.pickupStop}</Cell>
+                      <Cell class="text-center">{dayjs(suggest.pickupTime).format('YYYY/MM/DD')}</Cell>
+                    </Row>
+                  </Body>
+                {/each}
+              </DataTable>
+            {/await}
           {:else}
             <div />
           {/if}

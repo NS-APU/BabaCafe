@@ -50,4 +50,10 @@ export class LogisticsRepository {
       body,
     });
   }
+
+  async getTripSuggestions(pickupStop: string, deliveryStop: string, count: number): Promise<Record<string, string>[]> {
+    return await baseAPI<Record<string, string>[]>({
+      endpoint: `${this.baseEndpoint}/tripsuggestions?pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
+    });
+  }
 }
