@@ -1,4 +1,5 @@
 import { baseAPI } from '../api/base';
+import type { TSuggestTrip as SuggestTrip } from './../../../../server/app/src/logistics/logistics.service';
 import type { CreateLogisticsSettingForIntermediaryDto } from './../../../../server/app/src/logistics/setting/intermediary/dto/create-setting.dto';
 import type { TLogisticsSettingForIntermediary } from './../../../../server/app/src/logistics/setting/intermediary/entities/setting.entity';
 import type { TLogisticsSettingForLogistics } from './../../../../server/app/src/logistics/setting/logistics/entities/setting.entity';
@@ -11,6 +12,7 @@ export type TLogisticsSetting = Jsonify<TLogisticsSettingForLogistics>;
 export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
 export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
+export type TSuggestTrip = Jsonify<SuggestTrip>;
 
 export class LogisticsRepository {
   get baseEndpoint(): string {

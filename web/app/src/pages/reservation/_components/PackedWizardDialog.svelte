@@ -9,7 +9,7 @@
   import { Steps } from 'svelte-steps';
   import { USER_ATTRIBUTE } from '../../../constants/account';
   import { DELIVERY_TYPE } from '../../../constants/logistics';
-  import { LogisticsRepository } from '../../../models/Logistics';
+  import { LogisticsRepository, type TSuggestTrip } from '../../../models/Logistics';
   import { ReservationRepository, type TReservation } from '../../../models/Reservation';
   import { AccountService } from '../../../services/AccountService';
   import { profile } from '../../../stores/Account';
@@ -74,7 +74,7 @@
     );
   }
 
-  async function fetchTripSuggestions(): Promise<{ [k: string]: string }> {
+  async function fetchTripSuggestions(): Promise<TSuggestTrip[]> {
     try {
       const trips = await new LogisticsRepository().getTripSuggestions(
         pickupStop,
@@ -88,11 +88,11 @@
     }
   }
 
-  function selectTripStyle(e: Event, suggest: { [k: string]: string }) {
+  function selectTripStyle(e: Event, suggest: TSuggestTrip) {
     Array.prototype.forEach.call(document.getElementsByTagName('tr'), (element) => {
       element.style.backgroundColor = '#ffffff';
     });
-    e.currentTarget.style.backgroundColor = '#E0E0E0';
+    (e.currentTarget as HTMLElement).style.backgroundColor = '#E0E0E0';
     selectedTripId = suggest.tripId;
   }
 
