@@ -23,7 +23,7 @@ export function handleError(err, operation = '操作') {
         message: '認証が切れました。再度ログインしてください。',
         type: 'error',
       });
-      $goto('/login');
+      window.location.replace('/login');
       break;
     default:
       addToast({
