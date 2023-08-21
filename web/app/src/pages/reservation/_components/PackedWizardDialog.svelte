@@ -5,8 +5,6 @@
   import List, { Item, Graphic, Text } from '@smui/list';
   import Radio from '@smui/radio';
   import { Steps } from 'svelte-steps';
-  import { USER_ATTRIBUTE } from '../../../constants/account';
-  import { DELIVERY_TYPE } from '../../../constants/logistics';
   import { ReservationRepository, type TReservation } from '../../../models/Reservation';
   import { AccountService } from '../../../services/AccountService';
   import { profile } from '../../../stores/Account';
@@ -59,12 +57,14 @@
   $: isTripSelectionRequired(selectedShipperId);
 
   function isTripSelectionRequired(selectedShipperId) {
-    const selectedShipper = logistics.filter((user) => user.id === selectedShipperId)[0];
-    return (
-      selectedShipper &&
-      selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
-      selectedShipper.logisticsSettingForLogistics.deliveryType === DELIVERY_TYPE.route
-    );
+    // TODO: 配送便候補取得APIとの結合を後続のタスクで行うため、まだ巡回経路で集荷や配送を行う物流業者の場合でも配送便候補を選択せずに出荷できるようにしておく
+    // const selectedShipper = logistics.filter((user) => user.id === selectedShipperId)[0];
+    // return (
+    //   selectedShipper &&
+    //   selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
+    //   selectedShipper.logisticsSettingForLogistics.deliveryType === DELIVERY_TYPE.route
+    // );
+    return false;
   }
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
