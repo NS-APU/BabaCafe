@@ -88,6 +88,14 @@
     }
   }
 
+  function selectTripStyle(e: Event, suggest: { [k: string]: string }) {
+    Array.prototype.forEach.call(document.getElementsByTagName('tr'), (element) => {
+      element.style.backgroundColor = '#ffffff';
+    });
+    e.currentTarget.style.backgroundColor = '#E0E0E0';
+    selectedTripId = suggest.tripId;
+  }
+
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'packed':
@@ -136,8 +144,8 @@
       {#if open}
         {#if PACKED_STEPS.select_shipper.index === currentStep}
           {#await fetchLogistics()}
-            <div style="display: flex; justify-content: center">
-              <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+            <div class="flex justify-center">
+              <CircularProgress class="h-[160px] w-[32px]" indeterminate />
             </div>
           {:then logistics}
             <List radioList>
@@ -155,8 +163,8 @@
           <div />
           {#if isTripSelectionRequired(selectedShipperId)}
             {#await fetchTripSuggestions()}
-              <div style="display: flex; justify-content: center">
-                <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+              <div class="flex justify-center">
+                <CircularProgress class="h-[160px] w-[32px]" indeterminate />
               </div>
             {:then suggestions}
               <DataTable>
@@ -170,7 +178,7 @@
                 </Head>
                 {#each suggestions as suggest}
                   <Body class="cell">
-                    <Row>
+                    <Row on:click={(e) => selectTripStyle(e, suggest)}>
                       <Cell class="text-center">{suggest.routeName}</Cell>
                       <Cell class="text-center">{suggest.tripName}</Cell>
                       <Cell class="text-center">{suggest.pickupStop}</Cell>
