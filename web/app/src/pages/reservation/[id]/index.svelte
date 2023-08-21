@@ -155,8 +155,8 @@
           bind:open={isOpenPackedConfirmDialog}
           reservationId={$params.id}
           bind:reservationStatus
-          pickupStop={'小町 バス停'}
-          deliveryStop={'北貞商店前 バス停'}
+          pickupStop={reservationData.product.producer.logisticsSettingForProducer.stop}
+          deliveryStop={reservationData.receiveLocation.logisticsSettingForIntermediary.stop}
         />
       {/if}
       {#if canKept(reservationData)}
