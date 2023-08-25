@@ -24,3 +24,9 @@ export class Route extends BaseEntity {
   @OneToMany(() => Trip, (trip) => trip.route)
   trips: Trip[];
 }
+
+export type TRoute = Pick<Route, 'logisticsSettingId' | 'name'> & {
+  id: string;
+  setting: LogisticsSettingForLogistics;
+  trips: Trip[];
+};

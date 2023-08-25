@@ -47,10 +47,10 @@ export class LogisticsController {
     return this.logisticService.updateIntermediarySetting(account, intermediaryId, dto);
   }
 
-  @Post('/setting/logistics/route')
+  @Post('/setting/logistics/:logisticsId/route')
   @HttpCode(HttpStatus.CREATED)
-  async createRoute(@Body() dto: CreateRouteDto) {
-    return this.logisticService.createRoute(dto);
+  async createRoute(@Param('logisticsId') logisticsId: string, @Body() dto: CreateRouteDto) {
+    return this.logisticService.createRoute(logisticsId, dto);
   }
 
   @Post('/setting/logistics/trip')

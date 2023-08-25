@@ -83,13 +83,23 @@ export class LogisticsService {
     return setting;
   }
 
-  async createRoute(dto: CreateRouteDto): Promise<Route> {
+  async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
     const route = new Route();
-
     await LogisticsService.setProductAttributes(dto, route);
     await route.save();
 
-    return route;
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
   }
 
   private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
@@ -105,6 +115,7 @@ export class LogisticsService {
     const setting = await this.logisticsSettingRepository
       .findOne({
         where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
       })
       .then((setting) => setting);
 

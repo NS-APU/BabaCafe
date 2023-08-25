@@ -3,13 +3,17 @@ import type { CreateLogisticsSettingForIntermediaryDto } from './../../../../ser
 import type { TLogisticsSettingForIntermediary } from './../../../../server/app/src/logistics/setting/intermediary/entities/setting.entity';
 import type { CreateRouteDto } from './../../../../server/app/src/logistics/setting/logistics/dto/create-route.dto';
 import type { UpdateDeliveryTypeDto } from './../../../../server/app/src/logistics/setting/logistics/dto/update-delivery-type.dto';
+import type { TRoute } from './../../../../server/app/src/logistics/setting/logistics/entities/route.entity';
 import type { TLogisticsSettingForLogistics } from './../../../../server/app/src/logistics/setting/logistics/entities/setting.entity';
+import type { TTrip } from './../../../../server/app/src/logistics/setting/logistics/entities/trip.entity';
 import type { CreateLogisticsSettingForProducerDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-setting.dto';
 import type { TLogisticsSettingForProducer } from './../../../../server/app/src/logistics/setting/producer/entities/setting.entity';
 import type { Jsonify } from 'type-fest';
 
 export type TProducerSetting = Jsonify<TLogisticsSettingForProducer>;
 export type TLogisticsSetting = Jsonify<TLogisticsSettingForLogistics>;
+export type TRouteSetting = Jsonify<TRoute>;
+export type TTripSetting = Jsonify<TTrip>;
 export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
 export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
@@ -60,9 +64,9 @@ export class LogisticsRepository {
     });
   }
 
-  async createRoute(body: TRouteForm): Promise<TLogisticsSetting> {
+  async createRoute(logisticsId: string, body: TRouteForm): Promise<TLogisticsSetting> {
     return await baseAPI<TLogisticsSetting>({
-      endpoint: `${this.baseEndpoint}/setting/logistics/route`,
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/route`,
       method: 'POST',
       body,
     });
