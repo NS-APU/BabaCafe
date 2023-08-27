@@ -14,10 +14,10 @@
     USER_ATTRIBUTE,
     USER_ATTRIBUTE_LABEL,
   } from '../../constants/account';
-  import { ShowableError } from '../../models/Error';
   import { AccountService } from '../../services/AccountService';
   import { isLoggedIn } from '../../stores/Login';
   import { addToast } from '../../stores/Toast';
+  import { handleError } from '../../utils/error-handle-helper';
   import { encodeFileToBase64 } from '../../utils/file';
 
   let email = '';
@@ -50,7 +50,10 @@
       try {
         image = await encodeFileToBase64(files[0]);
       } catch {
-        throw new ShowableError('画像の読み込みに失敗しました。');
+        addToast({
+          message: '画像の読み込みに失敗しました。',
+          type: 'error',
+        });
       }
     }
   }
@@ -87,10 +90,7 @@
           $goto('/login');
         })
         .catch((err) => {
-          addToast({
-            message: err.message,
-            type: 'error',
-          });
+          handleError(err);
         });
     }
   }
