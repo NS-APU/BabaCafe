@@ -1,6 +1,20 @@
 import { IsNotEmpty, IsDateString, IsUUID, IsString, IsArray } from 'class-validator';
 
-export class CreateShippingScheduleDto {
+export interface ICreateShippingScheduleDto {
+  logisticsId: string;
+  logisticsName: string;
+  routeId: string;
+  routeName: string;
+  tripId: string;
+  tripName: string;
+  pickupStop: string;
+  pickupTime: string;
+  deliveryStop: string;
+  deliveryTime: string;
+  reservationIds: string[];
+}
+
+export class CreateShippingScheduleDto implements ICreateShippingScheduleDto {
   @IsNotEmpty()
   @IsUUID()
   logisticsId: string;
