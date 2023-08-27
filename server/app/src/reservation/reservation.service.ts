@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
+import { ShippingSchedule } from 'src/logistics/schedule/entities/shipping-schedule.entity';
 import { Product } from 'src/product/entities/product.entity';
 import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateReservationDto } from './dto/create-reservation.dto';
@@ -17,6 +18,8 @@ export class ReservationService {
     private productRepository: Repository<Product>,
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
+    @InjectRepository(ShippingSchedule)
+    private shippingScheduleRepository: Repository<ShippingSchedule>,
     @InjectDataSource() private dataSource: DataSource,
   ) {}
 
@@ -103,12 +106,10 @@ export class ReservationService {
     reservationId: string,
     dto: UpdateReservationForPackedDto,
   ): Promise<TReservation> {
-    const reservation = await this.reservationRepository
-      .findOne({
-        where: { id: reservationId },
-        relations: ['product'],
-      })
-      .then((reservation) => reservation.convertTReservation());
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: ['product'],
+    });
 
     if (!reservation) {
       throw new BadRequestException();
@@ -123,8 +124,55 @@ export class ReservationService {
     reservation.status = RESERVATION_STATUS.shipping;
     reservation.shipperId = dto.shipperId;
     reservation.packedAt = new Date();
-    this.reservationRepository.save(reservation);
-    return reservation;
+
+    if (!dto.pickupStop && !dto.pickupTime) {
+      this.reservationRepository.save(reservation);
+      return reservation.convertTReservation();
+    }
+
+    const shippingSchedule = await this.shippingScheduleRepository
+      .findOneOrFail({
+        where: {
+          pickupStop: dto.pickupStop,
+          pickupTime: dayjs(dto.pickupTime).toDate(),
+        },
+      })
+      .then((shippingSchedule) => {
+        shippingSchedule.reservationIds.push(reservation.id);
+        return shippingSchedule;
+      })
+      .catch(() => {
+        const shippingSchedule = new ShippingSchedule();
+        this.setShippingScheduleAttributes(dto, shippingSchedule, reservation);
+        return shippingSchedule;
+      });
+
+    reservation.shippingScheduleId = shippingSchedule.id;
+
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      await manager.save(reservation);
+      await manager.save(shippingSchedule);
+    });
+
+    return reservation.convertTReservation();
+  }
+
+  private async setShippingScheduleAttributes(
+    dto: UpdateReservationForPackedDto,
+    shippingSchedule: ShippingSchedule,
+    reservation: TReservation,
+  ) {
+    shippingSchedule.reservationIds.push(reservation.id);
+    shippingSchedule.logisticsId = dto.logisticsId;
+    shippingSchedule.logisticsName = dto.logisticsName;
+    shippingSchedule.routeId = dto.routeId;
+    shippingSchedule.routeName = dto.routeName;
+    shippingSchedule.tripId = dto.tripId;
+    shippingSchedule.tripName = dto.tripName;
+    shippingSchedule.pickupStop = dto.pickupStop;
+    shippingSchedule.pickupTime = dayjs(dto.pickupTime).toDate();
+    shippingSchedule.deliveryStop = dto.deliveryStop;
+    shippingSchedule.deliveryTime = dayjs(dto.deliveryTime).toDate();
   }
 
   async updateReservationForKept(account: Account, reservationId: string): Promise<TReservation> {
