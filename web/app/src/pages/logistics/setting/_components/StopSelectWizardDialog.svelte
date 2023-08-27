@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { goto } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
@@ -9,8 +8,7 @@
   import { DELIVERY_TYPE } from '../../../../constants/logistics';
   import { LogisticsRepository } from '../../../../models/Logistics';
   import { AccountService } from '../../../../services/AccountService';
-  import { markAsLogoutState } from '../../../../stores/Login';
-  import { addToast } from '../../../../stores/Toast';
+  import { handleError } from '../../../../utils/error-handle-helper';
 
   $: logisticsRepository = new LogisticsRepository();
 
@@ -41,31 +39,6 @@
     { text: SELECT_STOP_STEPS.select_route.text },
     { text: SELECT_STOP_STEPS.select_stop.text },
   ];
-
-  function handleError(err, operation) {
-    switch (err.error || err.message) {
-      case 'Bad Request':
-        addToast({
-          message: `${operation}に失敗しました。開発者へお問い合わせください。`,
-          type: 'error',
-        });
-        break;
-      case 'Unauthorized':
-        markAsLogoutState();
-        addToast({
-          message: '認証が切れました。再度ログインしてください。',
-          type: 'error',
-        });
-        $goto('/login');
-        break;
-      default:
-        addToast({
-          message: `${operation}に失敗しました。もう一度時間をおいて再読み込みしてください。`,
-          type: 'error',
-        });
-        break;
-    }
-  }
 
   async function fetchLogistics() {
     try {
