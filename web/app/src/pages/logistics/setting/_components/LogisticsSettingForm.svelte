@@ -2,8 +2,11 @@
   import { goto } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
-  import Dialog, { Title, Actions } from '@smui/dialog';
+  import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
+  import List, { Item, Graphic, Text } from '@smui/list';
+  import Radio from '@smui/radio';
+  import Textfield from '@smui/textfield';
   import { DELIVERY_TYPE, LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
   import { profile } from '../../../../stores/Account';
   import { markAsLogoutState } from '../../../../stores/Login';
@@ -104,99 +107,99 @@
     <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
   </div>
 {:then}
-  <div class="grid">
-    <div class="container">
-      <div class="text-lg">
-        <div
-          class="relative mt-3 flex justify-between border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]"
-        >
-          <p class="flex w-[260px] flex-row flex-wrap items-center text-left text-xl">集荷・配送方法</p>
-          <IconButton
-            class="material-icons inline-block align-middle"
-            on:click={() => (isUpdateDeliveryTypeDialogOpen = true)}
+  <div>
+    <div
+      class="relative mt-3 flex justify-between border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]"
+    >
+      <h1 class="flex w-[260px] flex-row flex-wrap items-center text-left text-xl">集荷・配送方法</h1>
+      <IconButton
+        class="material-icons inline-block align-middle"
+        on:click={() => (isUpdateDeliveryTypeDialogOpen = true)}
+      >
+        edit
+      </IconButton>
+      <Dialog selection bind:open={isUpdateDeliveryTypeDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
+        <Title>集荷・配送方法を変更します</Title>
+        <Content>
+          <List radioList>
+            <Item>
+              <Graphic>
+                <Radio bind:group={logisticsSetting.deliveryType} value={DELIVERY_TYPE.route} />
+              </Graphic>
+              <Text>{MESSAGE_OF_DELIVERY_TYPE.route}</Text>
+            </Item>
+            <Item>
+              <Graphic>
+                <Radio bind:group={logisticsSetting.deliveryType} value={DELIVERY_TYPE.direct} />
+              </Graphic>
+              <Text>{MESSAGE_OF_DELIVERY_TYPE.direct}</Text>
+            </Item>
+          </List>
+        </Content>
+        <Actions>
+          <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+            <p class="text-lg font-bold">キャンセル</p>
+          </Button>
+          <Button
+            class="w-[150px]  rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            action="updateDeliveryType"
           >
-            edit
-          </IconButton>
-          <Dialog selection bind:open={isUpdateDeliveryTypeDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
-            <Title>集荷・配送方法を変更します</Title>
-            <div class="justify-left ml-8 flex">
-              <input
-                type="radio"
-                value={DELIVERY_TYPE.route}
-                bind:group={logisticsSetting.deliveryType}
-                checked={logisticsSetting.deliveryType === DELIVERY_TYPE.route}
-              />
-              <p class="indent-3">
-                {MESSAGE_OF_DELIVERY_TYPE.route}
-              </p>
-            </div>
-            <div class="justify-left ml-8 flex">
-              <input
-                type="radio"
-                value={DELIVERY_TYPE.direct}
-                bind:group={logisticsSetting.deliveryType}
-                checked={logisticsSetting.deliveryType === DELIVERY_TYPE.direct}
-              />
-              <p class="indent-3">
-                {MESSAGE_OF_DELIVERY_TYPE.direct}
-              </p>
-            </div>
-            <Actions>
-              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-                <p class="text-lg font-bold">キャンセル</p>
-              </Button>
-              <Button
-                class="w-[150px]  rounded-full px-4 py-2"
-                color="secondary"
-                variant="raised"
-                action="updateDeliveryType"
-              >
-                <p class="text-lg font-bold">変更</p>
-              </Button>
-            </Actions>
-          </Dialog>
+            <p class="text-lg font-bold">変更</p>
+          </Button>
+        </Actions>
+      </Dialog>
+    </div>
+
+    <p class="mt-4">
+      {deliveryType === DELIVERY_TYPE.route ? MESSAGE_OF_DELIVERY_TYPE.route : MESSAGE_OF_DELIVERY_TYPE.direct}
+    </p>
+
+    {#if deliveryType === DELIVERY_TYPE.route}
+      <div>
+        <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
+          巡回経路の設定
+        </h1>
+
+        {#each logisticsSetting.routes as route}
+          <LogisticsRouteAccordion {route} />
+        {/each}
+
+        <div class="flex justify-center">
+          <Button
+            class="mt-4 w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isCreateRouteDialogOpen = true)}
+          >
+            <p class="text-lg">路線追加</p>
+          </Button>
         </div>
-        {#if deliveryType === DELIVERY_TYPE.route}
-          <p class="mt-4">{MESSAGE_OF_DELIVERY_TYPE.route}</p>
-        {:else if deliveryType === DELIVERY_TYPE.direct}
-          <p class="mt-4">{MESSAGE_OF_DELIVERY_TYPE.direct}</p>
-        {/if}
-
-        <p class="mt-4" />
-
-        {#if deliveryType === DELIVERY_TYPE.route}
-          <p class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
-            巡回経路の設定
-          </p>
-
-          {#each logisticsSetting.routes as route}
-            <LogisticsRouteAccordion {route} />
-          {/each}
-
-          <div style="display: flex; justify-content: center">
+        <Dialog selection bind:open={isCreateRouteDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
+          <Title>路線を追加します。</Title>
+          <Textfield
+            class="justfy-center mx-3 flex"
+            bind:value={routeName}
+            input$maxlength={100}
+            input$placeholder="路線名"
+          />
+          <Actions>
+            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
+              <p class="text-lg font-bold">キャンセル</p>
+            </Button>
             <Button
-              class="mt-4 w-[150px] rounded-full px-4 py-2"
+              class="w-[150px]  rounded-full px-4 py-2"
               color="secondary"
               variant="raised"
-              on:click={() => (isCreateRouteDialogOpen = true)}
+              action="createRoute"
+              disabled={!routeName}
             >
-              <p class="text-lg">路線追加</p>
+              <p class="text-lg font-bold">追加</p>
             </Button>
-          </div>
-          <Dialog selection bind:open={isCreateRouteDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
-            <Title>路線を追加します。</Title>
-            <input type="text" class="justfy-center mx-3 flex" bind:value={routeName} />
-            <Actions>
-              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-                <p class="text-lg font-bold">キャンセル</p>
-              </Button>
-              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="createRoute">
-                <p class="text-lg font-bold">追加</p>
-              </Button>
-            </Actions>
-          </Dialog>
-        {/if}
+          </Actions>
+        </Dialog>
       </div>
-    </div>
+    {/if}
   </div>
 {/await}

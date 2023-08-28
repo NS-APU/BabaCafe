@@ -6,12 +6,23 @@
   import type { TRouteSetting } from '../../../../models/Logistics';
 
   export let route: TRouteSetting;
+  $: panelOpen = false;
 </script>
 
 <div>
-  <Accordion class="mt-4 outline outline-1 outline-offset-2 outline-[#000000]">
+  <Accordion class="mt-4">
     <Panel class="px-3 py-2 text-lg text-[#494949]">
-      <Header class="bg-[#f4f4f4]">
+      <Header
+        class="bg-[#f4f4f4]"
+        on:click={() => {
+          panelOpen = !panelOpen;
+        }}
+      >
+        {#if panelOpen}
+          <span class="material-icons inline-block align-middle">expand_more</span>
+        {:else}
+          <span class="material-icons inline-block align-middle">chevron_right</span>
+        {/if}
         {route.name}
         <span slot="icon">
           <IconButton class="material-icons" disabled>edit</IconButton>
@@ -23,7 +34,7 @@
           <LogisticsTripAccordion {trip} />
         {/each}
 
-        <div style="display: flex; justify-content: center">
+        <div class="flex justify-center">
           <Button class="mb-3 mt-4 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised" disabled>
             <p class="text-lg">便追加</p>
           </Button>
