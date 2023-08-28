@@ -10,8 +10,7 @@
   import { CROP_UNITS_LABEL } from '../../../constants/product';
   import { ProductRepository, type TProduct } from '../../../models/Product';
   import { AccountService } from '../../../services/AccountService';
-  import { markAsLogoutState } from '../../../stores/Login';
-  import { addToast } from '../../../stores/Toast';
+  import { handleError } from '../../../utils/error-handle-helper';
   import type { TReservationForm } from '../../../models/Reservation';
 
   export let onConfirm: (values: Required<TReservationForm>) => unknown;
@@ -34,22 +33,7 @@
       reservationRangeMax = selectedProduct.remaining > RESERVATION_MAX ? RESERVATION_MAX : selectedProduct.remaining;
       totalPrice = selectedProduct.unitPrice;
     } catch (err) {
-      switch (err.error || err.message) {
-        case 'Unauthorized':
-          markAsLogoutState();
-          addToast({
-            message: '認証が切れました。再度ログインしてください。',
-            type: 'error',
-          });
-          $goto('/login');
-          break;
-        default:
-          addToast({
-            message: '情報の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
-            type: 'error',
-          });
-          break;
-      }
+      handleError(err);
     }
   });
 

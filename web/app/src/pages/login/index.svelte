@@ -8,6 +8,7 @@
   import { setAccountProfile } from '../../stores/Account';
   import { isLoggedIn, markAsLoginState } from '../../stores/Login';
   import { addToast } from '../../stores/Toast';
+  import { handleError } from '../../utils/error-handle-helper';
 
   let email = '';
   let password = '';
@@ -27,10 +28,7 @@
         });
       })
       .catch((err) => {
-        addToast({
-          message: err.message,
-          type: 'error',
-        });
+        handleError(err);
       });
   }
 
