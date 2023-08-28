@@ -91,7 +91,12 @@ export class LogisticsService {
     return await this.shippingScheduleRepository.save(shippingSchedule);
   }
 
-  async getTripSuggestions(pickupStop: string, deliveryStop: string, count: number): Promise<TSuggestTrip[]> {
+  async getTripSuggestions(
+    pickupStop: string,
+    deliveryStop: string,
+    count: number,
+    tripDate: Date,
+  ): Promise<TSuggestTrip[]> {
     const trips = await this.tripRepository
       .createQueryBuilder('trip')
       .innerJoinAndSelect('trip.timetables', 'deliverytimetable', 'deliverytimetable.stop = :deliveryStop', {
@@ -102,46 +107,45 @@ export class LogisticsService {
       .orderBy('pickuptimetable.time', 'ASC')
       .getMany();
 
+    if (!trips) {
+      throw new BadRequestException();
+    }
+
+    const checkDate = tripDate;
+    checkDate.setHours(checkDate.getHours() + 2);
     const tripFilter = await Promise.all(
       trips.map(async (trip) => {
-        const pickupTime = trip.timetables[0].time.getHours() * 60 + trip.timetables[0].time.getMinutes();
-        const now = new Date();
-        const isAvailableTime = pickupTime > (now.getHours() + 2) * 60 + now.getMinutes();
-
-        const shippingScheduleReservations = await this.shippingScheduleRepository
-          .findBy({
-            tripId: trip.id,
-            pickupTime: MoreThan(now),
-          })
-          .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
-
-        const reservationCount = shippingScheduleReservations.reduce(
-          (acc, reservations) => acc + reservations.length,
-          0,
-        );
-
-        return isAvailableTime && reservationCount <= trip.capacity;
+        const isAvailableTime = checkAvailableTimeTrip(trip, pickupStop, checkDate);
+        const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+        return isAvailableTime && isAvailableCapacity;
       }),
     );
 
-    let suggestTrips = trips.filter((_, index) => tripFilter[index]);
+    let filteredTrips = trips.filter((_, index) => tripFilter[index]);
 
-    if (suggestTrips.length < count) {
-      suggestTrips.push(...trips.slice(0, count - suggestTrips.length));
-    } else if (suggestTrips.length > count) {
-      suggestTrips = suggestTrips.slice(0, count);
+    if (filteredTrips.length < count) {
+      const nextDay = tripDate;
+      nextDay.setDate(nextDay.getDate() + 1);
+      const nextDayTripFilter = await Promise.all(
+        trips.map(async (trip) => {
+          return checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, nextDay);
+        }),
+      );
+      const nextDayTrips = trips.filter((_, index) => nextDayTripFilter[index]);
+      filteredTrips.push(...nextDayTrips);
     }
 
-    return suggestTrips.map((trip): TSuggestTrip => {
-      return {
-        routeId: trip.route.id,
-        routeName: trip.route.name,
-        tripId: trip.id,
-        tripName: trip.name,
-        pickupStop: trip.timetables[0].stop,
-        pickupTime: trip.timetables[0].time,
-      };
-    });
+    if (filteredTrips.length > count) {
+      filteredTrips = filteredTrips.slice(0, count);
+    }
+
+    const suggestTrips = await Promise.all(
+      filteredTrips.map(async (trip) => {
+        return makeTripSuggestions(trip, pickupStop, tripDate);
+      }),
+    );
+
+    return suggestTrips;
   }
 }
 
@@ -153,3 +157,45 @@ export type TSuggestTrip = {
   pickupStop: string;
   pickupTime: Date;
 };
+
+async function checkAvailableTimeTrip(trip: Trip, pickupStop: string, checkDate: Date) {
+  const pickupTimetable = trip.timetables.find((timetable) => timetable.stop === pickupStop);
+  const pickupTime = pickupTimetable.time.getHours() * 60 + pickupTimetable.time.getMinutes();
+  const isAvailableTime = pickupTime > checkDate.getHours() * 60 + checkDate.getMinutes();
+
+  return isAvailableTime;
+}
+
+async function checkAvailableCapacityTrip(
+  trip: Trip,
+  shippingScheduleRepository: Repository<ShippingSchedule>,
+  checkDate: Date,
+) {
+  const shippingScheduleReservations = await shippingScheduleRepository
+    .findBy({
+      tripId: trip.id,
+      pickupTime: MoreThan(checkDate),
+    })
+    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
+
+  const reservationCount = shippingScheduleReservations.reduce((acc, reservations) => acc + reservations.length, 0);
+
+  return reservationCount <= trip.capacity;
+}
+
+async function makeTripSuggestions(trip: Trip, pickupStop: string, now: Date) {
+  const pickupTimetable = trip.timetables.find((timetable) => timetable.stop === pickupStop);
+  const pickupTime = pickupTimetable.time;
+  pickupTime.setFullYear(now.getFullYear());
+  pickupTime.setMonth(now.getMonth());
+  pickupTime.setDate(now.getDate());
+
+  return {
+    routeId: trip.route.id,
+    routeName: trip.route.name,
+    tripId: trip.id,
+    tripName: trip.name,
+    pickupStop: pickupTimetable.stop,
+    pickupTime: pickupTime,
+  };
+}
