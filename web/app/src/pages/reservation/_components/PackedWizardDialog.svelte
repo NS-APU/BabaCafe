@@ -47,26 +47,27 @@
     { text: PACKED_STEPS.confirm_packed.text },
   ];
 
-  let selectedShipperId = '';
-  let selectedTripId = '';
+  let selectedShipper = null;
+  let selectedTrip = null;
 
   let logistics = [];
 
-  async function fetchLogistics(): Promise<{ [k: string]: string }> {
+  async function fetchLogistics(): Promise<Record<string, string>[]> {
+    selectedShipper = null;
     try {
       logistics = await new AccountService().getLogistics();
       logistics.push($profile);
-      return Object.fromEntries(logistics.map(({ id, name }) => [id, name]));
+      return logistics;
     } catch (err) {
       handleError(err);
-      return {};
+      logistics = [];
+      return logistics;
     }
   }
 
-  $: isTripSelectionRequired(selectedShipperId);
+  $: isTripSelectionRequired(selectedShipper);
 
-  function isTripSelectionRequired(selectedShipperId) {
-    const selectedShipper = logistics.filter((user) => user.id === selectedShipperId)[0];
+  function isTripSelectionRequired(selectedShipper) {
     return (
       selectedShipper &&
       selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
@@ -74,16 +75,20 @@
     );
   }
 
+  let suggestions = [];
+
   async function fetchTripSuggestions(): Promise<TSuggestTrip[]> {
+    selectedTrip = null;
     try {
-      const trips = await new LogisticsRepository().getTripSuggestions(
+      suggestions = await new LogisticsRepository().getTripSuggestions(
         pickupStop,
         deliveryStop,
         MAX_SUGGEST_TRIP_COUNT,
       );
-      return trips;
+      return suggestions;
     } catch (err) {
       handleError(err);
+      suggestions = [];
       return [];
     }
   }
@@ -93,7 +98,7 @@
       element.style.backgroundColor = '#ffffff';
     });
     (e.currentTarget as HTMLElement).style.backgroundColor = '#E0E0E0';
-    selectedTripId = suggest.tripId;
+    selectedTrip = suggest;
   }
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
@@ -109,7 +114,29 @@
 
   async function packed() {
     try {
-      const updateReservationData = await reservationRepository.packed(reservationId, { shipperId: selectedShipperId });
+      const packedData = selectedTrip
+        ? {
+            shipperId: selectedShipper.id,
+            // logisticsId と shipperId は同じなのでリクエストには不要ではないか？
+            logisticsId: selectedShipper.id,
+            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
+            logisticsName: selectedShipper.name,
+            routeId: selectedTrip.routeId,
+            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
+            routeName: selectedTrip.routeName,
+            tripId: selectedTrip.tripId,
+            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
+            tripName: selectedTrip.tripName,
+            pickupStop,
+            // 取得した候補一覧ではpickupTimeをDBの値ではなく候補日時で扱えるようにしてほしい
+            pickupTime: selectedTrip.pickupTime,
+            deliveryStop,
+            // 取得した候補一覧にデータが含まれていないため仮でpickupTimeと同じにしておく
+            deliveryTime: selectedTrip.pickupTime,
+            // reservationIds はバックエンドで扱われていない
+          }
+        : { shipperId: selectedShipper.id };
+      const updateReservationData = await reservationRepository.packed(reservationId, packedData);
       reservationStatus = updateReservationData.status;
       addToast({
         message: '予約作物の出荷が完了しました。',
@@ -129,7 +156,7 @@
       {#if PACKED_STEPS.select_shipper.index === currentStep}
         <p>配送者を選択してください</p>
       {:else if PACKED_STEPS.select_trip.index === currentStep}
-        {#if isTripSelectionRequired(selectedShipperId)}
+        {#if isTripSelectionRequired(selectedShipper)}
           <p>配送する便を選択してください。</p>
         {:else}
           <p>配送便の選択はありません。次へ進んでください。</p>
@@ -149,19 +176,19 @@
             </div>
           {:then logistics}
             <List radioList>
-              {#each Object.keys(logistics) as shipper}
+              {#each logistics as shipper}
                 <Item>
                   <Graphic>
-                    <Radio bind:group={selectedShipperId} value={shipper} />
+                    <Radio bind:group={selectedShipper} value={shipper} />
                   </Graphic>
-                  <Text>{logistics[shipper]}</Text>
+                  <Text>{shipper.name}</Text>
                 </Item>
               {/each}
             </List>
           {/await}
         {:else if PACKED_STEPS.select_trip.index === currentStep}
           <div />
-          {#if isTripSelectionRequired(selectedShipperId)}
+          {#if isTripSelectionRequired(selectedShipper)}
             {#await fetchTripSuggestions()}
               <div class="flex justify-center">
                 <CircularProgress class="h-[160px] w-[32px]" indeterminate />
@@ -200,7 +227,7 @@
   <Actions>
     {#if PACKED_STEPS.select_shipper.index === currentStep}
       <Button
-        disabled={!selectedShipperId}
+        disabled={!selectedShipper}
         class="w-[100px]  rounded-full px-4 py-2"
         color="secondary"
         variant="raised"
@@ -217,9 +244,9 @@
       >
         <p class="text-lg font-bold">前へ</p>
       </Button>
-      {#if isTripSelectionRequired(selectedShipperId)}
+      {#if isTripSelectionRequired(selectedShipper)}
         <Button
-          disabled={!selectedTripId}
+          disabled={!selectedTrip}
           class="w-[100px]  rounded-full px-4 py-2"
           color="secondary"
           variant="raised"
@@ -251,7 +278,7 @@
         color="secondary"
         variant="raised"
         action="packed"
-        disabled={!selectedShipperId}
+        disabled={!selectedShipper}
       >
         <p class="text-lg font-bold">出荷</p>
       </Button>
