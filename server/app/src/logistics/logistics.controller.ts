@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Put, Param, UseGuards, Query, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import * as dayjs from 'dayjs';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
 import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
@@ -56,7 +57,8 @@ export class LogisticsController {
     @Query('pickup-stop') pickupStop: string,
     @Query('delivery-stop') deliveryStop: string,
     @Query('count') count: number,
+    @Query('date') date: string,
   ) {
-    return await this.logisticService.getTripSuggestions(pickupStop, deliveryStop, count);
+    return await this.logisticService.getTripSuggestions(pickupStop, deliveryStop, count, dayjs(date).toDate());
   }
 }
