@@ -46,14 +46,14 @@
           </div>
           <div class="ml-5 mt-2">
             <p>{SHOCK_LEVEL_LABEL[Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === trip.shockLevel)]}</p>
-            <p class="mt-2">{trip.capacity}</p>
+            <p class="mt-2">{trip.capacity}予約</p>
           </div>
         </div>
         <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
           時刻表
         </h1>
         <div class="flex justify-center">
-          <DataTable class="mb-3 mt-3" table$aria-label="People list" style="max-width: 100%;">
+          <DataTable class="my-3 max-w-full">
             <Head>
               <Row>
                 <Cell class="text-center font-bold">停車場所</Cell>
@@ -63,7 +63,7 @@
             <Body>
               {#each trip.timetables as timetable}
                 <Row>
-                  <Cell>{timetable.stop}</Cell>
+                  <Cell class="text-center">{timetable.stop}</Cell>
                   <Cell class="text-center">{formatPickupTime(timetable.time)}</Cell>
                 </Row>
               {/each}
