@@ -1,14 +1,10 @@
-import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { ICreateShippingScheduleDto } from 'src/logistics/schedule/dto/create-shipping-scedule.entity';
 
 export class UpdateReservationForPackedDto implements ICreateShippingScheduleDto {
   @IsNotEmpty()
   @IsUUID()
   shipperId: string;
-
-  @IsOptional()
-  @IsUUID()
-  logisticsId: string;
 
   @IsOptional()
   @IsString()
@@ -45,8 +41,4 @@ export class UpdateReservationForPackedDto implements ICreateShippingScheduleDto
   @IsOptional()
   @IsDateString()
   deliveryTime: string;
-
-  @IsOptional()
-  @IsArray()
-  reservationIds: string[];
 }
