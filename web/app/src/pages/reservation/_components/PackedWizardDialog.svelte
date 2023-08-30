@@ -81,6 +81,7 @@
     selectedTrip = null;
     try {
       suggestions = await new LogisticsRepository().getTripSuggestions(
+        selectedShipper.id,
         pickupStop,
         deliveryStop,
         MAX_SUGGEST_TRIP_COUNT,
@@ -117,23 +118,16 @@
       const packedData = selectedTrip
         ? {
             shipperId: selectedShipper.id,
-            // logisticsId と shipperId は同じなのでリクエストには不要ではないか？
             logisticsId: selectedShipper.id,
-            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
             logisticsName: selectedShipper.name,
             routeId: selectedTrip.routeId,
-            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
             routeName: selectedTrip.routeName,
             tripId: selectedTrip.tripId,
-            // クライアント側で改ざんできないようにバックエンド側で扱ってほしい
             tripName: selectedTrip.tripName,
             pickupStop,
-            // 取得した候補一覧ではpickupTimeをDBの値ではなく候補日時で扱えるようにしてほしい
             pickupTime: selectedTrip.pickupTime,
             deliveryStop,
-            // 取得した候補一覧にデータが含まれていないため仮でpickupTimeと同じにしておく
-            deliveryTime: selectedTrip.pickupTime,
-            // reservationIds はバックエンドで扱われていない
+            deliveryTime: selectedTrip.deliveryTime,
           }
         : { shipperId: selectedShipper.id };
       const updateReservationData = await reservationRepository.packed(reservationId, packedData);
