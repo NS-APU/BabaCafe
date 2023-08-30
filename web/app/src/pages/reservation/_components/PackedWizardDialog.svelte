@@ -118,7 +118,6 @@
       const packedData = selectedTrip
         ? {
             shipperId: selectedShipper.id,
-            logisticsId: selectedShipper.id,
             logisticsName: selectedShipper.name,
             routeId: selectedTrip.routeId,
             routeName: selectedTrip.routeName,
