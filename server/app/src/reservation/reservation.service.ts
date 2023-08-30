@@ -147,11 +147,10 @@ export class ReservationService {
         return shippingSchedule;
       });
 
-    reservation.shippingScheduleId = shippingSchedule.id;
-
     await this.dataSource.manager.transaction(async (manager: EntityManager) => {
-      await manager.save(reservation);
       await manager.save(shippingSchedule);
+      reservation.shippingScheduleId = shippingSchedule.id;
+      await manager.save(reservation);
     });
 
     return reservation.convertTReservation();
