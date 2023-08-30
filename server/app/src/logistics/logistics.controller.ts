@@ -54,11 +54,18 @@ export class LogisticsController {
 
   @Get('/tripsuggestions')
   async getTripSuggestions(
+    @Query('logisticsId') logisticsId: string,
     @Query('pickup-stop') pickupStop: string,
     @Query('delivery-stop') deliveryStop: string,
     @Query('count') count: number,
     @Query('date') date: string,
   ) {
-    return await this.logisticService.getTripSuggestions(pickupStop, deliveryStop, count, dayjs(date).toDate());
+    return await this.logisticService.getTripSuggestions(
+      logisticsId,
+      pickupStop,
+      deliveryStop,
+      count,
+      dayjs(date).toDate(),
+    );
   }
 }
