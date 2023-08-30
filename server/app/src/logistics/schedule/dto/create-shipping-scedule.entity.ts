@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsDateString, IsUUID, IsString, IsArray } from 'class-validator';
+import { IsNotEmpty, IsDateString, IsUUID, IsString, IsArray, IsOptional } from 'class-validator';
 
 export interface ICreateShippingScheduleDto {
   logisticsId: string;
@@ -11,7 +11,6 @@ export interface ICreateShippingScheduleDto {
   pickupTime: string;
   deliveryStop: string;
   deliveryTime: string;
-  reservationIds: string[];
 }
 
 export class CreateShippingScheduleDto implements ICreateShippingScheduleDto {
@@ -52,6 +51,7 @@ export class CreateShippingScheduleDto implements ICreateShippingScheduleDto {
   @IsDateString()
   deliveryTime: string;
 
+  @IsOptional()
   @IsArray()
   reservationIds: string[];
 }
