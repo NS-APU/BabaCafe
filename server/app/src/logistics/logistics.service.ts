@@ -92,46 +92,92 @@ export class LogisticsService {
   }
 
   async getTripSuggestions(
+    logisticsId: string,
     pickupStop: string,
     deliveryStop: string,
     count: number,
     tripDate: Date,
   ): Promise<TSuggestTrip[]> {
-    const trips = await this.tripRepository
-      .createQueryBuilder('trip')
-      .innerJoinAndSelect('trip.timetables', 'deliverytimetable', 'deliverytimetable.stop = :deliveryStop', {
-        deliveryStop,
-      })
-      .innerJoinAndSelect('trip.timetables', 'pickuptimetable', 'pickuptimetable.stop = :pickupStop', { pickupStop })
-      .leftJoinAndSelect('trip.route', 'route')
-      .orderBy('pickuptimetable.time', 'ASC')
-      .getMany();
+    const logisticsSetting = await this.getLogisticsSetting(logisticsId);
 
-    if (!trips) {
+    if (!logisticsSetting) {
       throw new BadRequestException();
     }
 
     const checkDate = tripDate;
     checkDate.setHours(checkDate.getHours() + 2);
-    const tripFilter = await Promise.all(
-      trips.map(async (trip) => {
-        const isAvailableTime = checkAvailableTimeTrip(trip, pickupStop, checkDate);
-        const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
-        return isAvailableTime && isAvailableCapacity;
-      }),
-    );
 
-    let filteredTrips = trips.filter((_, index) => tripFilter[index]);
+    const setDate = async (dateObj: Date, timeObj: Date) => {
+      const newTimeObj = timeObj;
+      newTimeObj.setFullYear(dateObj.getFullYear());
+      newTimeObj.setMonth(dateObj.getMonth());
+      newTimeObj.setDate(dateObj.getDate());
+
+      return newTimeObj;
+    };
+
+    const availableTrips = await Promise.all(
+      logisticsSetting.routes.map(async (route) => {
+        return await Promise.all(
+          route.trips.map(async (trip) => {
+            const pickUpTimetable = trip.timetables.find((timetable) => timetable.stop === pickupStop);
+            if (!pickUpTimetable) return undefined;
+            const deliveryTimetable = trip.timetables.find((timetable) => timetable.stop === deliveryStop);
+            if (!deliveryTimetable) return undefined;
+            if (pickUpTimetable.time > deliveryTimetable.time) return undefined;
+
+            return {
+              routeId: route.id,
+              routeName: route.name,
+              tripId: trip.id,
+              tripName: trip.name,
+              capacity: trip.capacity,
+              pickupStop: pickUpTimetable.stop,
+              pickupTime: pickUpTimetable.time,
+              deliveryStop: deliveryTimetable.stop,
+              deliveryTime: deliveryTimetable.time,
+            };
+          }),
+        ).then((trips) => trips.filter(Boolean));
+      }),
+    ).then((routes) => routes.filter(Boolean).flat());
+
+    let filteredTrips = await Promise.all(
+      availableTrips.map(async (trip) => {
+        const isAvailableTime = checkAvailableTimeTrip(trip, checkDate);
+        const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+
+        if (!(await isAvailableTime) || !(await isAvailableCapacity)) return undefined;
+
+        const pickupTime = setDate(checkDate, trip.pickupTime);
+        const deliveryTime = setDate(checkDate, trip.deliveryTime);
+
+        return {
+          ...trip,
+          pickupTime: await pickupTime,
+          deliveryTime: await deliveryTime,
+        };
+      }),
+    ).then((trips) => trips.filter(Boolean));
 
     if (filteredTrips.length < count) {
-      const nextDay = tripDate;
-      nextDay.setDate(nextDay.getDate() + 1);
-      const nextDayTripFilter = await Promise.all(
-        trips.map(async (trip) => {
-          return checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, nextDay);
+      checkDate.setDate(checkDate.getDate() + 1);
+      const nextDayTrips = await Promise.all(
+        availableTrips.map(async (trip) => {
+          const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+
+          if (!(await isAvailableCapacity)) return undefined;
+
+          const pickupTime = setDate(checkDate, trip.pickupTime);
+          const deliveryTime = setDate(checkDate, trip.deliveryTime);
+
+          return {
+            ...trip,
+            pickupTime: await pickupTime,
+            deliveryTime: await deliveryTime,
+          };
         }),
-      );
-      const nextDayTrips = trips.filter((_, index) => nextDayTripFilter[index]);
+      ).then((trips) => trips.filter(Boolean));
       filteredTrips.push(...nextDayTrips);
     }
 
@@ -139,13 +185,7 @@ export class LogisticsService {
       filteredTrips = filteredTrips.slice(0, count);
     }
 
-    const suggestTrips = await Promise.all(
-      filteredTrips.map(async (trip) => {
-        return makeTripSuggestions(trip, pickupStop, tripDate);
-      }),
-    );
-
-    return suggestTrips;
+    return filteredTrips;
   }
 }
 
@@ -154,48 +194,33 @@ export type TSuggestTrip = {
   routeName: string;
   tripId: string;
   tripName: string;
+  capacity: number;
   pickupStop: string;
   pickupTime: Date;
+  deliveryStop: string;
+  deliveryTime: Date;
 };
 
-async function checkAvailableTimeTrip(trip: Trip, pickupStop: string, checkDate: Date) {
-  const pickupTimetable = trip.timetables.find((timetable) => timetable.stop === pickupStop);
-  const pickupTime = pickupTimetable.time.getHours() * 60 + pickupTimetable.time.getMinutes();
+async function checkAvailableTimeTrip(suggestTrip: TSuggestTrip, checkDate: Date) {
+  const pickupTime = suggestTrip.pickupTime.getHours() * 60 + suggestTrip.pickupTime.getMinutes();
   const isAvailableTime = pickupTime > checkDate.getHours() * 60 + checkDate.getMinutes();
 
   return isAvailableTime;
 }
 
 async function checkAvailableCapacityTrip(
-  trip: Trip,
+  suggestTrip: TSuggestTrip,
   shippingScheduleRepository: Repository<ShippingSchedule>,
   checkDate: Date,
 ) {
   const shippingScheduleReservations = await shippingScheduleRepository
     .findBy({
-      tripId: trip.id,
+      tripId: suggestTrip.tripId,
       pickupTime: MoreThan(checkDate),
     })
     .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
 
   const reservationCount = shippingScheduleReservations.reduce((acc, reservations) => acc + reservations.length, 0);
 
-  return reservationCount <= trip.capacity;
-}
-
-async function makeTripSuggestions(trip: Trip, pickupStop: string, now: Date) {
-  const pickupTimetable = trip.timetables.find((timetable) => timetable.stop === pickupStop);
-  const pickupTime = pickupTimetable.time;
-  pickupTime.setFullYear(now.getFullYear());
-  pickupTime.setMonth(now.getMonth());
-  pickupTime.setDate(now.getDate());
-
-  return {
-    routeId: trip.route.id,
-    routeName: trip.route.name,
-    tripId: trip.id,
-    tripName: trip.name,
-    pickupStop: pickupTimetable.stop,
-    pickupTime: pickupTime,
-  };
+  return reservationCount <= suggestTrip.capacity;
 }

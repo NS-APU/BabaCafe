@@ -156,11 +156,10 @@ export class ReservationService {
         return shippingSchedule;
       });
 
-    reservation.shippingScheduleId = shippingSchedule.id;
-
     await this.dataSource.manager.transaction(async (manager: EntityManager) => {
-      await manager.save(reservation);
       await manager.save(shippingSchedule);
+      reservation.shippingScheduleId = shippingSchedule.id;
+      await manager.save(reservation);
     });
 
     return reservation.convertTReservation();
@@ -171,7 +170,7 @@ export class ReservationService {
     shippingSchedule: ShippingSchedule,
     reservation: TReservation,
   ) {
-    shippingSchedule.reservationIds.push(reservation.id);
+    shippingSchedule.reservationIds = [reservation.id];
     shippingSchedule.logisticsId = dto.logisticsId;
     shippingSchedule.logisticsName = dto.logisticsName;
     shippingSchedule.routeId = dto.routeId;
