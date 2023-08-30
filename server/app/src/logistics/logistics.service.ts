@@ -213,14 +213,17 @@ async function checkAvailableCapacityTrip(
   shippingScheduleRepository: Repository<ShippingSchedule>,
   checkDate: Date,
 ) {
-  const shippingScheduleReservations = await shippingScheduleRepository
+  const shippingScheduleReservationIds = await shippingScheduleRepository
     .findBy({
       tripId: suggestTrip.tripId,
       pickupTime: MoreThan(checkDate),
     })
-    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
+    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservationIds));
 
-  const reservationCount = shippingScheduleReservations.reduce((acc, reservations) => acc + reservations.length, 0);
+  const reservationCount = shippingScheduleReservationIds.reduce(
+    (acc, reservationIds) => acc + reservationIds.length,
+    0,
+  );
 
   return reservationCount <= suggestTrip.capacity;
 }
