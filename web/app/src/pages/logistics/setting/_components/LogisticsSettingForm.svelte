@@ -1,20 +1,17 @@
 <script lang="ts">
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
-  import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import IconButton from '@smui/icon-button';
-  import List, { Item, Graphic, Text } from '@smui/list';
-  import Radio from '@smui/radio';
-  import Textfield from '@smui/textfield';
   import { DELIVERY_TYPE, LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
   import { profile } from '../../../../stores/Account';
-  import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
+  import DeliveryTypeEditDialog from './DeliveryTypeEditDialog.svelte';
   import LogisticsRouteAccordion from './LogisticsRouteAccordion.svelte';
+  import RouteAddDialog from './RouteAddDialog.svelte';
 
   let logisticsRepository: LogisticsRepository = new LogisticsRepository();
-  let isUpdateDeliveryTypeDialogOpen = false;
-  let isCreateRouteDialogOpen = false;
+  let isDeliveryTypeEditDialogOpen = false;
+  let isRouteAddDialogOpen = false;
   let logisticsSetting: TLogisticsSetting = null;
   let deliveryType: typeof DELIVERY_TYPE[keyof typeof DELIVERY_TYPE] = null;
   let routeName = '';
@@ -25,48 +22,6 @@
       deliveryType = logisticsSetting.deliveryType;
     } catch (err) {
       handleError(err, '物流設定の取得');
-    }
-  }
-
-  async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
-    switch (e.detail.action) {
-      case 'updateDeliveryType':
-        await updateDeliveryType(logisticsSetting.deliveryType);
-        break;
-      case 'createRoute':
-        await createRoute(routeName, logisticsSetting.id);
-        break;
-      default:
-        // NOP
-        break;
-    }
-  }
-
-  async function updateDeliveryType(deliveryTypeValue: typeof DELIVERY_TYPE[keyof typeof DELIVERY_TYPE]) {
-    try {
-      logisticsSetting = await logisticsRepository.updateDeliveryType(logisticsSetting.logisticsId, {
-        deliveryType: deliveryTypeValue,
-      });
-      deliveryType = logisticsSetting.deliveryType;
-      addToast({
-        message: '集荷・配送方法を更新しました。',
-      });
-    } catch (err) {
-      handleError(err, '集荷・配送方法の変更');
-    }
-  }
-
-  async function createRoute(routeName: string, id: string) {
-    try {
-      logisticsSetting = await logisticsRepository.createRoute(logisticsSetting.logisticsId, {
-        name: routeName,
-        logisticsSettingId: id,
-      });
-      addToast({
-        message: '路線を追加しました。',
-      });
-    } catch (err) {
-      handleError(err, '路線の追加');
     }
   }
 
@@ -90,43 +45,12 @@
         <IconButton
           class="material-icons inline-block align-middle"
           size="button"
-          on:click={() => (isUpdateDeliveryTypeDialogOpen = true)}
+          on:click={() => (isDeliveryTypeEditDialogOpen = true)}
         >
           edit
         </IconButton>
       </h1>
-      <Dialog selection bind:open={isUpdateDeliveryTypeDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
-        <Title>集荷・配送方法を変更します</Title>
-        <Content>
-          <List radioList>
-            <Item>
-              <Graphic>
-                <Radio bind:group={logisticsSetting.deliveryType} value={DELIVERY_TYPE.route} />
-              </Graphic>
-              <Text>{MESSAGE_OF_DELIVERY_TYPE.route}</Text>
-            </Item>
-            <Item>
-              <Graphic>
-                <Radio bind:group={logisticsSetting.deliveryType} value={DELIVERY_TYPE.direct} />
-              </Graphic>
-              <Text>{MESSAGE_OF_DELIVERY_TYPE.direct}</Text>
-            </Item>
-          </List>
-        </Content>
-        <Actions>
-          <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-            <p class="text-lg font-bold">キャンセル</p>
-          </Button>
-          <Button
-            class="w-[150px]  rounded-full px-4 py-2"
-            color="secondary"
-            variant="raised"
-            action="updateDeliveryType"
-          >
-            <p class="text-lg font-bold">変更</p>
-          </Button>
-        </Actions>
-      </Dialog>
+      <DeliveryTypeEditDialog bind:open={isDeliveryTypeEditDialogOpen} bind:logisticsSetting bind:deliveryType />
       <p class="mt-4">
         {deliveryType === DELIVERY_TYPE.route ? MESSAGE_OF_DELIVERY_TYPE.route : MESSAGE_OF_DELIVERY_TYPE.direct}
       </p>
@@ -147,38 +71,12 @@
             class="mt-4 w-[150px] rounded-full px-4 py-2"
             color="secondary"
             variant="raised"
-            on:click={() => (isCreateRouteDialogOpen = true)}
+            on:click={() => (isRouteAddDialogOpen = true)}
           >
             <p class="text-lg">路線追加</p>
           </Button>
         </div>
-        <Dialog selection bind:open={isCreateRouteDialogOpen} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>路線を追加します。</Title>
-          <Content class="mb-5">
-            <Textfield
-              class="mx-6 w-[300px]"
-              bind:value={routeName}
-              type={'text'}
-              input$maxlength={50}
-              input$placeholder="路線名"
-              required
-            />
-          </Content>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button
-              class="w-[150px]  rounded-full px-4 py-2"
-              color="secondary"
-              variant="raised"
-              action="createRoute"
-              disabled={!routeName}
-            >
-              <p class="text-lg font-bold">追加</p>
-            </Button>
-          </Actions>
-        </Dialog>
+        <RouteAddDialog bind:open={isRouteAddDialogOpen} bind:logisticsSetting bind:routeName />
       </div>
     {/if}
   </div>
