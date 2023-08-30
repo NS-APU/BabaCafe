@@ -162,7 +162,7 @@ export class ReservationService {
     shippingSchedule: ShippingSchedule,
     reservation: TReservation,
   ) {
-    shippingSchedule.reservationIds.push(reservation.id);
+    shippingSchedule.reservationIds = [reservation.id];
     shippingSchedule.logisticsId = dto.logisticsId;
     shippingSchedule.logisticsName = dto.logisticsName;
     shippingSchedule.routeId = dto.routeId;
