@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsDateString, IsUUID, IsString, IsArray, IsOptional } from 'class-validator';
 
 export interface ICreateShippingScheduleDto {
-  logisticsId: string;
   logisticsName: string;
   routeId: string;
   routeName: string;

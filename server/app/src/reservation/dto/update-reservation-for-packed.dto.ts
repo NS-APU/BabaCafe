@@ -7,10 +7,6 @@ export class UpdateReservationForPackedDto implements ICreateShippingScheduleDto
   shipperId: string;
 
   @IsOptional()
-  @IsUUID()
-  logisticsId: string;
-
-  @IsOptional()
   @IsString()
   logisticsName: string;
 
