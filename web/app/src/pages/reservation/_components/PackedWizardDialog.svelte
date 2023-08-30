@@ -140,7 +140,7 @@
   }
 </script>
 
-<Dialog selection bind:open on:SMUIDialog:closed={onDialogClosedHandle}>
+<Dialog selection bind:open on:SMUIDialog:closed={onDialogClosedHandle} surface$style="max-width: calc(100vw - 32px);">
   <Title>
     <div class="text-xs">
       <Steps {steps} current={currentStep} size="2rem" clickable={false} />
