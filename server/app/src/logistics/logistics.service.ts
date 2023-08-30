@@ -214,9 +214,12 @@ async function checkAvailableCapacityTrip(
   checkDate: Date,
 ) {
   const shippingScheduleReservations = await shippingScheduleRepository
-    .findBy({
-      tripId: suggestTrip.tripId,
-      pickupTime: MoreThan(checkDate),
+    .find({
+      where: {
+        tripId: suggestTrip.tripId,
+        pickupTime: MoreThan(checkDate),
+      },
+      relations: ['reservations'],
     })
     .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
 
