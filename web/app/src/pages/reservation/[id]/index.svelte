@@ -151,7 +151,13 @@
         >
           <p class="text-lg font-bold">出荷</p>
         </Button>
-        <PackedWizardDialog bind:open={isOpenPackedConfirmDialog} reservationId={$params.id} bind:reservationStatus />
+        <PackedWizardDialog
+          bind:open={isOpenPackedConfirmDialog}
+          reservationId={$params.id}
+          bind:reservationStatus
+          pickupStop={reservationData.product.producer.logisticsSettingForProducer.stop}
+          deliveryStop={reservationData.receiveLocation.logisticsSettingForIntermediary.stop}
+        />
       {/if}
       {#if canKept(reservationData)}
         <Button

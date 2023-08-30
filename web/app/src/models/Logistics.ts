@@ -1,4 +1,5 @@
 import { baseAPI } from '../api/base';
+import type { TSuggestTrip as SuggestTrip } from './../../../../server/app/src/logistics/logistics.service';
 import type { CreateLogisticsSettingForIntermediaryDto } from './../../../../server/app/src/logistics/setting/intermediary/dto/create-setting.dto';
 import type { TLogisticsSettingForIntermediary } from './../../../../server/app/src/logistics/setting/intermediary/entities/setting.entity';
 import type { TLogisticsSettingForLogistics } from './../../../../server/app/src/logistics/setting/logistics/entities/setting.entity';
@@ -11,6 +12,7 @@ export type TLogisticsSetting = Jsonify<TLogisticsSettingForLogistics>;
 export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
 export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
+export type TSuggestTrip = Jsonify<SuggestTrip>;
 
 export class LogisticsRepository {
   get baseEndpoint(): string {
@@ -48,6 +50,17 @@ export class LogisticsRepository {
       endpoint: `${this.baseEndpoint}/setting/intermediary/${id}`,
       method: 'PUT',
       body,
+    });
+  }
+
+  async getTripSuggestions(
+    logisticsId: string,
+    pickupStop: string,
+    deliveryStop: string,
+    count: number,
+  ): Promise<Record<string, string>[]> {
+    return await baseAPI<Record<string, string>[]>({
+      endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
     });
   }
 }

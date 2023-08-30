@@ -65,7 +65,15 @@ export class ReservationService {
     return await this.reservationRepository
       .findOne({
         where: { id },
-        relations: ['consumer', 'product', 'product.producer', 'shipper', 'receiveLocation'],
+        relations: [
+          'consumer',
+          'product',
+          'product.producer',
+          'product.producer.logisticsSettingForProducer',
+          'shipper',
+          'receiveLocation',
+          'receiveLocation.logisticsSettingForIntermediary',
+        ],
       })
       .then((reservation) => reservation.convertTReservation());
   }
