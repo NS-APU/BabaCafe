@@ -151,7 +151,6 @@ export class ReservationService {
       })
       .catch(() => {
         const shippingSchedule = new ShippingSchedule();
-        shippingSchedule.reservationIds = [];
         this.setShippingScheduleAttributes(dto, shippingSchedule, reservation);
         return shippingSchedule;
       });
