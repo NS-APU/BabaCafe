@@ -217,7 +217,7 @@ async function checkAvailableCapacityTrip(
     .find({
       where: {
         tripId: suggestTrip.tripId,
-        pickupTime: MoreThan(checkDate),
+        pickupTime: MoreThan(checkDate), // その日限りのものを取得するようにする
       },
       relations: ['reservations'],
     })
