@@ -1,4 +1,5 @@
 import { baseAPI } from '../api/base';
+import type { TSuggestTrip as SuggestTrip } from './../../../../server/app/src/logistics/logistics.service';
 import type { CreateLogisticsSettingForIntermediaryDto } from './../../../../server/app/src/logistics/setting/intermediary/dto/create-setting.dto';
 import type { TLogisticsSettingForIntermediary } from './../../../../server/app/src/logistics/setting/intermediary/entities/setting.entity';
 import type { CreateRouteDto } from './../../../../server/app/src/logistics/setting/logistics/dto/create-route.dto';
@@ -24,6 +25,7 @@ export const DELIVERY_TYPE = {
   route: 'route',
   direct: 'direct',
 } as const;
+export type TSuggestTrip = Jsonify<SuggestTrip>;
 
 export class LogisticsRepository {
   get baseEndpoint(): string {
@@ -77,6 +79,17 @@ export class LogisticsRepository {
       endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/deliveryType`,
       method: 'PUT',
       body,
+    });
+  }
+
+  async getTripSuggestions(
+    logisticsId: string,
+    pickupStop: string,
+    deliveryStop: string,
+    count: number,
+  ): Promise<Record<string, string>[]> {
+    return await baseAPI<Record<string, string>[]>({
+      endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
     });
   }
 }

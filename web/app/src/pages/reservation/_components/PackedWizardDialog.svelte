@@ -1,19 +1,28 @@
 <script lang="ts">
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
+  import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
   import Dialog, { Title, Content, Actions } from '@smui/dialog';
   import List, { Item, Graphic, Text } from '@smui/list';
   import Radio from '@smui/radio';
+  import dayjs from 'dayjs';
   import { Steps } from 'svelte-steps';
+  import { USER_ATTRIBUTE } from '../../../constants/account';
+  import { DELIVERY_TYPE } from '../../../constants/logistics';
+  import { LogisticsRepository, type TSuggestTrip } from '../../../models/Logistics';
   import { ReservationRepository, type TReservation } from '../../../models/Reservation';
   import { AccountService } from '../../../services/AccountService';
   import { profile } from '../../../stores/Account';
   import { addToast } from '../../../stores/Toast';
   import { handleError } from '../../../utils/error-handle-helper';
 
+  const MAX_SUGGEST_TRIP_COUNT = 3;
+
   export let open: boolean;
   export let reservationId: string;
   export let reservationStatus: TReservation['status'];
+  export let pickupStop: string;
+  export let deliveryStop: string;
 
   $: reservationRepository = new ReservationRepository();
 
@@ -38,33 +47,59 @@
     { text: PACKED_STEPS.confirm_packed.text },
   ];
 
-  let selectedShipperId = '';
-  let selectedTripId = '';
+  let selectedShipper = null;
+  let selectedTrip = null;
 
   let logistics = [];
 
-  async function fetchLogistics(): Promise<{ [k: string]: string }> {
+  async function fetchLogistics(): Promise<Record<string, string>[]> {
+    selectedShipper = null;
     try {
       logistics = await new AccountService().getLogistics();
       logistics.push($profile);
-      return Object.fromEntries(logistics.map(({ id, name }) => [id, name]));
+      return logistics;
     } catch (err) {
       handleError(err);
-      return {};
+      logistics = [];
+      return logistics;
     }
   }
 
-  $: isTripSelectionRequired(selectedShipperId);
+  $: isTripSelectionRequired(selectedShipper);
 
-  function isTripSelectionRequired(selectedShipperId) {
-    // TODO: 配送便候補取得APIとの結合を後続のタスクで行うため、まだ巡回経路で集荷や配送を行う物流業者の場合でも配送便候補を選択せずに出荷できるようにしておく
-    // const selectedShipper = logistics.filter((user) => user.id === selectedShipperId)[0];
-    // return (
-    //   selectedShipper &&
-    //   selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
-    //   selectedShipper.logisticsSettingForLogistics.deliveryType === DELIVERY_TYPE.route
-    // );
-    return false;
+  function isTripSelectionRequired(selectedShipper) {
+    return (
+      selectedShipper &&
+      selectedShipper.attribute === USER_ATTRIBUTE.logistics &&
+      selectedShipper.logisticsSettingForLogistics.deliveryType === DELIVERY_TYPE.route
+    );
+  }
+
+  let suggestions = [];
+
+  async function fetchTripSuggestions(): Promise<TSuggestTrip[]> {
+    selectedTrip = null;
+    try {
+      suggestions = await new LogisticsRepository().getTripSuggestions(
+        selectedShipper.id,
+        pickupStop,
+        deliveryStop,
+        MAX_SUGGEST_TRIP_COUNT,
+      );
+      return suggestions;
+    } catch (err) {
+      handleError(err);
+      suggestions = [];
+      return [];
+    }
+  }
+
+  function selectTripStyle(e: Event, suggest: TSuggestTrip) {
+    Array.prototype.forEach.call(document.getElementsByTagName('tr'), (element) => {
+      element.style.backgroundColor = '#ffffff';
+    });
+    (e.currentTarget as HTMLElement).style.backgroundColor = '#E0E0E0';
+    selectedTrip = suggest;
   }
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
@@ -80,7 +115,21 @@
 
   async function packed() {
     try {
-      const updateReservationData = await reservationRepository.packed(reservationId, { shipperId: selectedShipperId });
+      const packedData = selectedTrip
+        ? {
+            shipperId: selectedShipper.id,
+            logisticsName: selectedShipper.name,
+            routeId: selectedTrip.routeId,
+            routeName: selectedTrip.routeName,
+            tripId: selectedTrip.tripId,
+            tripName: selectedTrip.tripName,
+            pickupStop,
+            pickupTime: selectedTrip.pickupTime,
+            deliveryStop,
+            deliveryTime: selectedTrip.deliveryTime,
+          }
+        : { shipperId: selectedShipper.id };
+      const updateReservationData = await reservationRepository.packed(reservationId, packedData);
       reservationStatus = updateReservationData.status;
       addToast({
         message: '予約作物の出荷が完了しました。',
@@ -100,7 +149,7 @@
       {#if PACKED_STEPS.select_shipper.index === currentStep}
         <p>配送者を選択してください</p>
       {:else if PACKED_STEPS.select_trip.index === currentStep}
-        {#if isTripSelectionRequired(selectedShipperId)}
+        {#if isTripSelectionRequired(selectedShipper)}
           <p>配送する便を選択してください。</p>
         {:else}
           <p>配送便の選択はありません。次へ進んでください。</p>
@@ -115,25 +164,50 @@
       {#if open}
         {#if PACKED_STEPS.select_shipper.index === currentStep}
           {#await fetchLogistics()}
-            <div style="display: flex; justify-content: center">
-              <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
+            <div class="flex justify-center">
+              <CircularProgress class="h-[160px] w-[32px]" indeterminate />
             </div>
           {:then logistics}
             <List radioList>
-              {#each Object.keys(logistics) as shipper}
+              {#each logistics as shipper}
                 <Item>
                   <Graphic>
-                    <Radio bind:group={selectedShipperId} value={shipper} />
+                    <Radio bind:group={selectedShipper} value={shipper} />
                   </Graphic>
-                  <Text>{logistics[shipper]}</Text>
+                  <Text>{shipper.name}</Text>
                 </Item>
               {/each}
             </List>
           {/await}
         {:else if PACKED_STEPS.select_trip.index === currentStep}
           <div />
-          {#if isTripSelectionRequired(selectedShipperId)}
-            <div />
+          {#if isTripSelectionRequired(selectedShipper)}
+            {#await fetchTripSuggestions()}
+              <div class="flex justify-center">
+                <CircularProgress class="h-[160px] w-[32px]" indeterminate />
+              </div>
+            {:then suggestions}
+              <DataTable>
+                <Head>
+                  <Row>
+                    <Cell class="text-center">路線</Cell>
+                    <Cell class="text-center">便名</Cell>
+                    <Cell class="text-center">集荷場所</Cell>
+                    <Cell class="text-center">集荷予定日時</Cell>
+                  </Row>
+                </Head>
+                {#each suggestions as suggest}
+                  <Body class="cell">
+                    <Row on:click={(e) => selectTripStyle(e, suggest)}>
+                      <Cell class="text-center">{suggest.routeName}</Cell>
+                      <Cell class="text-center">{suggest.tripName}</Cell>
+                      <Cell class="text-center">{suggest.pickupStop}</Cell>
+                      <Cell class="text-center">{dayjs(suggest.pickupTime).format('YYYY/MM/DD')}</Cell>
+                    </Row>
+                  </Body>
+                {/each}
+              </DataTable>
+            {/await}
           {:else}
             <div />
           {/if}
@@ -146,7 +220,7 @@
   <Actions>
     {#if PACKED_STEPS.select_shipper.index === currentStep}
       <Button
-        disabled={!selectedShipperId}
+        disabled={!selectedShipper}
         class="w-[100px]  rounded-full px-4 py-2"
         color="secondary"
         variant="raised"
@@ -163,9 +237,9 @@
       >
         <p class="text-lg font-bold">前へ</p>
       </Button>
-      {#if isTripSelectionRequired(selectedShipperId)}
+      {#if isTripSelectionRequired(selectedShipper)}
         <Button
-          disabled={!selectedTripId}
+          disabled={!selectedTrip}
           class="w-[100px]  rounded-full px-4 py-2"
           color="secondary"
           variant="raised"
@@ -197,7 +271,7 @@
         color="secondary"
         variant="raised"
         action="packed"
-        disabled={!selectedShipperId}
+        disabled={!selectedShipper}
       >
         <p class="text-lg font-bold">出荷</p>
       </Button>
