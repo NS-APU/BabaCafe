@@ -17,7 +17,7 @@
   import { ShowableError } from '../../../models/Error';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
-  import type { TProductForm } from '../../../models/Product';
+  import type { TProductForm, TProduct } from '../../../models/Product';
 
   const START_DEFAULT_DATE_TIME = new Date();
   START_DEFAULT_DATE_TIME.setHours(0);
@@ -54,36 +54,37 @@
 
   export let onConfirm: (values: Required<TProductForm>) => unknown;
 
-  const initialValues = {
-    name: '',
-    kinds: CROP_KINDS.vegetables,
-    description: '',
-    startAt: START_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
-    endAt: END_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
-    unit: CROP_UNITS.gram,
-    unitQuantity: 1,
-    unitPrice: 0,
-    image: '',
-    quantity: 1,
-    shockLevel: SHOCK_LEVEL.strong,
-  };
-
+  export let product: TProduct | undefined = undefined;
+  export let pageType: 'new' | 'edit';
   const { form, data } = createForm({
-    initialValues,
+    initialValues: {
+      ...product,
+      name: product?.name || '',
+      kinds: product?.kinds || CROP_KINDS.vegetables,
+      description: product?.description || '',
+      startAt: product?.startAt || START_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
+      endAt: product?.endAt || END_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
+      unit: product?.unit || CROP_UNITS.gram,
+      unitQuantity: product?.unitQuantity || 1,
+      unitPrice: product?.unitPrice || 0,
+      image: product?.image || '',
+      quantity: product?.quantity || 1,
+      shockLevel: product?.shockLevel || SHOCK_LEVEL.strong,
+    },
     onSubmit: async (values) => {
       await onConfirm({
         ...values,
-        name: name,
-        kinds: kinds,
-        description: description,
-        startAt: startAt,
-        endAt: endAt,
-        unit: unit,
-        unitQuantity: Number(unitQuantity),
-        unitPrice: Number(unitPrice),
+        name: $data.name,
+        kinds: $data.kinds,
+        description: $data.description,
+        startAt: $data.startAt,
+        endAt: $data.endAt,
+        unit: $data.unit,
+        unitQuantity: Number($data.unitQuantity),
+        unitPrice: Number($data.unitPrice),
         image: $data.image,
-        quantity: Number(quantity),
-        shockLevel: Number(shockLevel),
+        quantity: Number($data.quantity),
+        shockLevel: Number($data.shockLevel),
       });
     },
   });
@@ -114,17 +115,6 @@
     onInput('');
     onBlur();
   }
-
-  let name = '';
-  let kinds = CROP_KINDS.vegetables;
-  let description = '';
-  let startAt = START_DEFAULT_DATE_TIME.toISOString().slice(0, 16);
-  let endAt = END_DEFAULT_DATE_TIME.toISOString().slice(0, 16);
-  let unit = CROP_UNITS.gram;
-  let unitQuantity = 1;
-  let unitPrice = 0;
-  let quantity = 1;
-  let shockLevel = SHOCK_LEVEL.strong;
 </script>
 
 <div>
@@ -138,7 +128,7 @@
         <Textfield
           class="m-3 w-[300px]"
           label="作物名"
-          bind:value={name}
+          bind:value={$data.name}
           required
           type={'text'}
           input$maxlength={30}
@@ -147,7 +137,7 @@
       </div>
 
       <div>
-        <Select class="m-3 w-[300px]" variant="standard" label="作物の種類" bind:value={kinds} required>
+        <Select class="m-3 w-[300px]" variant="standard" label="作物の種類" bind:value={$data.kinds} required>
           {#each Object.keys(CROP_KINDS) as kind}
             <Option value={CROP_KINDS[kind]}>{CROP_KINDS_LABEL[kind]}</Option>
           {/each}
@@ -158,7 +148,7 @@
         <div class="label required input-title text-text-lightGray">説明</div>
         <Textfield
           class="w-[300px] sm:w-[300px] md:w-[600px]"
-          bind:value={description}
+          bind:value={$data.description}
           textarea
           input$maxlength={500}
           input$placeholder="例）甘くて美味しい、真っ赤な苺です。"
@@ -171,7 +161,7 @@
           class="m-3 w-[150px]"
           variant="standard"
           label="開始"
-          bind:value={startAt}
+          bind:value={$data.startAt}
           type="datetime-local"
           required
           input$min={START_AT_MIN_DATE_TIME.toISOString().slice(0, 16)}
@@ -183,7 +173,7 @@
           class="m-3 w-[150px]"
           variant="standard"
           label="終了"
-          bind:value={endAt}
+          bind:value={$data.endAt}
           type="datetime-local"
           required
           input$min={END_AT_MIN_DATE_TIME.toISOString().slice(0, 16)}
@@ -197,13 +187,13 @@
         <Textfield
           class="m-3 w-[100px]"
           label="単位数量"
-          bind:value={unitQuantity}
+          bind:value={$data.unitQuantity}
           required
           type={'number'}
           input$min={0}
           input$max={99999}
         />
-        <Select class="m-3 w-[100px]" label="単位" variant="standard" bind:value={unit} required>
+        <Select class="m-3 w-[100px]" label="単位" variant="standard" bind:value={$data.unit} required>
           {#each Object.keys(CROP_UNITS) as kind}
             <Option value={CROP_UNITS[kind]}>{CROP_UNITS_LABEL[kind]}</Option>
           {/each}
@@ -215,7 +205,7 @@
         <Textfield
           class="m-3 w-[150px]"
           label="金額"
-          bind:value={unitPrice}
+          bind:value={$data.unitPrice}
           required
           type={'number'}
           suffix="円"
@@ -229,7 +219,7 @@
         <Textfield
           class="ml-3 w-[150px]"
           label="数量"
-          bind:value={quantity}
+          bind:value={$data.quantity}
           required
           type={'number'}
           suffix="点"
@@ -278,7 +268,7 @@
       </h1>
 
       <div>
-        <Select class="m-3 w-[300px]" variant="standard" label="衝撃" bind:value={shockLevel} required>
+        <Select class="m-3 w-[300px]" variant="standard" label="衝撃" bind:value={$data.shockLevel} required>
           {#each Object.keys(SHOCK_LEVEL) as shockLevel}
             <Option value={SHOCK_LEVEL[shockLevel]}>{SHOCK_LEVEL_LABEL[shockLevel]}</Option>
           {/each}
@@ -298,7 +288,7 @@
       </Button>
 
       <Button variant="raised" class="mt-10 w-[150px] rounded-full px-4 py-2" color="secondary" type="submit">
-        <p class="black">出品</p>
+        <p class="black">{pageType === 'new' ? '出品' : '編集'}</p>
       </Button>
     </div>
   </form>
