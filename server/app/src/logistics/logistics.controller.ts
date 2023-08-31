@@ -7,6 +7,9 @@ import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsService } from './logistics.service';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
+import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
+import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
+import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
 
 @Controller('logistics')
 @UseGuards(JwtAuthGuard)
@@ -46,6 +49,22 @@ export class LogisticsController {
     return this.logisticService.updateIntermediarySetting(account, intermediaryId, dto);
   }
 
+  @Post('/setting/logistics/:logisticsId/route')
+  @HttpCode(HttpStatus.CREATED)
+  async createRoute(@Param('logisticsId') logisticsId: string, @Body() dto: CreateRouteDto) {
+    return this.logisticService.createRoute(logisticsId, dto);
+  }
+
+  @Post('/setting/logistics/trip')
+  @HttpCode(HttpStatus.CREATED)
+  async createTrip(@Body() dto: CreateTripDto, @GetAccount() account: Account) {
+    return this.logisticService.createTrip(account, dto);
+  }
+
+  @Put('/setting/logistics/:logisticsId/deliveryType')
+  async updateDeliveryType(@Param('logisticsId') logisticsId: string, @Body() dto: UpdateDeliveryTypeDto) {
+    return this.logisticService.updateDeliveryType(logisticsId, dto);
+  }
   @Post('/schedule')
   @HttpCode(HttpStatus.CREATED)
   async createShippingSchedule(@Body() dto: CreateShippingScheduleDto) {

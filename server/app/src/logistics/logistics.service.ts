@@ -9,6 +9,10 @@ import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/enti
 import { MoreThan, Repository } from 'typeorm';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
+import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
+import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
+import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { Route } from './setting/logistics/entities/route.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 
 @Injectable()
@@ -86,6 +90,50 @@ export class LogisticsService {
     return setting;
   }
 
+  async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
+    const route = new Route();
+    await LogisticsService.setProductAttributes(dto, route);
+    await route.save();
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
+    route.logisticsSettingId = dto.logisticsSettingId;
+    route.name = dto.name;
+  }
+
+  async createTrip(account: Account, dto: CreateTripDto) {
+    // TODO 便追加の処理
+  }
+
+  async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    setting.deliveryType = dto.deliveryType;
+    this.logisticsSettingRepository.save(setting);
+    return setting;
+  }
   async createShippingSchedule(dto: CreateShippingScheduleDto): Promise<ShippingSchedule> {
     const shippingSchedule = this.shippingScheduleRepository.create(dto);
     return await this.shippingScheduleRepository.save(shippingSchedule);
