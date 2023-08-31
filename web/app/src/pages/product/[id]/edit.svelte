@@ -3,7 +3,7 @@
   import CircularProgress from '@smui/circular-progress';
   import { ProductRepository, type TProduct, type TProductForm } from '../../../models/Product';
   import { addToast } from '../../../stores/Toast';
-  import { markAsLogoutState } from './../../../stores/Login';
+  import { handleError } from '../../../utils/error-handle-helper';
   import ProductForm from './../_components/ProductForm.svelte';
 
   $: productRepository = new ProductRepository();
@@ -12,52 +12,22 @@
     try {
       return await productRepository.findOne($params.id);
     } catch (err) {
-      switch (err.error || err.message) {
-        case 'Unauthorized':
-          markAsLogoutState();
-          addToast({
-            message: '認証が切れました。再度ログインしてください。',
-            type: 'error',
-          });
-          $goto('/login');
-          break;
-        default:
-          addToast({
-            message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
-            type: 'error',
-          });
-          break;
-      }
-      return null;
+      handleError(err, '商品の取得');
     }
   }
 
   async function onConfirm(values: Required<TProductForm>) {
+    const operation = '商品の編集';
     await productRepository
       .update($params.id, { ...values })
       .then(() => {
         addToast({
-          message: '商品の編集に成功しました。',
+          message: `${operation}に成功しました。`,
         });
         $goto('./../');
       })
       .catch((err) => {
-        switch (err.error || err.message) {
-          case 'Unauthorized':
-            markAsLogoutState();
-            addToast({
-              message: '認証が切れました。再度ログインしてください。',
-              type: 'error',
-            });
-            $goto('/login');
-            break;
-          default:
-            addToast({
-              message: '商品の編集に失敗しました。もう一度時間をおいて再度試してください。',
-              type: 'error',
-            });
-            break;
-        }
+        handleError(err, operation);
       });
   }
 </script>
