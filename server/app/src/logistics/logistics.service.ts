@@ -141,6 +141,27 @@ export class LogisticsService {
     // TODO 便追加の処理
   }
 
+  async deleteTrip(logisticsId: string, tripId: string): Promise<LogisticsSettingForLogistics> {
+    const trip = await this.tripRepository.findOne({ where: { id: tripId } });
+    if (!trip) {
+      throw new BadRequestException();
+    }
+    await this.tripRepository.remove(trip);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
   async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
     const setting = await this.logisticsSettingRepository
       .findOne({

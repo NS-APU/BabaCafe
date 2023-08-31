@@ -40,7 +40,7 @@
       </Header>
       <Content>
         {#each route.trips as trip}
-          <LogisticsTripAccordion {trip} />
+          <LogisticsTripAccordion bind:logisticsSetting {trip} />
         {/each}
 
         <div class="flex justify-center">

@@ -78,6 +78,11 @@ export class LogisticsController {
     return this.logisticService.createTrip(account, dto);
   }
 
+  @Delete('/setting/logistics/:logisticsId/trip/:tripId')
+  async deleteTrip(@Param('logisticsId') logisticsId: string, @Param('tripId') tripId: string) {
+    return this.logisticService.deleteTrip(logisticsId, tripId);
+  }
+
   @Put('/setting/logistics/:logisticsId/deliveryType')
   async updateDeliveryType(@Param('logisticsId') logisticsId: string, @Body() dto: UpdateDeliveryTypeDto) {
     return this.logisticService.updateDeliveryType(logisticsId, dto);
