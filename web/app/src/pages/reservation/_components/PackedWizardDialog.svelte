@@ -140,7 +140,7 @@
   }
 </script>
 
-<Dialog selection bind:open on:SMUIDialog:closed={onDialogClosedHandle}>
+<Dialog selection bind:open on:SMUIDialog:closed={onDialogClosedHandle} surface$style="max-width: calc(100vw - 32px);">
   <Title>
     <div class="text-xs">
       <Steps {steps} current={currentStep} size="2rem" clickable={false} />
@@ -187,7 +187,7 @@
                 <CircularProgress class="h-[160px] w-[32px]" indeterminate />
               </div>
             {:then suggestions}
-              <DataTable>
+              <DataTable class="w-full">
                 <Head>
                   <Row>
                     <Cell class="text-center">路線</Cell>
