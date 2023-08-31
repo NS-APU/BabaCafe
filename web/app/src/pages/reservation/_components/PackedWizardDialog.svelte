@@ -187,7 +187,7 @@
                 <CircularProgress class="h-[160px] w-[32px]" indeterminate />
               </div>
             {:then suggestions}
-              <DataTable>
+              <DataTable class="w-full">
                 <Head>
                   <Row>
                     <Cell class="text-center">路線</Cell>
