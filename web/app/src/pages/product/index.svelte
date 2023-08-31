@@ -8,8 +8,7 @@
   import { CROP_UNITS_LABEL } from '../../constants/product';
   import { ProductRepository, type TProduct } from '../../models/Product';
   import { profile } from '../../stores/Account';
-  import { markAsLogoutState } from '../../stores/Login';
-  import { addToast } from '../../stores/Toast';
+  import { handleError } from '../../utils/error-handle-helper';
 
   $: productRepository = new ProductRepository();
 
@@ -18,22 +17,7 @@
       const products = await productRepository.all();
       return products;
     } catch (err) {
-      switch (err.error || err.message) {
-        case 'Unauthorized':
-          markAsLogoutState();
-          addToast({
-            message: '認証が切れました。再度ログインしてください。',
-            type: 'error',
-          });
-          $goto('/login');
-          break;
-        default:
-          addToast({
-            message: '商品の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
-            type: 'error',
-          });
-          break;
-      }
+      handleError(err);
       return [];
     }
   }

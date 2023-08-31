@@ -6,8 +6,7 @@
   import { USER_ATTRIBUTE } from '../../constants/account';
   import { ReservationRepository, statusToText } from '../../models/Reservation';
   import { profile } from '../../stores/Account';
-  import { markAsLogoutState } from '../../stores/Login';
-  import { addToast } from '../../stores/Toast';
+  import { handleError } from '../../utils/error-handle-helper';
 
   $: reservationRepository = new ReservationRepository();
 
@@ -15,22 +14,7 @@
     try {
       return await reservationRepository.allReservations();
     } catch (err) {
-      switch (err.error || err.message) {
-        case 'Unauthorized':
-          markAsLogoutState();
-          addToast({
-            message: '認証が切れました。再度ログインしてください。',
-            type: 'error',
-          });
-          $goto('/login');
-          break;
-        default:
-          addToast({
-            message: '予約の取得に失敗しました。もう一度時間をおいて再読み込みしてください。',
-            type: 'error',
-          });
-          break;
-      }
+      handleError(err);
       return [];
     }
   }

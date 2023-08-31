@@ -1,8 +1,8 @@
 <script lang="ts">
   import { goto } from '@roxi/routify';
   import { ProductRepository, type TProductForm } from '../../models/Product';
-  import { markAsLogoutState } from '../../stores/Login';
   import { addToast } from '../../stores/Toast';
+  import { handleError } from '../../utils/error-handle-helper';
   import ProductForm from './_components/ProductForm.svelte';
 
   $: productRepository = new ProductRepository();
@@ -17,22 +17,7 @@
         $goto('./');
       })
       .catch((err) => {
-        switch (err.error || err.message) {
-          case 'Unauthorized':
-            markAsLogoutState();
-            addToast({
-              message: '認証が切れました。再度ログインしてください。',
-              type: 'error',
-            });
-            $goto('/login');
-            break;
-          default:
-            addToast({
-              message: '商品の作成に失敗しました。もう一度時間をおいて再度試してください。',
-              type: 'error',
-            });
-            break;
-        }
+        handleError(err);
       });
   }
 </script>

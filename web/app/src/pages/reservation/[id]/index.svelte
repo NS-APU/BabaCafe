@@ -1,19 +1,18 @@
 <script lang="ts">
-  import { goto, params } from '@roxi/routify';
+  import { params } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
-  import Dialog, { Title, Content, Actions } from '@smui/dialog';
-  import List, { Item, Graphic, Text } from '@smui/list';
   import Paper from '@smui/paper';
-  import Radio from '@smui/radio';
   import dayjs from 'dayjs';
   import StatusLabel from '.././_components/StatusLabel.svelte';
   import { CROP_UNITS_LABEL } from '../../../constants/product';
   import { ReservationRepository, type TReservation, RESERVATION_STATUS } from '../../../models/Reservation';
-  import { AccountService } from '../../../services/AccountService';
   import { profile } from '../../../stores/Account';
-  import { markAsLogoutState } from '../../../stores/Login';
-  import { addToast } from '../../../stores/Toast';
+  import { handleError } from '../../../utils/error-handle-helper';
+  import CancelConfirmDialog from '../_components/CancelConfirmDialog.svelte';
+  import KeptConfirmDialog from '../_components/KeptConfirmDialog.svelte';
+  import PackedWizardDialog from '../_components/PackedWizardDialog.svelte';
+  import ReceivedConfirmDialog from '../_components/ReceivedConfirmDialog.svelte';
 
   $: reservationRepository = new ReservationRepository();
 
@@ -49,113 +48,7 @@
   let isOpenPackedConfirmDialog = false;
   let isOpenKeptConfirmDialog = false;
   let isOpenReceivedConfirmDialog = false;
-  let isOpenCanceledConfirmDialog = false;
-
-  let selectedShipperId = '';
-
-  async function fetchLogistics() {
-    try {
-      const logistics = await new AccountService().getLogistics();
-      logistics.push($profile);
-      return Object.fromEntries(logistics.map(({ id, name }) => [id, name]));
-    } catch (err) {
-      handleError(err);
-      return [];
-    }
-  }
-
-  async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
-    switch (e.detail.action) {
-      case 'packed':
-        await packed();
-        break;
-      case 'kept':
-        await kept();
-        break;
-      case 'received':
-        await received();
-        break;
-      case 'canceled':
-        await canceled();
-        break;
-      default:
-        // NOP
-        break;
-    }
-  }
-
-  async function packed() {
-    try {
-      const updateReservationData = await reservationRepository.packed($params.id, { shipperId: selectedShipperId });
-      reservationStatus = updateReservationData.status;
-      addToast({
-        message: '予約作物の出荷が完了しました。',
-      });
-    } catch (err) {
-      handleError(err);
-    }
-  }
-
-  async function kept() {
-    try {
-      const updateReservationData = await reservationRepository.kept($params.id);
-      reservationStatus = updateReservationData.status;
-      addToast({
-        message: '予約作物を店舗で保管しています。',
-      });
-    } catch (err) {
-      handleError(err);
-    }
-  }
-
-  async function received() {
-    try {
-      const updateReservationData = await reservationRepository.received($params.id);
-      reservationStatus = updateReservationData.status;
-      addToast({
-        message: '予約作物を受取りました。',
-      });
-    } catch (err) {
-      handleError(err);
-    }
-  }
-
-  async function canceled() {
-    try {
-      const updateReservationData = await reservationRepository.canceled($params.id);
-      reservationStatus = updateReservationData.status;
-      addToast({
-        message: '予約を取り消しました。',
-      });
-    } catch (err) {
-      handleError(err);
-    }
-  }
-
-  function handleError(err) {
-    switch (err.error || err.message) {
-      case 'Bad Request':
-        addToast({
-          message: '予約の更新に失敗しました。開発者へお問い合わせください。',
-          type: 'error',
-        });
-        break;
-      case 'Unauthorized':
-        markAsLogoutState();
-        addToast({
-          message: '認証が切れました。再度ログインしてください。',
-          type: 'error',
-        });
-        $goto('/login');
-        break;
-      default:
-        addToast({
-          message: '予約の更新に失敗しました。もう一度時間をおいて再読み込みしてください。',
-          type: 'error',
-        });
-        break;
-    }
-  }
+  let isOpenCancelConfirmDialog = false;
 </script>
 
 {#await fetchReservationProducts()}
@@ -258,43 +151,13 @@
         >
           <p class="text-lg font-bold">出荷</p>
         </Button>
-        <Dialog selection bind:open={isOpenPackedConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>配送者を選択して出荷しますか？</Title>
-          <Content>
-            {#await fetchLogistics()}
-              <div style="display: flex; justify-content: center">
-                <CircularProgress style=" width: 32px;height: 160px;" indeterminate />
-              </div>
-            {:then logistics}
-              <div class="max-h-[300px]">
-                <List radioList>
-                  {#each Object.keys(logistics) as shipper}
-                    <Item>
-                      <Graphic>
-                        <Radio bind:group={selectedShipperId} value={shipper} />
-                      </Graphic>
-                      <Text>{logistics[shipper]}</Text>
-                    </Item>
-                  {/each}
-                </List>
-              </div>
-            {/await}
-          </Content>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button
-              class="w-[150px]  rounded-full px-4 py-2"
-              color="secondary"
-              variant="raised"
-              action="packed"
-              disabled={!selectedShipperId}
-            >
-              <p class="text-lg font-bold">出荷</p>
-            </Button>
-          </Actions>
-        </Dialog>
+        <PackedWizardDialog
+          bind:open={isOpenPackedConfirmDialog}
+          reservationId={$params.id}
+          bind:reservationStatus
+          pickupStop={reservationData.product.producer.logisticsSettingForProducer.stop}
+          deliveryStop={reservationData.receiveLocation.logisticsSettingForIntermediary.stop}
+        />
       {/if}
       {#if canKept(reservationData)}
         <Button
@@ -305,17 +168,7 @@
         >
           <p class="text-lg font-bold">店舗預かり</p>
         </Button>
-        <Dialog selection bind:open={isOpenKeptConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>店舗で作物を預かりましたか？</Title>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="kept">
-              <p class="text-lg font-bold">店舗預かり</p>
-            </Button>
-          </Actions>
-        </Dialog>
+        <KeptConfirmDialog bind:open={isOpenKeptConfirmDialog} reservationId={$params.id} bind:reservationStatus />
       {/if}
       {#if canReceived(reservationData)}
         <Button
@@ -326,17 +179,11 @@
         >
           <p class="text-lg font-bold">受取り</p>
         </Button>
-        <Dialog selection bind:open={isOpenReceivedConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-          <Title>作物を受取りましたか？</Title>
-          <Actions>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-              <p class="text-lg font-bold">キャンセル</p>
-            </Button>
-            <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="received">
-              <p class="text-lg font-bold">受取り</p>
-            </Button>
-          </Actions>
-        </Dialog>
+        <ReceivedConfirmDialog
+          bind:open={isOpenReceivedConfirmDialog}
+          reservationId={$params.id}
+          bind:reservationStatus
+        />
       {/if}
       {#if canEdit(reservationData)}
         <div>
@@ -349,21 +196,15 @@
             class="w-[150px] rounded-full px-4 py-2"
             color="secondary"
             variant="raised"
-            on:click={() => (isOpenCanceledConfirmDialog = true)}
+            on:click={() => (isOpenCancelConfirmDialog = true)}
           >
             <p class="text-lg font-bold">予約取り消し</p>
           </Button>
-          <Dialog selection bind:open={isOpenCanceledConfirmDialog} on:SMUIDialog:closed={onDialogClosedHandle}>
-            <Title>予約を取り消しますか？</Title>
-            <Actions>
-              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
-                <p class="text-lg font-bold">キャンセル</p>
-              </Button>
-              <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="raised" action="canceled">
-                <p class="text-lg font-bold">取り消し</p>
-              </Button>
-            </Actions>
-          </Dialog>
+          <CancelConfirmDialog
+            bind:open={isOpenCancelConfirmDialog}
+            reservationId={$params.id}
+            bind:reservationStatus
+          />
         </div>
       {/if}
     </div>

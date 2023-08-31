@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Put, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Put, Param, UseGuards, Query, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import * as dayjs from 'dayjs';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
 import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsService } from './logistics.service';
+import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 
 @Controller('logistics')
 @UseGuards(JwtAuthGuard)
@@ -42,5 +44,28 @@ export class LogisticsController {
     @GetAccount() account: Account,
   ) {
     return this.logisticService.updateIntermediarySetting(account, intermediaryId, dto);
+  }
+
+  @Post('/schedule')
+  @HttpCode(HttpStatus.CREATED)
+  async createShippingSchedule(@Body() dto: CreateShippingScheduleDto) {
+    return this.logisticService.createShippingSchedule(dto);
+  }
+
+  @Get('/tripsuggestions')
+  async getTripSuggestions(
+    @Query('logisticsId') logisticsId: string,
+    @Query('pickup-stop') pickupStop: string,
+    @Query('delivery-stop') deliveryStop: string,
+    @Query('count') count: number,
+    @Query('date') date: string,
+  ) {
+    return await this.logisticService.getTripSuggestions(
+      logisticsId,
+      pickupStop,
+      deliveryStop,
+      count,
+      dayjs(date).toDate(),
+    );
   }
 }

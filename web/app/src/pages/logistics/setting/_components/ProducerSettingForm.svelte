@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { goto } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
   import { onMount } from 'svelte';
   import { LogisticsRepository } from '../../../../models/Logistics';
   import { profile } from '../../../../stores/Account';
-  import { markAsLogoutState } from '../../../../stores/Login';
   import { addToast } from '../../../../stores/Toast';
+  import { handleError } from '../../../../utils/error-handle-helper';
   import StopSelectWizardDialog from './StopSelectWizardDialog.svelte';
 
   $: logisticsRepository = new LogisticsRepository();
@@ -38,31 +37,6 @@
       isMounted = true;
     }
   });
-
-  function handleError(err, operation) {
-    switch (err.error || err.message) {
-      case 'Bad Request':
-        addToast({
-          message: `${operation}に失敗しました。開発者へお問い合わせください。`,
-          type: 'error',
-        });
-        break;
-      case 'Unauthorized':
-        markAsLogoutState();
-        addToast({
-          message: '認証が切れました。再度ログインしてください。',
-          type: 'error',
-        });
-        $goto('/login');
-        break;
-      default:
-        addToast({
-          message: `${operation}に失敗しました。もう一度時間をおいて再読み込みしてください。`,
-          type: 'error',
-        });
-        break;
-    }
-  }
 </script>
 
 {#if !isMounted}

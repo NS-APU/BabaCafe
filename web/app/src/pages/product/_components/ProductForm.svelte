@@ -14,7 +14,6 @@
     SHOCK_LEVEL,
     SHOCK_LEVEL_LABEL,
   } from '../../../constants/product';
-  import { ShowableError } from '../../../models/Error';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
   import type { TProductForm, TProduct } from '../../../models/Product';
@@ -106,7 +105,10 @@
         onInput(await encodeFileToBase64(files[0]));
         onBlur();
       } catch {
-        throw new ShowableError('画像の読み込みに失敗しました。');
+        addToast({
+          message: '画像の読み込みに失敗しました。',
+          type: 'error',
+        });
       }
     }
   }
