@@ -24,6 +24,8 @@ export class LogisticsService {
     private logisticsSettingRepository: Repository<LogisticsSettingForLogistics>,
     @InjectRepository(LogisticsSettingForIntermediary)
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
+    @InjectRepository(Route)
+    private routeRepository: Repository<Route>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
     @InjectRepository(ShippingSchedule)
@@ -94,6 +96,27 @@ export class LogisticsService {
     const route = new Route();
     await LogisticsService.setProductAttributes(dto, route);
     await route.save();
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async deleteRoute(logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
+    const route = await this.routeRepository.findOne({ where: { id: routeId } });
+    if (!route) {
+      throw new BadRequestException();
+    }
+    await this.routeRepository.remove(route);
 
     const setting = await this.logisticsSettingRepository
       .findOne({

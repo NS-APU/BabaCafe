@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Put, Param, UseGuards, Query, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Put,
+  Delete,
+  Param,
+  UseGuards,
+  Query,
+  Post,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import * as dayjs from 'dayjs';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
@@ -53,6 +65,11 @@ export class LogisticsController {
   @HttpCode(HttpStatus.CREATED)
   async createRoute(@Param('logisticsId') logisticsId: string, @Body() dto: CreateRouteDto) {
     return this.logisticService.createRoute(logisticsId, dto);
+  }
+
+  @Delete('/setting/logistics/:logisticsId/route/:routeId')
+  async deleteRoute(@Param('logisticsId') logisticsId: string, @Param('routeId') routeId: string) {
+    return this.logisticService.deleteRoute(logisticsId, routeId);
   }
 
   @Post('/setting/logistics/trip')
