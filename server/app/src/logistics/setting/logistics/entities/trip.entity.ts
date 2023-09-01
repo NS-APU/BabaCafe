@@ -30,3 +30,9 @@ export class Trip extends BaseEntity {
   @OneToMany(() => Timetable, (timetable) => timetable.trip)
   timetables: Timetable[];
 }
+
+export type TTrip = Pick<Trip, 'routeId' | 'name' | 'shockLevel' | 'capacity'> & {
+  id: string;
+  route: Route;
+  timetables: Timetable[];
+};
