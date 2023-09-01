@@ -4,6 +4,7 @@
   import IconButton from '@smui/icon-button';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
+  import dayjs from 'dayjs';
   import { createField, createForm } from 'felte';
   import CloseIcon from '../../../components/icon/CloseIcon.svelte';
   import {
@@ -18,30 +19,18 @@
   import { encodeFileToBase64 } from '../../../utils/file';
   import type { TProductForm, TProduct } from '../../../models/Product';
 
-  const START_DEFAULT_DATE_TIME = new Date();
-  START_DEFAULT_DATE_TIME.setHours(0);
-  START_DEFAULT_DATE_TIME.setMinutes(0);
-  const START_AT_MIN_DATE_TIME = new Date();
-  START_AT_MIN_DATE_TIME.setHours(0);
-  START_AT_MIN_DATE_TIME.setMinutes(0);
-  const START_AT_MAX_DATE_TIME = new Date();
-  START_AT_MAX_DATE_TIME.setMonth(START_AT_MAX_DATE_TIME.getMonth() + 1);
-  START_AT_MAX_DATE_TIME.setDate(START_AT_MAX_DATE_TIME.getDate() - 1);
-  START_AT_MAX_DATE_TIME.setHours(0);
-  START_AT_MAX_DATE_TIME.setMinutes(0);
+  const START_DEFAULT_DATE_TIME = dayjs().minute(0);
+  const START_AT_MIN_DATE_TIME = START_DEFAULT_DATE_TIME;
+  // 終了日は開始日の翌日以降 && 開始日と終了日が30日以内 を満たすには 開始日の上限が+29日である必要あり
+  const START_AT_MAX_DATE_TIME = START_DEFAULT_DATE_TIME.add(29, 'day');
 
-  const END_DEFAULT_DATE_TIME = new Date();
-  END_DEFAULT_DATE_TIME.setDate(END_DEFAULT_DATE_TIME.getDate() + 7);
-  END_DEFAULT_DATE_TIME.setHours(0);
-  END_DEFAULT_DATE_TIME.setMinutes(0);
-  const END_AT_MIN_DATE_TIME = new Date();
-  END_AT_MIN_DATE_TIME.setDate(END_AT_MIN_DATE_TIME.getDate() + 1);
-  END_AT_MIN_DATE_TIME.setHours(0);
-  END_AT_MIN_DATE_TIME.setMinutes(0);
-  const END_AT_MAX_DATE_TIME = new Date();
-  END_AT_MAX_DATE_TIME.setMonth(END_AT_MAX_DATE_TIME.getMonth() + 1);
-  END_AT_MAX_DATE_TIME.setHours(0);
-  END_AT_MAX_DATE_TIME.setMinutes(0);
+  const END_DEFAULT_DATE_TIME = START_DEFAULT_DATE_TIME.add(7, 'day');
+  const END_AT_MIN_DATE_TIME = START_DEFAULT_DATE_TIME.add(1, 'day');
+  const END_AT_MAX_DATE_TIME = START_DEFAULT_DATE_TIME.add(30, 'day');
+
+  const DATE_FORMAT = 'YYYY-MM-DDThh:mm';
+
+  const FILE_LIMIT_SIZE = 5 * 1024 * 1024;
 
   const showPicker = (e: Event) => {
     if (e.target instanceof HTMLInputElement) {
@@ -49,20 +38,21 @@
     }
   };
 
-  const FILE_LIMIT_SIZE = 5 * 1024 * 1024;
-
   export let onConfirm: (values: Required<TProductForm>) => unknown;
 
   export let product: TProduct | undefined = undefined;
   export let pageType: 'new' | 'edit';
+
   const { form, data } = createForm({
     initialValues: {
       ...product,
       name: product?.name || '',
       kinds: product?.kinds || CROP_KINDS.vegetables,
       description: product?.description || '',
-      startAt: product?.startAt || START_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
-      endAt: product?.endAt || END_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
+      startAt: product?.startAt
+        ? dayjs(product.startAt).format(DATE_FORMAT)
+        : START_DEFAULT_DATE_TIME.format(DATE_FORMAT),
+      endAt: product?.endAt ? dayjs(product.endAt).format(DATE_FORMAT) : END_DEFAULT_DATE_TIME.format(DATE_FORMAT),
       unit: product?.unit || CROP_UNITS.gram,
       unitQuantity: product?.unitQuantity || 1,
       unitPrice: product?.unitPrice || 0,
@@ -166,8 +156,8 @@
           bind:value={$data.startAt}
           type="datetime-local"
           required
-          input$min={START_AT_MIN_DATE_TIME.toISOString().slice(0, 16)}
-          input$max={START_AT_MAX_DATE_TIME.toISOString().slice(0, 16)}
+          input$min={START_AT_MIN_DATE_TIME.format(DATE_FORMAT)}
+          input$max={START_AT_MAX_DATE_TIME.format(DATE_FORMAT)}
           on:click={showPicker}
         />
         <span class="label ml-3 mr-3 text-text-lightGray">～</span>
@@ -178,8 +168,8 @@
           bind:value={$data.endAt}
           type="datetime-local"
           required
-          input$min={END_AT_MIN_DATE_TIME.toISOString().slice(0, 16)}
-          input$max={END_AT_MAX_DATE_TIME.toISOString().slice(0, 16)}
+          input$min={END_AT_MIN_DATE_TIME.format(DATE_FORMAT)}
+          input$max={END_AT_MAX_DATE_TIME.format(DATE_FORMAT)}
           on:click={showPicker}
         />
       </div>
