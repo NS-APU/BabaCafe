@@ -28,7 +28,7 @@
   const END_AT_MIN_DATE_TIME = START_DEFAULT_DATE_TIME.add(1, 'day');
   const END_AT_MAX_DATE_TIME = START_DEFAULT_DATE_TIME.add(30, 'day');
 
-  const DATE_FORMAT = 'YYYY-MM-DDThh:mm';
+  const DATE_FORMAT = 'YYYY-MM-DDTHH:mm';
 
   const FILE_LIMIT_SIZE = 5 * 1024 * 1024;
 
