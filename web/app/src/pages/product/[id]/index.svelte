@@ -123,7 +123,7 @@
           <p class="black">予約</p>
         </Button>
       </div>
-    {:else if $profile.attribute === USER_ATTRIBUTE.producer}
+    {:else if $profile.attribute === USER_ATTRIBUTE.producer && !isOutOfStock(product)}
       <div class="flex justify-center">
         <Button
           variant="raised"
