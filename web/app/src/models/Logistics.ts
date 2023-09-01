@@ -100,9 +100,9 @@ export class LogisticsRepository {
     });
   }
 
-  async deleteTrip(logisticsSettingId: string, tripId: string): Promise<TLogisticsSetting> {
+  async deleteTrip(logisticsSettingId: string, routeId: string, tripId: string): Promise<TLogisticsSetting> {
     return await baseAPI<TLogisticsSetting>({
-      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsSettingId}/trip/${tripId}`,
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsSettingId}/route/${routeId}/trip/${tripId}`,
       method: 'DELETE',
     });
   }

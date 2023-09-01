@@ -1,11 +1,17 @@
 <script lang="ts">
   import ConfirmDialog from '../../../../components/customized/ConfirmDialog.svelte';
-  import { LogisticsRepository, type TTripSetting, type TLogisticsSetting } from '../../../../models/Logistics';
+  import {
+    LogisticsRepository,
+    type TTripSetting,
+    type TRouteSetting,
+    type TLogisticsSetting,
+  } from '../../../../models/Logistics';
   import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
 
   export let open: boolean;
   export let logisticsSetting: TLogisticsSetting = null;
+  export let route: TRouteSetting;
   export let trip: TTripSetting;
 
   let logisticsRepository: LogisticsRepository = new LogisticsRepository();
@@ -23,7 +29,7 @@
 
   async function deleteTrip() {
     try {
-      logisticsSetting = await logisticsRepository.deleteTrip(logisticsSetting.logisticsId, trip.id);
+      logisticsSetting = await logisticsRepository.deleteTrip(logisticsSetting.logisticsId, route.id, trip.id);
       addToast({
         message: '便を削除しました。',
       });

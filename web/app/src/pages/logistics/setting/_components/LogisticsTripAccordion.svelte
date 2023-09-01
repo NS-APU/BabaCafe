@@ -5,9 +5,10 @@
   import dayjs from 'dayjs';
   import { SHOCK_LEVEL_LABEL, SHOCK_LEVEL } from '../../../../constants/product';
   import TripDeleteDialog from './TripDeleteDialog.svelte';
-  import type { TTripSetting, TLogisticsSetting } from '../../../../models/Logistics';
+  import type { TTripSetting, TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
   export let logisticsSetting: TLogisticsSetting = null;
+  export let route: TRouteSetting;
   export let trip: TTripSetting;
   $: panelOpen = false;
 
@@ -82,5 +83,5 @@
       </Content>
     </Panel>
   </Accordion>
-  <TripDeleteDialog bind:open={isTripDeleteDialogOpen} bind:logisticsSetting {trip} />
+  <TripDeleteDialog bind:open={isTripDeleteDialogOpen} bind:logisticsSetting {route} {trip} />
 </div>

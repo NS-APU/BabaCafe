@@ -145,11 +145,27 @@ export class LogisticsService {
     // TODO 便追加の処理
   }
 
-  async deleteTrip(logisticsId: string, tripId: string): Promise<LogisticsSettingForLogistics> {
-    const trip = await this.tripRepository.findOne({ where: { id: tripId } });
-    if (!trip) {
+  async deleteTrip(
+    account: Account,
+    logisticsId: string,
+    routeId: string,
+    tripId: string,
+  ): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
       throw new BadRequestException();
     }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId, routes: { id: routeId, trips: { id: tripId } } },
+        relations: ['routes', 'routes.trips'],
+      })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const trip = await this.tripRepository.findOne({ where: { id: tripId } });
     await this.tripRepository.remove(trip);
 
     const setting = await this.logisticsSettingRepository
