@@ -2,14 +2,16 @@
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table';
+  import IconButton from '@smui/icon-button';
   import { onMount } from 'svelte';
-  import { LogisticsRepository } from '../../../../models/Logistics';
+  import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
+  import { LogisticsRepository, type TUserConsolidationDefine } from '../../../../models/Logistics';
   import { profile } from '../../../../stores/Account';
   import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
-  import ConsolidationDefinitinonAddDialog from './ConsolidationDefinitinonAddDialog.svelte';
-  import ConsolidationDefinitinonDeleteDialog from './ConsolidationDefinitinonDeleteDialog.svelte';
-  import ConsolidationDefinitinonEditDialog from './ConsolidationDefinitinonEditDialog.svelte';
+  import ConsolidationDefinitionAddDialog from './ConsolidationDefinitionAddDialog.svelte';
+  import ConsolidationDefinitionDeleteDialog from './ConsolidationDefinitionDeleteDialog.svelte';
+  import ConsolidationDefinitionEditDialog from './ConsolidationDefinitionEditDialog.svelte';
   import StopSelectWizardDialog from './StopSelectWizardDialog.svelte';
 
   $: logisticsRepository = new LogisticsRepository();
@@ -19,6 +21,8 @@
   let editOpen = false;
   let deleteOpen = false;
   let selectedStop = 'Unselected';
+  let consolidations: TUserConsolidationDefine[] = [];
+  let targetConsolidation = null;
   let selectedAction = async (stop: string) => {
     const operation = '物流設定の更新';
     try {
@@ -38,6 +42,7 @@
     try {
       const setting = await logisticsRepository.getProducerSetting($profile.id);
       selectedStop = setting.stop;
+      consolidations = setting.consolidations;
     } catch (err) {
       handleError(err, '物流設定の取得');
     } finally {
@@ -74,60 +79,67 @@
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
         混載定義
       </h1>
-      <div class="relative mx-5 my-3">
-        <div class="absolute inset-y-0 right-1 flex">
-          <Button
-            variant="raised"
-            class="w-[100px] rounded-full text-base "
-            color="secondary"
-            type="button"
-            on:click={() => (addOpen = true)}
-          >
-            <p>追加</p>
-          </Button>
-          <ConsolidationDefinitinonAddDialog bind:open={addOpen} />
+      <div class="mt-3">
+        <div class="flex flex-row-reverse">
+          <IconButton class="material-icons" on:click={() => (addOpen = true)}>add</IconButton>
+          <ConsolidationDefinitionAddDialog bind:open={addOpen} bind:consolidations />
         </div>
       </div>
-      <DataTable class="mt-10" table$aria-label="pruducer_mixed" style="width: 100%">
+      <DataTable class="w-full">
         <Head>
           <Row>
-            <Cell class="text-center">名前</Cell>
-            <Cell class="text-center">衝撃</Cell>
-            <Cell class="text-center" />
-            <Cell class="text-center" />
+            <Cell>名前</Cell>
+            <Cell>衝撃</Cell>
+            <Cell class="w-[5px]" />
+            <Cell class="w-[5px]" />
           </Row>
         </Head>
         <Body>
-          <Row>
-            <Cell class="text-center">きゅうり</Cell>
-            <Cell class="text-center">強い</Cell>
-            <Cell class="text-center">
-              <Button
-                variant="raised"
-                class="w-[100px] rounded-full text-base "
-                color="secondary"
-                type="button"
-                on:click={() => (editOpen = true)}
+          {#each consolidations as consolidation}
+            <Row>
+              <Cell>{consolidation.name}</Cell>
+              <Cell
+                >{SHOCK_LEVEL_LABEL[
+                  Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === consolidation.shockLevel)
+                ]}</Cell
               >
-                <p>編集</p>
-              </Button>
-            </Cell>
-            <ConsolidationDefinitinonEditDialog bind:open={editOpen} />
-            <Cell class="text-center">
-              <Button
-                variant="raised"
-                class="w-[100px] rounded-full text-base "
-                color="secondary"
-                type="button"
-                on:click={() => (deleteOpen = true)}
-              >
-                <p>削除</p>
-              </Button>
-            </Cell>
-            <ConsolidationDefinitinonDeleteDialog bind:open={deleteOpen} />
-          </Row>
+              <Cell>
+                <IconButton
+                  class="material-icons"
+                  on:click={() => {
+                    targetConsolidation = consolidation;
+                    editOpen = true;
+                  }}>edit</IconButton
+                >
+              </Cell>
+              <Cell>
+                <IconButton
+                  class="material-icons"
+                  on:click={() => {
+                    targetConsolidation = consolidation;
+                    deleteOpen = true;
+                  }}>delete</IconButton
+                >
+              </Cell>
+            </Row>
+          {/each}
         </Body>
       </DataTable>
+      {#if targetConsolidation}
+        <ConsolidationDefinitionEditDialog
+          bind:open={editOpen}
+          bind:consolidations
+          id={targetConsolidation.id}
+          name={targetConsolidation.name}
+          shockLevel={targetConsolidation?.shockLevel}
+        />
+        <ConsolidationDefinitionDeleteDialog
+          bind:open={deleteOpen}
+          bind:consolidations
+          id={targetConsolidation.id}
+          name={targetConsolidation.name}
+        />
+      {/if}
     </div>
   </div>
 {/if}
