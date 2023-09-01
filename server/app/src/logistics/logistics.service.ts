@@ -111,25 +111,29 @@ export class LogisticsService {
     return setting;
   }
 
-  async deleteRoute(logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
-    const route = await this.routeRepository.findOne({ where: { id: routeId } });
-    if (!route) {
+  async deleteRoute(account: Account, logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
       throw new BadRequestException();
     }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({ where: { logisticsId, routes: { id: routeId } }, relations: ['routes'] })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const route = await this.routeRepository.findOne({ where: { id: routeId } });
     await this.routeRepository.remove(route);
 
-    const setting = await this.logisticsSettingRepository
+    const resSetting = await this.logisticsSettingRepository
       .findOne({
         where: { logisticsId },
         relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
       })
       .then((setting) => setting);
 
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return resSetting;
   }
 
   private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
