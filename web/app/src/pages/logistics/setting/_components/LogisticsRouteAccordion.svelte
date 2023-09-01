@@ -3,10 +3,13 @@
   import IconButton from '@smui/icon-button';
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
   import LogisticsTripAccordion from './LogisticsTripAccordion.svelte';
+  import TripAddDialog from './TripAddDialog.svelte';
   import type { TRouteSetting } from '../../../../models/Logistics';
 
   export let route: TRouteSetting;
   $: panelOpen = false;
+  let isTripAddDialogOpen = false;
+  let tripName = '';
 </script>
 
 <div>
@@ -35,10 +38,16 @@
         {/each}
 
         <div class="flex justify-center">
-          <Button class="mb-3 mt-4 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised" disabled>
+          <Button
+            class="mb-3 mt-4 w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isTripAddDialogOpen = true)}
+          >
             <p class="text-lg">便追加</p>
           </Button>
         </div>
+        <TripAddDialog bind:open={isTripAddDialogOpen} bind:tripName />
       </Content>
     </Panel>
   </Accordion>
