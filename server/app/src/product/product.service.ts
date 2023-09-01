@@ -55,13 +55,18 @@ export class ProductService {
   }
 
   async updateProduct(dto: UpdateProductDto, account: Account, productId: string): Promise<TProduct> {
-    if (account.attribute !== USER_ATTRIBUTE.producer) {
-      // 作成者以外の場合はエラーを表示。
-      throw new BadRequestException();
-    }
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
+
+    if (!product) {
+      throw new BadRequestException();
+    }
+    if (account.id !== product.producerId) {
+      // 作成者以外の場合はエラーを表示。
+      throw new BadRequestException();
+    }
+
     await ProductService.setProductAttributes(dto, product, account);
     await product.save();
 
