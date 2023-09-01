@@ -16,6 +16,7 @@
   } from '../../../constants/product';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
+  import SelectConsolidationDefinitionDialog from './SelectConsolidationDefinitionDialog.svelte';
   import type { TProductForm } from '../../../models/Product';
 
   const START_DEFAULT_DATE_TIME = new Date();
@@ -127,6 +128,8 @@
   let unitPrice = 0;
   let quantity = 1;
   let shockLevel = SHOCK_LEVEL.strong;
+
+  let isOpenSelectConsolidationDefinitionDialog = false;
 </script>
 
 <div>
@@ -280,11 +283,20 @@
       </h1>
 
       <div>
-        <Select class="m-3 w-[300px]" variant="standard" label="衝撃" bind:value={shockLevel} required>
+        <Select class="ml-3 mt-3 w-[300px]" variant="standard" label="衝撃" bind:value={shockLevel} required>
           {#each Object.keys(SHOCK_LEVEL) as shockLevel}
             <Option value={SHOCK_LEVEL[shockLevel]}>{SHOCK_LEVEL_LABEL[shockLevel]}</Option>
           {/each}
         </Select>
+        <Button
+          variant="raised"
+          class="ml-3 mt-3 rounded !bg-[#EFEFEF]"
+          on:click={() => (isOpenSelectConsolidationDefinitionDialog = true)}
+          type="button"
+        >
+          <p>混載定義から選択</p>
+        </Button>
+        <SelectConsolidationDefinitionDialog bind:open={isOpenSelectConsolidationDefinitionDialog} bind:shockLevel />
       </div>
     </div>
 

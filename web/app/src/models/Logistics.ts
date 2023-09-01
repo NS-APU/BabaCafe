@@ -92,4 +92,10 @@ export class LogisticsRepository {
       endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
     });
   }
+
+  async getSystemConsolidationDefinitions(): Promise<Record<string, string>[]> {
+    return await baseAPI<Record<string, string>[]>({
+      endpoint: `${this.baseEndpoint}/setting/system/consolidation-definition`,
+    });
+  }
 }

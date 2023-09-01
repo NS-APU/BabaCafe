@@ -14,6 +14,7 @@ import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
 import { Route } from './setting/logistics/entities/route.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -28,6 +29,8 @@ export class LogisticsService {
     private tripRepository: Repository<Trip>,
     @InjectRepository(ShippingSchedule)
     private shippingScheduleRepository: Repository<ShippingSchedule>,
+    @InjectRepository(SystemConsolidationDefine)
+    private systemConsolidationDefineRepository: Repository<SystemConsolidationDefine>,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -37,7 +40,9 @@ export class LogisticsService {
   }
 
   async getProducerSetting(producerId: string): Promise<LogisticsSettingForProducer> {
-    return await this.producerSettingRepository.findOne({ where: { producerId } }).then((setting) => setting);
+    return await this.producerSettingRepository
+      .findOne({ where: { producerId }, relations: ['consolidations'] })
+      .then((setting) => setting);
   }
 
   async getIntermediarySetting(intermediaryId: string): Promise<LogisticsSettingForIntermediary> {
@@ -234,6 +239,10 @@ export class LogisticsService {
     }
 
     return filteredTrips;
+  }
+
+  async getSystemConsolidationDefinition(): Promise<SystemConsolidationDefine[]> {
+    return await this.systemConsolidationDefineRepository.find().then((consolidation) => consolidation);
   }
 }
 

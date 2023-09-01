@@ -87,4 +87,9 @@ export class LogisticsController {
       dayjs(date).toDate(),
     );
   }
+
+  @Get('/setting/system/consolidation-definition')
+  async getSystemConsolidationDefinition() {
+    return await this.logisticService.getSystemConsolidationDefinition();
+  }
 }

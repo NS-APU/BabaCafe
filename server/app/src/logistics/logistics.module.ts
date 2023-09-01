@@ -8,6 +8,7 @@ import { LogisticsSettingForIntermediary } from './setting/intermediary/entities
 import { LogisticsSettingForLogistics } from './setting/logistics/entities/setting.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 import { LogisticsSettingForProducer } from './setting/producer/entities/setting.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LogisticsSettingForProducer } from './setting/producer/entities/setting
       Account,
       Trip,
       ShippingSchedule,
+      SystemConsolidationDefine,
     ]),
   ],
   controllers: [LogisticsController],
