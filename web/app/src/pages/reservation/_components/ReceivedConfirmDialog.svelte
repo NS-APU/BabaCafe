@@ -1,8 +1,8 @@
 <script lang="ts">
+  import ConfirmDialog from '../../../components/customized/ConfirmDialog.svelte';
   import { ReservationRepository, type TReservation } from '../../../models/Reservation';
   import { addToast } from '../../../stores/Toast';
   import { handleError } from '../../../utils/error-handle-helper';
-  import ConfirmDialog from './ConfirmDialog.svelte';
 
   export let open: boolean;
   export let reservationId: string;
@@ -34,11 +34,11 @@
 </script>
 
 <ConfirmDialog
-  {open}
+  bind:open
   closedAction={onDialogClosedHandle}
   title="作物を受取りましたか？"
   negativeButtonName="キャンセル"
-  negativeButtonAction=""
+  negativeButtonAction="close"
   positiveButtonName="受取り"
   positiveButtonAction="received"
 />

@@ -78,6 +78,13 @@ export class LogisticsRepository {
     });
   }
 
+  async deleteRoute(logisticsSettingId: string, routeId: string): Promise<TLogisticsSetting> {
+    return await baseAPI<TLogisticsSetting>({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsSettingId}/route/${routeId}`,
+      method: 'DELETE',
+    });
+  }
+
   async updateDeliveryType(logisticsId: string, body: TDeliveryTypeForm): Promise<TLogisticsSetting> {
     return await baseAPI<TLogisticsSetting>({
       endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/deliveryType`,
