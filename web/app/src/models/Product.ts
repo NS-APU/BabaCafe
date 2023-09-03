@@ -29,6 +29,14 @@ export class ProductRepository {
     });
   }
 
+  async update(id: string, body: TProductForm): Promise<TProduct> {
+    return await baseAPI<TProduct>({
+      endpoint: `${this.baseEndpoint}/${id}`,
+      method: 'PATCH',
+      body,
+    });
+  }
+
   async canceled(id: string): Promise<TProduct> {
     return await baseAPI<TProduct>({
       endpoint: `${this.baseEndpoint}/${id}`,

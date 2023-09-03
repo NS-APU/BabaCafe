@@ -10,7 +10,7 @@ export async function baseAPI<
   body,
 }: {
   endpoint: string;
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
   body?: B;
 }): Promise<T> {
   const controller = new AbortController();
