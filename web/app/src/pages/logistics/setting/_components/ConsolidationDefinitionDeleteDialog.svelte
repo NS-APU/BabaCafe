@@ -1,8 +1,8 @@
 <script lang="ts">
+  import ConfirmDialog from '../../../../components/customized/ConfirmDialog.svelte';
   import { LogisticsRepository } from '../../../../models/Logistics';
   import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
-  import ConfirmDialog from '../../../reservation/_components/ConfirmDialog.svelte';
 
   let logisticsRepository: LogisticsRepository = new LogisticsRepository();
 
@@ -36,7 +36,7 @@
 </script>
 
 <ConfirmDialog
-  {open}
+  bind:open
   closedAction={onDialogClosedHandle}
   title={`「${name}」の混載定義を削除しますか`}
   negativeButtonName="キャンセル"
