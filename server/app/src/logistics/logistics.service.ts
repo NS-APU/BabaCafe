@@ -26,7 +26,7 @@ export class LogisticsService {
     @InjectRepository(LogisticsSettingForIntermediary)
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
     @InjectRepository(Route)
-    private RouteRepository: Repository<Route>,
+    private routeRepository: Repository<Route>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
     @InjectRepository(ShippingSchedule)
@@ -112,6 +112,31 @@ export class LogisticsService {
     return setting;
   }
 
+  async deleteRoute(account: Account, logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({ where: { logisticsId, routes: { id: routeId } }, relations: ['routes'] })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const route = await this.routeRepository.findOne({ where: { id: routeId } });
+    await this.routeRepository.remove(route);
+
+    const resSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    return resSetting;
+  }
+
   private static async setRouteAttributes(dto: CreateRouteDto, route: Route) {
     route.logisticsSettingId = dto.logisticsSettingId;
     route.name = dto.name;
@@ -139,7 +164,7 @@ export class LogisticsService {
   }
 
   async updateRoute(logisticsId: string, id: string, dto: UpdateRouteDto): Promise<LogisticsSettingForLogistics> {
-    const route = await this.RouteRepository.findOne({
+    const route = await this.routeRepository.findOne({
       where: { id },
     });
 
@@ -148,7 +173,7 @@ export class LogisticsService {
     }
 
     route.name = dto.name;
-    await this.RouteRepository.save(route);
+    await this.routeRepository.save(route);
 
     const setting = await this.logisticsSettingRepository
       .findOne({

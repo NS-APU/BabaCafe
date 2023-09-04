@@ -138,6 +138,7 @@ export type TProduct = Pick<
   | 'createdAt'
   | 'updatedAt'
   | 'deletedAt'
+  | 'shockLevel'
 > & {
   id: string;
   producer: Account;
