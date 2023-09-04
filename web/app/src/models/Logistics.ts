@@ -9,6 +9,7 @@ import type { TLogisticsSettingForLogistics } from './../../../../server/app/src
 import type { TTrip } from './../../../../server/app/src/logistics/setting/logistics/entities/trip.entity';
 import type { CreateLogisticsSettingForProducerDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-setting.dto';
 import type { TLogisticsSettingForProducer } from './../../../../server/app/src/logistics/setting/producer/entities/setting.entity';
+import type { UpdateRouteDto } from '../../../../server/app/src/logistics/setting/logistics/dto/update-route.dto';
 import type { Jsonify } from 'type-fest';
 
 export type TProducerSetting = Jsonify<TLogisticsSettingForProducer>;
@@ -19,6 +20,7 @@ export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
 export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
 export type TRouteForm = Jsonify<CreateRouteDto>;
+export type TUpdateRouteForm = Jsonify<UpdateRouteDto>;
 export type TDeliveryTypeForm = Jsonify<UpdateDeliveryTypeDto>;
 
 export const DELIVERY_TYPE = {
@@ -90,6 +92,14 @@ export class LogisticsRepository {
   ): Promise<Record<string, string>[]> {
     return await baseAPI<Record<string, string>[]>({
       endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
+    });
+  }
+
+  async updateRoute(logisticsId: string, routeId: string, body: TUpdateRouteForm): Promise<TLogisticsSetting> {
+    return await baseAPI<TLogisticsSetting>({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/route/${routeId}`,
+      method: 'PUT',
+      body,
     });
   }
 }

@@ -10,6 +10,7 @@ import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedul
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
 
 @Controller('logistics')
 @UseGuards(JwtAuthGuard)
@@ -86,5 +87,14 @@ export class LogisticsController {
       count,
       dayjs(date).toDate(),
     );
+  }
+
+  @Put('/setting/logistics/:logisticsId/route/:routeId')
+  async updateRoute(
+    @Param('logisticsId') logisticsId: string,
+    @Param('routeId') routeId: string,
+    @Body() dto: UpdateRouteDto,
+  ) {
+    return this.logisticService.updateRoute(logisticsId, routeId, dto);
   }
 }
