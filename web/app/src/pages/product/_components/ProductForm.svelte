@@ -59,7 +59,7 @@
       unitPrice: product?.unitPrice || 0,
       image: product?.image || '',
       quantity: product?.quantity || 1,
-      shockLevel: product?.shockLevel || SHOCK_LEVEL.strong,
+      shockLevel: String(product?.shockLevel || SHOCK_LEVEL.strong),
     },
     onSubmit: async (values) => {
       await onConfirm({
@@ -118,7 +118,7 @@
   let unitQuantity = 1;
   let unitPrice = 0;
   let quantity = 1;
-  let shockLevel = SHOCK_LEVEL.strong;
+  let shockLevel = String(SHOCK_LEVEL.strong);
 
   let isOpenSelectConsolidationDefinitionDialog = false;
 </script>
@@ -275,8 +275,8 @@
 
       <div>
         <Select class="ml-3 mt-3 w-[300px]" variant="standard" label="衝撃" bind:value={$data.shockLevel} required>
-          {#each Object.keys(SHOCK_LEVEL) as shockLevel}
-            <Option value={SHOCK_LEVEL[shockLevel]}>{SHOCK_LEVEL_LABEL[shockLevel]}</Option>
+          {#each Object.keys(SHOCK_LEVEL) as shockLevelKey}
+            <Option value={String(SHOCK_LEVEL[shockLevelKey])}>{SHOCK_LEVEL_LABEL[shockLevelKey]}</Option>
           {/each}
         </Select>
         <Button
@@ -287,7 +287,10 @@
         >
           <p>混載定義から選択</p>
         </Button>
-        <SelectConsolidationDefinitionDialog bind:open={isOpenSelectConsolidationDefinitionDialog} bind:shockLevel />
+        <SelectConsolidationDefinitionDialog
+          bind:open={isOpenSelectConsolidationDefinitionDialog}
+          bind:shockLevel={$data.shockLevel}
+        />
       </div>
     </div>
 

@@ -11,7 +11,7 @@
   $: logisticsRepository = new LogisticsRepository();
 
   export let open: boolean;
-  export let shockLevel;
+  export let shockLevel: string;
   let selectConsolidation;
   let systemConsolidations = [];
   let userConsolidations = [];
@@ -42,7 +42,7 @@
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'select':
-        shockLevel = Number(selectConsolidation.shockLevel);
+        shockLevel = String(selectConsolidation.shockLevel);
         break;
       default:
         // NOP
@@ -89,12 +89,13 @@
     {/await}
   </Content>
   <Actions>
-    <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined" action="close">
+    <Button class="w-[150px]  rounded-full px-4 py-2" type="button" color="secondary" variant="outlined" action="close">
       <p class="text-lg font-bold">キャンセル</p>
     </Button>
     <Button
       class="w-[150px]  rounded-full px-4 py-2"
       color="secondary"
+      type="button"
       variant="raised"
       action="select"
       disabled={!selectConsolidation}
