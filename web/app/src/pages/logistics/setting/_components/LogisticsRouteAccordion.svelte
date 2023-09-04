@@ -3,10 +3,19 @@
   import IconButton from '@smui/icon-button';
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
   import LogisticsTripAccordion from './LogisticsTripAccordion.svelte';
-  import type { TRouteSetting } from '../../../../models/Logistics';
+  import RouteDeleteDialog from './RouteDeleteDialog.svelte';
+  import type { TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
+  export let logisticsSetting: TLogisticsSetting = null;
   export let route: TRouteSetting;
   $: panelOpen = false;
+
+  let isRouteDeleteDialogOpen = false;
+
+  function onClickRouteDeleteButton(event: Event) {
+    event.stopPropagation();
+    isRouteDeleteDialogOpen = true;
+  }
 </script>
 
 <div>
@@ -26,7 +35,7 @@
         {route.name}
         <span slot="icon">
           <IconButton class="material-icons" disabled>edit</IconButton>
-          <IconButton class="material-icons" disabled>delete</IconButton>
+          <IconButton class="material-icons" on:click={onClickRouteDeleteButton}>delete</IconButton>
         </span>
       </Header>
       <Content>
@@ -42,4 +51,5 @@
       </Content>
     </Panel>
   </Accordion>
+  <RouteDeleteDialog bind:open={isRouteDeleteDialogOpen} bind:logisticsSetting {route} />
 </div>
