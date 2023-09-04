@@ -14,7 +14,7 @@
   export let consolidations;
   export let id;
   export let name;
-  export let shockLevel;
+  export let shockLevel: string;
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
@@ -31,7 +31,7 @@
     try {
       const setting = await logisticsRepository.updateConsolidationDefinition(id, {
         name,
-        shockLevel,
+        shockLevel: Number(shockLevel),
       });
       consolidations = setting.consolidations;
       addToast({
@@ -57,7 +57,7 @@
     <div class="m-3">
       <Select class="w-[300px] " bind:value={shockLevel} required label="衝撃">
         {#each Object.keys(SHOCK_LEVEL_LABEL) as kind}
-          <Option value={SHOCK_LEVEL[kind]}>{SHOCK_LEVEL_LABEL[kind]}</Option>
+          <Option value={String(SHOCK_LEVEL[kind])}>{SHOCK_LEVEL_LABEL[kind]}</Option>
         {/each}
       </Select>
     </div>

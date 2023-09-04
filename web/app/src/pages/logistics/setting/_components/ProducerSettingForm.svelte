@@ -131,7 +131,7 @@
           bind:consolidations
           id={targetConsolidation.id}
           name={targetConsolidation.name}
-          shockLevel={targetConsolidation?.shockLevel}
+          shockLevel={String(targetConsolidation?.shockLevel)}
         />
         <ConsolidationDefinitionDeleteDialog
           bind:open={deleteOpen}
