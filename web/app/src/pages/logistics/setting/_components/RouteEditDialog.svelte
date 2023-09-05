@@ -42,7 +42,7 @@
   <Content class="mb-5">
     <Textfield class="mx-6 w-[300px]" bind:value={inputRouteName} type={'text'} input$maxlength={50} required />
   </Content>
-  <Actions class="flex justify-center">
+  <Actions>
     <Button class="w-[150px]  rounded-full px-4 py-2" color="secondary" variant="outlined">
       <p class="text-lg font-bold">キャンセル</p>
     </Button>
