@@ -109,17 +109,6 @@
     onBlur();
   }
 
-  let name = '';
-  let kinds = CROP_KINDS.vegetables;
-  let description = '';
-  let startAt = START_DEFAULT_DATE_TIME.toISOString().slice(0, 16);
-  let endAt = END_DEFAULT_DATE_TIME.toISOString().slice(0, 16);
-  let unit = CROP_UNITS.gram;
-  let unitQuantity = 1;
-  let unitPrice = 0;
-  let quantity = 1;
-  let shockLevel = String(SHOCK_LEVEL.strong);
-
   let isOpenSelectConsolidationDefinitionDialog = false;
 </script>
 
