@@ -3,18 +3,32 @@
   import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
+  import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
+  import { LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
+  import { addToast } from '../../../../stores/Toast';
+  import { handleError } from '../../../../utils/error-handle-helper';
   import TimetableImport from './TimetableImport.svelte';
 
   const shockLevels = ['とても強い', '強い', '弱い', 'とても弱い'];
+  let logisticsRepository: LogisticsRepository = new LogisticsRepository();
+  export let logisticsSetting: TLogisticsSetting = null;
   export let open = false;
-  export let tripName = '';
-  let value = '';
+  export let routeId;
+  let tripName = '';
+  let value = null;
   let capacity: number = null;
   let timetables = [];
+  let newDateTimetables = [];
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'createTrip':
+        newDateTimetables = timetables.map((value) => {
+          const [stop, time] = [value.stop, changeFormatDate(value.time)];
+          return { stop, time };
+        });
+
+        await createTrip(routeId);
         break;
       default:
         // NOP
@@ -23,19 +37,42 @@
     clearInputData();
   }
 
+  function changeFormatDate(time: string) {
+    if (!time) {
+      return;
+    }
+    const today = new Date();
+    today.setHours(Number(time.substring(0, 2)));
+    today.setMinutes(Number(time.substring(3)));
+    today.setSeconds(0);
+    return today;
+  }
+
+  async function createTrip(routeId: string) {
+    try {
+      logisticsSetting = await logisticsRepository.createTrip(logisticsSetting.logisticsId, routeId, {
+        name: tripName,
+        shockLevel: SHOCK_LEVEL[Object.keys(SHOCK_LEVEL_LABEL).find((key) => SHOCK_LEVEL_LABEL[key] === value)],
+        capacity: capacity,
+        timetables: newDateTimetables,
+      });
+      addToast({
+        message: '便を追加しました。',
+      });
+    } catch (err) {
+      handleError(err, '便の追加');
+    }
+  }
+
   function clearInputData() {
     tripName = '';
-    value = '';
+    value = null;
     capacity = null;
     timetables = [];
   }
 </script>
 
-<Dialog
-  bind:open
-  on:SMUIDialog:closed={onDialogClosedHandle}
-  surface$style="width: 850px; max-width: calc(100vw - 32px); max-height: 80vh;"
->
+<Dialog bind:open on:SMUIDialog:closed={onDialogClosedHandle} surface$class="h-[80vh] w-[850px]">
   <Title>運航便を追加します。</Title>
   <Content>
     <div class="justify-left ml-8 mr-8">
@@ -66,8 +103,7 @@
           <Textfield
             class="w-[300px]"
             bind:value={capacity}
-            type={'text'}
-            input$maxlength={50}
+            type={'number'}
             input$placeholder="最大取り扱い量"
             required
           />
@@ -85,8 +121,14 @@
     <Button class="w-[150px] rounded-full px-4 py-2" color="secondary" variant="outlined">
       <p class="text-lg font-bold">キャンセル</p>
     </Button>
-    <Button class="w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised" action="" disabled={!tripName}>
-      <p class="text-lg font-bold">編集</p>
+    <Button
+      class="w-[150px] rounded-full px-4 py-2"
+      color="secondary"
+      variant="raised"
+      action="createTrip"
+      disabled={!tripName}
+    >
+      <p class="text-lg font-bold">追加</p>
     </Button>
   </Actions>
 </Dialog>

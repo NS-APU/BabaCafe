@@ -63,7 +63,7 @@
         </h1>
 
         {#each logisticsSetting.routes as route}
-          <LogisticsRouteAccordion {route} />
+          <LogisticsRouteAccordion {route} bind:logisticsSetting />
         {/each}
 
         <div class="flex justify-center">

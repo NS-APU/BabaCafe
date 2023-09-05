@@ -9,7 +9,7 @@
   export let route: TRouteSetting;
   $: panelOpen = false;
   let isTripAddDialogOpen = false;
-  let tripName = '';
+  export let logisticsSetting;
 </script>
 
 <div>
@@ -47,7 +47,7 @@
             <p class="text-lg">便追加</p>
           </Button>
         </div>
-        <TripAddDialog bind:open={isTripAddDialogOpen} bind:tripName />
+        <TripAddDialog bind:open={isTripAddDialogOpen} routeId={route.id} bind:logisticsSetting />
       </Content>
     </Panel>
   </Accordion>
