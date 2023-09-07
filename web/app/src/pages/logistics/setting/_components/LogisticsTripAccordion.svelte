@@ -4,13 +4,23 @@
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
   import dayjs from 'dayjs';
   import { SHOCK_LEVEL_LABEL, SHOCK_LEVEL } from '../../../../constants/product';
-  import type { TTripSetting } from '../../../../models/Logistics';
+  import TripDeleteDialog from './TripDeleteDialog.svelte';
+  import type { TTripSetting, TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
+  export let logisticsSetting: TLogisticsSetting = null;
+  export let route: TRouteSetting;
   export let trip: TTripSetting;
   $: panelOpen = false;
 
+  let isTripDeleteDialogOpen = false;
+
   function formatPickupTime(timeString) {
     return timeString ? dayjs(timeString).format('HH:mm') : '';
+  }
+
+  function onClickTripDeleteButton(event: Event) {
+    event.stopPropagation();
+    isTripDeleteDialogOpen = true;
   }
 </script>
 
@@ -31,7 +41,7 @@
         {trip.name}
         <span slot="icon">
           <IconButton class="material-icons" disabled>edit</IconButton>
-          <IconButton class="material-icons" disabled>delete</IconButton>
+          <IconButton class="material-icons" on:click={onClickTripDeleteButton}>delete</IconButton>
         </span>
       </Header>
       <Content>
@@ -73,4 +83,5 @@
       </Content>
     </Panel>
   </Accordion>
+  <TripDeleteDialog bind:open={isTripDeleteDialogOpen} bind:logisticsSetting {route} {trip} />
 </div>

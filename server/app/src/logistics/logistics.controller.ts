@@ -82,6 +82,16 @@ export class LogisticsController {
     return this.logisticService.createTrip(account, dto);
   }
 
+  @Delete('/setting/logistics/:logisticsId/route/:routeId/trip/:tripId')
+  async deleteTrip(
+    @Param('logisticsId') logisticsId: string,
+    @Param('routeId') routeId: string,
+    @Param('tripId') tripId: string,
+    @GetAccount() account: Account,
+  ) {
+    return this.logisticService.deleteTrip(account, logisticsId, routeId, tripId);
+  }
+
   @Put('/setting/logistics/:logisticsId/deliveryType')
   async updateDeliveryType(@Param('logisticsId') logisticsId: string, @Body() dto: UpdateDeliveryTypeDto) {
     return this.logisticService.updateDeliveryType(logisticsId, dto);
