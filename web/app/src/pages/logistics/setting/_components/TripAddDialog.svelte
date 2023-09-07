@@ -80,21 +80,19 @@
   }
 </script>
 
-<Dialog bind:open on:SMUIDialog:closed={onDialogClosedHandle} surface$class="h-[80vh] w-[850px]">
+<Dialog bind:open on:SMUIDialog:closed={onDialogClosedHandle} container$class="max-h-[80vh]">
   <Title>運航便を追加します。</Title>
   <Content>
     <div class="justify-left ml-8 mr-8">
-      <p>
-        便名<br />
-        <Textfield
-          class="w-[300px]"
-          bind:value={tripName}
-          type={'text'}
-          input$maxlength={50}
-          input$placeholder="便名"
-          required
-        />
-      </p>
+      <Textfield
+        class="w-[300px]"
+        label="便名"
+        bind:value={tripName}
+        type={'text'}
+        input$maxlength={50}
+        input$placeholder="便名"
+        required
+      />
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
         <span>車両</span>
       </h1>
@@ -106,10 +104,10 @@
             {/each}
           </Select>
         </div>
-        <p class="mt-3">最大取扱い量</p>
         <div>
           <Textfield
-            class="w-[300px]"
+            class="mt-3 w-[300px]"
+            label="最大取扱い量"
             bind:value={capacity}
             type={'number'}
             input$max={100}
