@@ -49,6 +49,14 @@ export class ReservationRepository {
     });
   }
 
+  async update(id: string, body: TReservationForm): Promise<TReservation> {
+    return await baseAPI<TReservation>({
+      endpoint: `${this.baseEndpoint}/products/${id}`,
+      method: 'PATCH',
+      body,
+    });
+  }
+
   async packed(id: string, body: TReservationPackedForm): Promise<TReservation> {
     return await baseAPI<TReservation>({
       endpoint: `${this.baseEndpoint}/products/${id}/packed`,
