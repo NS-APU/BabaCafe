@@ -26,6 +26,8 @@ export class LogisticsService {
     private logisticsSettingRepository: Repository<LogisticsSettingForLogistics>,
     @InjectRepository(LogisticsSettingForIntermediary)
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
+    @InjectRepository(Route)
+    private routeRepository: Repository<Route>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
     @InjectRepository(Timetable)
@@ -111,6 +113,31 @@ export class LogisticsService {
     }
 
     return setting;
+  }
+
+  async deleteRoute(account: Account, logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({ where: { logisticsId, routes: { id: routeId } }, relations: ['routes'] })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const route = await this.routeRepository.findOne({ where: { id: routeId } });
+    await this.routeRepository.remove(route);
+
+    const resSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    return resSetting;
   }
 
   private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
@@ -301,14 +328,17 @@ async function checkAvailableCapacityTrip(
   shippingScheduleRepository: Repository<ShippingSchedule>,
   checkDate: Date,
 ) {
-  const shippingScheduleReservations = await shippingScheduleRepository
+  const shippingScheduleReservationIds = await shippingScheduleRepository
     .findBy({
       tripId: suggestTrip.tripId,
       pickupTime: MoreThan(checkDate),
     })
-    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
+    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservationIds));
 
-  const reservationCount = shippingScheduleReservations.reduce((acc, reservations) => acc + reservations.length, 0);
+  const reservationCount = shippingScheduleReservationIds.reduce(
+    (acc, reservationIds) => acc + reservationIds.length,
+    0,
+  );
 
   return reservationCount <= suggestTrip.capacity;
 }
