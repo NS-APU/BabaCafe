@@ -63,7 +63,7 @@
           時刻表
         </h1>
         <div class="flex justify-center">
-          <DataTable class="my-3 max-w-full">
+          <DataTable stickyHeader class="my-3 max-h-[300px] w-4/5 min-w-[300px] max-w-full overflow-auto">
             <Head>
               <Row>
                 <Cell class="text-center font-bold">停車場所</Cell>

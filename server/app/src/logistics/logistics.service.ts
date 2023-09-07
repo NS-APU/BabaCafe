@@ -10,10 +10,12 @@ import { MoreThan, Repository } from 'typeorm';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
+import { CreateTimetableDto } from './setting/logistics/dto/create-timetable.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
 import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
 import { Route } from './setting/logistics/entities/route.entity';
+import { Timetable } from './setting/logistics/entities/timetable.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
 import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
@@ -32,6 +34,8 @@ export class LogisticsService {
     private routeRepository: Repository<Route>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
+    @InjectRepository(Timetable)
+    private timetableRepository: Repository<Timetable>,
     @InjectRepository(ShippingSchedule)
     private shippingScheduleRepository: Repository<ShippingSchedule>,
     @InjectRepository(SystemConsolidationDefine)
@@ -151,8 +155,44 @@ export class LogisticsService {
     route.name = dto.name;
   }
 
-  async createTrip(account: Account, dto: CreateTripDto) {
-    // TODO 便追加の処理
+  async createTrip(logisticsId: string, routeId: string, dto: CreateTripDto): Promise<LogisticsSettingForLogistics> {
+    const trip = new Trip();
+    await LogisticsService.setTripAttributes(routeId, dto, trip);
+    const resultTrip = await trip.save();
+
+    const registerTimetables: Timetable[] = [];
+    for (const timetable of dto.timetables) {
+      const time = new Timetable();
+      await LogisticsService.setTimetableAttributes(resultTrip.id, timetable, time);
+      registerTimetables.push(time);
+    }
+    await this.timetableRepository.save(registerTimetables);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  private static async setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
+    trip.routeId = routeId;
+    trip.name = dto.name;
+    trip.shockLevel = dto.shockLevel;
+    trip.capacity = dto.capacity;
+  }
+
+  private static async setTimetableAttributes(tripId: string, timetable: CreateTimetableDto, time: Timetable) {
+    time.tripId = tripId;
+    time.stop = timetable.stop;
+    time.time = timetable.time;
   }
 
   async deleteTrip(

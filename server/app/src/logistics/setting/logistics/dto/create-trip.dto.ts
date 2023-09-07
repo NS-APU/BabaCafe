@@ -1,4 +1,5 @@
 import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import { CreateTimetableDto } from './create-timetable.dto';
 
 export class CreateTripDto {
   @IsNotEmpty()
@@ -13,5 +14,6 @@ export class CreateTripDto {
   @IsInt()
   capacity: number;
 
-  //   TODO: 時刻表も保持させる
+  @IsNotEmpty()
+  timetables: CreateTimetableDto[];
 }

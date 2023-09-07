@@ -78,10 +78,14 @@ export class LogisticsController {
     return this.logisticService.deleteRoute(account, logisticsId, routeId);
   }
 
-  @Post('/setting/logistics/trip')
+  @Post('/setting/logistics/:logisticsId/route/:routeId/trip')
   @HttpCode(HttpStatus.CREATED)
-  async createTrip(@Body() dto: CreateTripDto, @GetAccount() account: Account) {
-    return this.logisticService.createTrip(account, dto);
+  async createTrip(
+    @Param('logisticsId') logisticsId: string,
+    @Param('routeId') routeId: string,
+    @Body() dto: CreateTripDto,
+  ) {
+    return this.logisticService.createTrip(logisticsId, routeId, dto);
   }
 
   @Delete('/setting/logistics/:logisticsId/route/:routeId/trip/:tripId')

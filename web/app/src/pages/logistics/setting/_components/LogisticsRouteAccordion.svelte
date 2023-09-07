@@ -5,6 +5,7 @@
   import LogisticsTripAccordion from './LogisticsTripAccordion.svelte';
   import RouteDeleteDialog from './RouteDeleteDialog.svelte';
   import RouteEditDialog from './RouteEditDialog.svelte';
+  import TripAddDialog from './TripAddDialog.svelte';
   import type { TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
   export let logisticsSetting: TLogisticsSetting = null;
@@ -12,6 +13,7 @@
   let isRouteEditDialogOpen = false;
   let isRouteDeleteDialogOpen = false;
   $: panelOpen = false;
+  let isTripAddDialogOpen = false;
 
   function onClickRouteEditButton(event: Event) {
     event.stopPropagation();
@@ -50,10 +52,16 @@
         {/each}
 
         <div class="flex justify-center">
-          <Button class="mb-3 mt-4 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised" disabled>
+          <Button
+            class="mb-3 mt-4 w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={() => (isTripAddDialogOpen = true)}
+          >
             <p class="text-lg">便追加</p>
           </Button>
         </div>
+        <TripAddDialog bind:open={isTripAddDialogOpen} routeId={route.id} bind:logisticsSetting />
       </Content>
     </Panel>
   </Accordion>
