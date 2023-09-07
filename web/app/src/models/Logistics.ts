@@ -10,6 +10,7 @@ import type { TTrip } from './../../../../server/app/src/logistics/setting/logis
 import type { CreateConsolidationDefinitionDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-consolidation-define.dto';
 import type { CreateLogisticsSettingForProducerDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-setting.dto';
 import type { TLogisticsSettingForProducer } from './../../../../server/app/src/logistics/setting/producer/entities/setting.entity';
+import type { UpdateRouteDto } from '../../../../server/app/src/logistics/setting/logistics/dto/update-route.dto';
 import type { UserConsolidationDefine } from '../../../../server/app/src/logistics/setting/producer/entities/consolidation-define.entity';
 import type { Jsonify } from 'type-fest';
 
@@ -21,6 +22,7 @@ export type TIntermediarySetting = Jsonify<TLogisticsSettingForIntermediary>;
 export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>;
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
 export type TRouteForm = Jsonify<CreateRouteDto>;
+export type TUpdateRouteForm = Jsonify<UpdateRouteDto>;
 export type TDeliveryTypeForm = Jsonify<UpdateDeliveryTypeDto>;
 export type TConsolidationDefinitionForm = Jsonify<CreateConsolidationDefinitionDto>;
 export type TUserConsolidationDefine = Jsonify<UserConsolidationDefine>;
@@ -137,6 +139,14 @@ export class LogisticsRepository {
   async getSystemConsolidationDefinitions(): Promise<Record<string, string>[]> {
     return await baseAPI<Record<string, string>[]>({
       endpoint: `${this.baseEndpoint}/setting/system/consolidation-definition`,
+    });
+  }
+
+  async updateRoute(logisticsId: string, routeId: string, body: TUpdateRouteForm): Promise<TLogisticsSetting> {
+    return await baseAPI<TLogisticsSetting>({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/route/${routeId}`,
+      method: 'PUT',
+      body,
     });
   }
 }

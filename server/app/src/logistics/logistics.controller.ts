@@ -22,6 +22,7 @@ import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedul
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
 import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
 
 @Controller('logistics')
@@ -147,5 +148,14 @@ export class LogisticsController {
     @GetAccount() account: Account,
   ) {
     return this.logisticService.deleteConsolidationDefinition(account, consolidationId);
+  }
+
+  @Put('/setting/logistics/:logisticsId/route/:routeId')
+  async updateRoute(
+    @Param('logisticsId') logisticsId: string,
+    @Param('routeId') routeId: string,
+    @Body() dto: UpdateRouteDto,
+  ) {
+    return this.logisticService.updateRoute(logisticsId, routeId, dto);
   }
 }

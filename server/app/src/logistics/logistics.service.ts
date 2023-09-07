@@ -12,6 +12,7 @@ import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
 import { Route } from './setting/logistics/entities/route.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
@@ -103,7 +104,7 @@ export class LogisticsService {
 
   async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
     const route = new Route();
-    await LogisticsService.setProductAttributes(dto, route);
+    await LogisticsService.setRouteAttributes(dto, route);
     await route.save();
 
     const setting = await this.logisticsSettingRepository
@@ -145,7 +146,7 @@ export class LogisticsService {
     return resSetting;
   }
 
-  private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
+  private static async setRouteAttributes(dto: CreateRouteDto, route: Route) {
     route.logisticsSettingId = dto.logisticsSettingId;
     route.name = dto.name;
   }
@@ -207,6 +208,33 @@ export class LogisticsService {
     this.logisticsSettingRepository.save(setting);
     return setting;
   }
+
+  async updateRoute(logisticsId: string, id: string, dto: UpdateRouteDto): Promise<LogisticsSettingForLogistics> {
+    const route = await this.routeRepository.findOne({
+      where: { id },
+    });
+
+    if (!route) {
+      throw new BadRequestException();
+    }
+
+    route.name = dto.name;
+    await this.routeRepository.save(route);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
   async createShippingSchedule(dto: CreateShippingScheduleDto): Promise<ShippingSchedule> {
     const shippingSchedule = this.shippingScheduleRepository.create(dto);
     return await this.shippingScheduleRepository.save(shippingSchedule);
