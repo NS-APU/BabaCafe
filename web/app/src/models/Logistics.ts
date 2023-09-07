@@ -133,4 +133,10 @@ export class LogisticsRepository {
       method: 'DELETE',
     });
   }
+
+  async getSystemConsolidationDefinitions(): Promise<Record<string, string>[]> {
+    return await baseAPI<Record<string, string>[]>({
+      endpoint: `${this.baseEndpoint}/setting/system/consolidation-definition`,
+    });
+  }
 }

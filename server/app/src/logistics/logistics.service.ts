@@ -16,6 +16,7 @@ import { Route } from './setting/logistics/entities/route.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
 import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
 import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -32,6 +33,8 @@ export class LogisticsService {
     private tripRepository: Repository<Trip>,
     @InjectRepository(ShippingSchedule)
     private shippingScheduleRepository: Repository<ShippingSchedule>,
+    @InjectRepository(SystemConsolidationDefine)
+    private systemConsolidationDefineRepository: Repository<SystemConsolidationDefine>,
     @InjectRepository(UserConsolidationDefine)
     private userConsolidationDefineRepository: Repository<UserConsolidationDefine>,
   ) {}
@@ -304,6 +307,10 @@ export class LogisticsService {
     }
 
     return filteredTrips;
+  }
+
+  async getSystemConsolidationDefinition(): Promise<SystemConsolidationDefine[]> {
+    return await this.systemConsolidationDefineRepository.find().then((consolidation) => consolidation);
   }
 
   async createConsolidationDefinition(

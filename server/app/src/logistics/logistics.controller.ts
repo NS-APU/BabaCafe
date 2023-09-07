@@ -97,6 +97,7 @@ export class LogisticsController {
   async updateDeliveryType(@Param('logisticsId') logisticsId: string, @Body() dto: UpdateDeliveryTypeDto) {
     return this.logisticService.updateDeliveryType(logisticsId, dto);
   }
+
   @Post('/schedule')
   @HttpCode(HttpStatus.CREATED)
   async createShippingSchedule(@Body() dto: CreateShippingScheduleDto) {
@@ -118,6 +119,11 @@ export class LogisticsController {
       count,
       dayjs(date).toDate(),
     );
+  }
+
+  @Get('/setting/system/consolidation-definition')
+  async getSystemConsolidationDefinition() {
+    return await this.logisticService.getSystemConsolidationDefinition();
   }
 
   @Post('/setting/producer/consolidation-definition')

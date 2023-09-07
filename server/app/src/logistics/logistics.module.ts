@@ -10,6 +10,7 @@ import { LogisticsSettingForLogistics } from './setting/logistics/entities/setti
 import { Trip } from './setting/logistics/entities/trip.entity';
 import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
 import { LogisticsSettingForProducer } from './setting/producer/entities/setting.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LogisticsSettingForProducer } from './setting/producer/entities/setting
       Route,
       Trip,
       ShippingSchedule,
+      SystemConsolidationDefine,
       UserConsolidationDefine,
     ]),
   ],
