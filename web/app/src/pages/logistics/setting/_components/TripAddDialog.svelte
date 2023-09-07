@@ -113,10 +113,10 @@
             input$max={100}
             input$min={1}
             input$placeholder="最大取り扱い量"
+            suffix="予約"
             on:input={inputNumberLimited}
             required
           />
-          予約
         </div>
       </div>
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">

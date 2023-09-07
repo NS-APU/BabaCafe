@@ -69,7 +69,7 @@
     </label>
   </div>
   <div class="my-3 flex justify-center">
-    <DataTable stickyHeader class="w-4/5 min-w-[300px]">
+    <DataTable stickyHeader class="max-h-[300px] w-4/5 min-w-[300px] overflow-auto">
       <Head>
         <Row>
           <Cell class="text-center font-bold">停車場所</Cell>
