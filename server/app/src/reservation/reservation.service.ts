@@ -7,6 +7,7 @@ import { Product } from 'src/product/entities/product.entity';
 import { DataSource, EntityManager, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationForPackedDto } from './dto/update-reservation-for-packed.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { Reservation, RESERVATION_STATUS, TReservation } from './entities/reservation.entity';
 
 @Injectable()
@@ -94,8 +95,38 @@ export class ReservationService {
     return reservation.convertTReservation();
   }
 
+  async updateReservation(dto: UpdateReservationDto, account: Account, reservationId: string): Promise<TReservation> {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: ['product'],
+    });
+
+    if (!reservation) {
+      throw new BadRequestException();
+    }
+    if (account.id !== reservation.consumerId) {
+      throw new BadRequestException();
+    }
+    if (reservation.status !== RESERVATION_STATUS.packking) {
+      throw new BadRequestException();
+    }
+
+    const beforeQuantity = reservation.quantity;
+
+    this.setReservationAttributes(dto, reservation, reservation.product, account);
+
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      reservation.product.remaining += beforeQuantity;
+      reservation.product.remaining -= reservation.quantity;
+      await manager.save(reservation.product);
+      await manager.save(reservation);
+    });
+
+    return reservation.convertTReservation();
+  }
+
   private async setReservationAttributes(
-    dto: CreateReservationDto,
+    dto: CreateReservationDto | UpdateReservationDto,
     reservation: Reservation,
     product: Product,
     account: Account,

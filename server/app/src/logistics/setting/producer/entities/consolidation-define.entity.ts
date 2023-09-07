@@ -23,3 +23,7 @@ export class UserConsolidationDefine extends BaseEntity {
   @JoinColumn({ name: 'producer_id', referencedColumnName: 'producerId' })
   setting: LogisticsSettingForProducer;
 }
+
+export type TUserConsolidationDefine = Pick<UserConsolidationDefine, 'producerId' | 'name' | 'shockLevel'> & {
+  id: string;
+};
