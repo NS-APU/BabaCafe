@@ -23,5 +23,5 @@
 </script>
 
 <div>
-  <ReservationForm {onConfirm} />
+  <ReservationForm pageType="new" {onConfirm} />
 </div>

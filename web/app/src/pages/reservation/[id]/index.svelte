@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { params } from '@roxi/routify';
+  import { params, goto } from '@roxi/routify';
   import Button from '@smui/button';
   import CircularProgress from '@smui/circular-progress';
   import Paper from '@smui/paper';
@@ -187,11 +187,14 @@
       {/if}
       {#if canEdit(reservationData)}
         <div>
-          <!-- TODO:ボタン配置しただけなので要ページ遷移処理。
-          <Button class="  mr-2 w-[150px] rounded-full px-4 py-2" color="secondary" variant="raised">
+          <Button
+            class="w-[150px] rounded-full px-4 py-2"
+            color="secondary"
+            variant="raised"
+            on:click={$goto('../../reservation/:id/edit', { productId: reservationData.productId })}
+          >
             <p class="text-lg font-bold">編集</p>
-          </Button> -->
-
+          </Button>
           <Button
             class="w-[150px] rounded-full px-4 py-2"
             color="secondary"

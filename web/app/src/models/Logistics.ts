@@ -104,6 +104,13 @@ export class LogisticsRepository {
     });
   }
 
+  async deleteTrip(logisticsSettingId: string, routeId: string, tripId: string): Promise<TLogisticsSetting> {
+    return await baseAPI<TLogisticsSetting>({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsSettingId}/route/${routeId}/trip/${tripId}`,
+      method: 'DELETE',
+    });
+  }
+
   async createConsolidationDefinition(body: TConsolidationDefinitionForm): Promise<TProducerSetting> {
     return await baseAPI<TProducerSetting>({
       endpoint: `${this.baseEndpoint}/setting/producer/consolidation-definition`,
