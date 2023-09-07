@@ -8,6 +8,8 @@
   dayjs.extend(customParseFormat);
 
   export let timetables = [];
+  export let routeId;
+  export let kinds;
 
   function csvFileParse(file: File) {
     parse(file, {
@@ -53,13 +55,13 @@
 <div>
   <div class="my-3 flex justify-center">
     <label
-      for="csv_upload"
+      for={`csv_upload_${routeId}_${kinds}`}
       class="cursor-pointer rounded bg-[#4499E1] px-10 py-1 font-bold text-[#ffffff] hover:bg-[#2B6CB0]"
       >CSVインポート
       <input
         type="file"
         name="file"
-        id="csv_upload"
+        id={`csv_upload_${routeId}_${kinds}`}
         accept="text/csv"
         class="hidden"
         on:change={csvFileOnChangeHandler}

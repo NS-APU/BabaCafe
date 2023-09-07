@@ -118,7 +118,7 @@ export class LogisticsService {
     route.name = dto.name;
   }
 
-  async createTrip(logisticsId: string, routeId: string, dto: CreateTripDto) {
+  async createTrip(logisticsId: string, routeId: string, dto: CreateTripDto): Promise<LogisticsSettingForLogistics> {
     const trip = new Trip();
     await LogisticsService.setTripAttributes(routeId, dto, trip);
     const resultTrip = await trip.save();
