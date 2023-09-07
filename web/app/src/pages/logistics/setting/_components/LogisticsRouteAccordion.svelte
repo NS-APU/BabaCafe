@@ -4,15 +4,21 @@
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
   import LogisticsTripAccordion from './LogisticsTripAccordion.svelte';
   import RouteDeleteDialog from './RouteDeleteDialog.svelte';
+  import RouteEditDialog from './RouteEditDialog.svelte';
   import TripAddDialog from './TripAddDialog.svelte';
   import type { TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
   export let logisticsSetting: TLogisticsSetting = null;
   export let route: TRouteSetting;
+  let isRouteEditDialogOpen = false;
+  let isRouteDeleteDialogOpen = false;
   $: panelOpen = false;
   let isTripAddDialogOpen = false;
 
-  let isRouteDeleteDialogOpen = false;
+  function onClickRouteEditButton(event: Event) {
+    event.stopPropagation();
+    isRouteEditDialogOpen = true;
+  }
 
   function onClickRouteDeleteButton(event: Event) {
     event.stopPropagation();
@@ -36,13 +42,13 @@
         {/if}
         {route.name}
         <span slot="icon">
-          <IconButton class="material-icons" disabled>edit</IconButton>
+          <IconButton class="material-icons" on:click={onClickRouteEditButton}>edit</IconButton>
           <IconButton class="material-icons" on:click={onClickRouteDeleteButton}>delete</IconButton>
         </span>
       </Header>
       <Content>
         {#each route.trips as trip}
-          <LogisticsTripAccordion {trip} />
+          <LogisticsTripAccordion bind:logisticsSetting {route} {trip} />
         {/each}
 
         <div class="flex justify-center">
@@ -59,5 +65,6 @@
       </Content>
     </Panel>
   </Accordion>
+  <RouteEditDialog bind:open={isRouteEditDialogOpen} bind:logisticsSetting {route} />
   <RouteDeleteDialog bind:open={isRouteDeleteDialogOpen} bind:logisticsSetting {route} />
 </div>

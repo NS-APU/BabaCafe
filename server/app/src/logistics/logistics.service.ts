@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Account } from 'src/account/entities/account.entity';
+import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
@@ -13,9 +13,13 @@ import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTimetableDto } from './setting/logistics/dto/create-timetable.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
 import { Route } from './setting/logistics/entities/route.entity';
 import { Timetable } from './setting/logistics/entities/timetable.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
+import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
+import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -34,6 +38,10 @@ export class LogisticsService {
     private timetableRepository: Repository<Timetable>,
     @InjectRepository(ShippingSchedule)
     private shippingScheduleRepository: Repository<ShippingSchedule>,
+    @InjectRepository(SystemConsolidationDefine)
+    private systemConsolidationDefineRepository: Repository<SystemConsolidationDefine>,
+    @InjectRepository(UserConsolidationDefine)
+    private userConsolidationDefineRepository: Repository<UserConsolidationDefine>,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -43,7 +51,9 @@ export class LogisticsService {
   }
 
   async getProducerSetting(producerId: string): Promise<LogisticsSettingForProducer> {
-    return await this.producerSettingRepository.findOne({ where: { producerId } }).then((setting) => setting);
+    return await this.producerSettingRepository
+      .findOne({ where: { producerId }, relations: ['consolidations'] })
+      .then((setting) => setting);
   }
 
   async getIntermediarySetting(intermediaryId: string): Promise<LogisticsSettingForIntermediary> {
@@ -98,7 +108,7 @@ export class LogisticsService {
 
   async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
     const route = new Route();
-    await LogisticsService.setProductAttributes(dto, route);
+    await LogisticsService.setRouteAttributes(dto, route);
     await route.save();
 
     const setting = await this.logisticsSettingRepository
@@ -140,7 +150,7 @@ export class LogisticsService {
     return resSetting;
   }
 
-  private static async setProductAttributes(dto: CreateRouteDto, route: Route) {
+  private static async setRouteAttributes(dto: CreateRouteDto, route: Route) {
     route.logisticsSettingId = dto.logisticsSettingId;
     route.name = dto.name;
   }
@@ -185,6 +195,43 @@ export class LogisticsService {
     time.time = timetable.time;
   }
 
+  async deleteTrip(
+    account: Account,
+    logisticsId: string,
+    routeId: string,
+    tripId: string,
+  ): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId, routes: { id: routeId, trips: { id: tripId } } },
+        relations: ['routes', 'routes.trips'],
+      })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const trip = await this.tripRepository.findOne({ where: { id: tripId } });
+    await this.tripRepository.remove(trip);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
   async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
     const setting = await this.logisticsSettingRepository
       .findOne({
@@ -201,6 +248,33 @@ export class LogisticsService {
     this.logisticsSettingRepository.save(setting);
     return setting;
   }
+
+  async updateRoute(logisticsId: string, id: string, dto: UpdateRouteDto): Promise<LogisticsSettingForLogistics> {
+    const route = await this.routeRepository.findOne({
+      where: { id },
+    });
+
+    if (!route) {
+      throw new BadRequestException();
+    }
+
+    route.name = dto.name;
+    await this.routeRepository.save(route);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
   async createShippingSchedule(dto: CreateShippingScheduleDto): Promise<ShippingSchedule> {
     const shippingSchedule = this.shippingScheduleRepository.create(dto);
     return await this.shippingScheduleRepository.save(shippingSchedule);
@@ -301,6 +375,88 @@ export class LogisticsService {
     }
 
     return filteredTrips;
+  }
+
+  async getSystemConsolidationDefinition(): Promise<SystemConsolidationDefine[]> {
+    return await this.systemConsolidationDefineRepository.find().then((consolidation) => consolidation);
+  }
+
+  async createConsolidationDefinition(
+    account: Account,
+    dto: CreateConsolidationDefinitionDto,
+  ): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+    const consolidation = new UserConsolidationDefine();
+    consolidation.producerId = account.id;
+    consolidation.name = dto.name;
+    consolidation.shockLevel = dto.shockLevel;
+    await consolidation.save();
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async updateConsolidationDefinition(
+    account: Account,
+    consolidationId: string,
+    dto: CreateConsolidationDefinitionDto,
+  ): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+
+    const consolidation = await this.userConsolidationDefineRepository
+      .findOne({ where: { id: consolidationId, producerId: account.id } })
+      .then((consolidation) => consolidation);
+    if (!consolidation) {
+      throw new BadRequestException();
+    }
+    consolidation.name = dto.name;
+    consolidation.shockLevel = dto.shockLevel;
+    await this.userConsolidationDefineRepository.save(consolidation);
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async deleteConsolidationDefinition(account: Account, consolidationId: string): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+
+    const consolidation = await this.userConsolidationDefineRepository
+      .findOne({ where: { id: consolidationId, producerId: account.id } })
+      .then((consolidation) => consolidation);
+    if (!consolidation) {
+      throw new BadRequestException();
+    }
+    await this.userConsolidationDefineRepository.remove(consolidation);
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
   }
 }
 
