@@ -70,6 +70,14 @@
     capacity = null;
     timetables = [];
   }
+
+  function inputNumberLimited() {
+    if (capacity > 100) {
+      capacity = 100;
+    } else if (capacity < 1) {
+      capacity = 1;
+    }
+  }
 </script>
 
 <Dialog bind:open on:SMUIDialog:closed={onDialogClosedHandle} surface$class="h-[80vh] w-[850px]">
@@ -104,7 +112,10 @@
             class="w-[300px]"
             bind:value={capacity}
             type={'number'}
+            input$max={100}
+            input$min={1}
             input$placeholder="最大取り扱い量"
+            on:input={inputNumberLimited}
             required
           />
           予約
@@ -126,7 +137,7 @@
       color="secondary"
       variant="raised"
       action="createTrip"
-      disabled={!tripName}
+      disabled={!tripName || !value || !capacity}
     >
       <p class="text-lg font-bold">追加</p>
     </Button>
