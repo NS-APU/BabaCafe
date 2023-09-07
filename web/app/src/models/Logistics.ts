@@ -7,8 +7,10 @@ import type { UpdateDeliveryTypeDto } from './../../../../server/app/src/logisti
 import type { TRoute } from './../../../../server/app/src/logistics/setting/logistics/entities/route.entity';
 import type { TLogisticsSettingForLogistics } from './../../../../server/app/src/logistics/setting/logistics/entities/setting.entity';
 import type { TTrip } from './../../../../server/app/src/logistics/setting/logistics/entities/trip.entity';
+import type { CreateConsolidationDefinitionDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-consolidation-define.dto';
 import type { CreateLogisticsSettingForProducerDto } from './../../../../server/app/src/logistics/setting/producer/dto/create-setting.dto';
 import type { TLogisticsSettingForProducer } from './../../../../server/app/src/logistics/setting/producer/entities/setting.entity';
+import type { UserConsolidationDefine } from '../../../../server/app/src/logistics/setting/producer/entities/consolidation-define.entity';
 import type { Jsonify } from 'type-fest';
 
 export type TProducerSetting = Jsonify<TLogisticsSettingForProducer>;
@@ -20,6 +22,8 @@ export type TProducerSettingForm = Jsonify<CreateLogisticsSettingForProducerDto>
 export type TIntermediarySettingForm = Jsonify<CreateLogisticsSettingForIntermediaryDto>;
 export type TRouteForm = Jsonify<CreateRouteDto>;
 export type TDeliveryTypeForm = Jsonify<UpdateDeliveryTypeDto>;
+export type TConsolidationDefinitionForm = Jsonify<CreateConsolidationDefinitionDto>;
+export type TUserConsolidationDefine = Jsonify<UserConsolidationDefine>;
 
 export const DELIVERY_TYPE = {
   route: 'route',
@@ -97,6 +101,36 @@ export class LogisticsRepository {
   ): Promise<Record<string, string>[]> {
     return await baseAPI<Record<string, string>[]>({
       endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
+    });
+  }
+
+  async deleteTrip(logisticsSettingId: string, routeId: string, tripId: string): Promise<TLogisticsSetting> {
+    return await baseAPI<TLogisticsSetting>({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsSettingId}/route/${routeId}/trip/${tripId}`,
+      method: 'DELETE',
+    });
+  }
+
+  async createConsolidationDefinition(body: TConsolidationDefinitionForm): Promise<TProducerSetting> {
+    return await baseAPI<TProducerSetting>({
+      endpoint: `${this.baseEndpoint}/setting/producer/consolidation-definition`,
+      method: 'POST',
+      body,
+    });
+  }
+
+  async updateConsolidationDefinition(id: string, body: TConsolidationDefinitionForm): Promise<TProducerSetting> {
+    return await baseAPI<TProducerSetting>({
+      endpoint: `${this.baseEndpoint}/setting/producer/consolidation-definition/${id}`,
+      method: 'PUT',
+      body,
+    });
+  }
+
+  async deleteConsolidationDefinition(id: string): Promise<TProducerSetting> {
+    return await baseAPI<TProducerSetting>({
+      endpoint: `${this.baseEndpoint}/setting/producer/consolidation-definition/${id}`,
+      method: 'DELETE',
     });
   }
 
