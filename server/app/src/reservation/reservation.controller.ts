@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Patch, Put, UseGuards } from '@nestjs/common';
 import { Account } from 'src/account/entities/account.entity';
 import { GetAccount } from 'src/account/get-account.decorator';
 import { JwtAuthGuard } from 'src/account/jwt-auth.guard';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationForPackedDto } from './dto/update-reservation-for-packed.dto';
+import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { TReservation } from './entities/reservation.entity';
 import { ReservationService } from './reservation.service';
 
@@ -29,6 +30,15 @@ export class ReservationController {
     @GetAccount() account: Account,
   ): Promise<TReservation> {
     return this.reservationService.createReservation(createReservationDto, account);
+  }
+
+  @Patch('/products/:reservationId')
+  async updateReservation(
+    @Body() updateReservationDto: UpdateReservationDto,
+    @GetAccount() account: Account,
+    @Param('reservationId') reservationId: string,
+  ): Promise<TReservation> {
+    return this.reservationService.updateReservation(updateReservationDto, account, reservationId);
   }
 
   @Put('/products/:reservationId/packed')

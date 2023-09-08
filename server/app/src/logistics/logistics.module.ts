@@ -5,9 +5,13 @@ import { LogisticsController } from './logistics.controller';
 import { LogisticsService } from './logistics.service';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { LogisticsSettingForIntermediary } from './setting/intermediary/entities/setting.entity';
+import { Route } from './setting/logistics/entities/route.entity';
 import { LogisticsSettingForLogistics } from './setting/logistics/entities/setting.entity';
+import { Timetable } from './setting/logistics/entities/timetable.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
+import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
 import { LogisticsSettingForProducer } from './setting/producer/entities/setting.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Module({
   imports: [
@@ -16,8 +20,12 @@ import { LogisticsSettingForProducer } from './setting/producer/entities/setting
       LogisticsSettingForLogistics,
       LogisticsSettingForIntermediary,
       Account,
+      Route,
       Trip,
+      Timetable,
       ShippingSchedule,
+      SystemConsolidationDefine,
+      UserConsolidationDefine,
     ]),
   ],
   controllers: [LogisticsController],

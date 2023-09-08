@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Account } from 'src/account/entities/account.entity';
+import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
@@ -9,7 +9,17 @@ import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/enti
 import { MoreThan, Repository } from 'typeorm';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
+import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
+import { CreateTimetableDto } from './setting/logistics/dto/create-timetable.dto';
+import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
+import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
+import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
+import { Route } from './setting/logistics/entities/route.entity';
+import { Timetable } from './setting/logistics/entities/timetable.entity';
 import { Trip } from './setting/logistics/entities/trip.entity';
+import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
+import { UserConsolidationDefine } from './setting/producer/entities/consolidation-define.entity';
+import { SystemConsolidationDefine } from './setting/system/entities/consolidation-define.entity';
 
 @Injectable()
 export class LogisticsService {
@@ -20,10 +30,18 @@ export class LogisticsService {
     private logisticsSettingRepository: Repository<LogisticsSettingForLogistics>,
     @InjectRepository(LogisticsSettingForIntermediary)
     private intermediarySettingRepository: Repository<LogisticsSettingForIntermediary>,
+    @InjectRepository(Route)
+    private routeRepository: Repository<Route>,
     @InjectRepository(Trip)
     private tripRepository: Repository<Trip>,
+    @InjectRepository(Timetable)
+    private timetableRepository: Repository<Timetable>,
     @InjectRepository(ShippingSchedule)
     private shippingScheduleRepository: Repository<ShippingSchedule>,
+    @InjectRepository(SystemConsolidationDefine)
+    private systemConsolidationDefineRepository: Repository<SystemConsolidationDefine>,
+    @InjectRepository(UserConsolidationDefine)
+    private userConsolidationDefineRepository: Repository<UserConsolidationDefine>,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -33,7 +51,9 @@ export class LogisticsService {
   }
 
   async getProducerSetting(producerId: string): Promise<LogisticsSettingForProducer> {
-    return await this.producerSettingRepository.findOne({ where: { producerId } }).then((setting) => setting);
+    return await this.producerSettingRepository
+      .findOne({ where: { producerId }, relations: ['consolidations'] })
+      .then((setting) => setting);
   }
 
   async getIntermediarySetting(intermediaryId: string): Promise<LogisticsSettingForIntermediary> {
@@ -83,6 +103,175 @@ export class LogisticsService {
 
     setting.stop = dto.stop;
     this.intermediarySettingRepository.save(setting);
+    return setting;
+  }
+
+  async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
+    const route = new Route();
+    await LogisticsService.setRouteAttributes(dto, route);
+    await route.save();
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async deleteRoute(account: Account, logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({ where: { logisticsId, routes: { id: routeId } }, relations: ['routes'] })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const route = await this.routeRepository.findOne({ where: { id: routeId } });
+    await this.routeRepository.remove(route);
+
+    const resSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    return resSetting;
+  }
+
+  private static async setRouteAttributes(dto: CreateRouteDto, route: Route) {
+    route.logisticsSettingId = dto.logisticsSettingId;
+    route.name = dto.name;
+  }
+
+  async createTrip(logisticsId: string, routeId: string, dto: CreateTripDto): Promise<LogisticsSettingForLogistics> {
+    const trip = new Trip();
+    await LogisticsService.setTripAttributes(routeId, dto, trip);
+    const resultTrip = await trip.save();
+
+    const registerTimetables: Timetable[] = [];
+    for (const timetable of dto.timetables) {
+      const time = new Timetable();
+      await LogisticsService.setTimetableAttributes(resultTrip.id, timetable, time);
+      registerTimetables.push(time);
+    }
+    await this.timetableRepository.save(registerTimetables);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  private static async setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
+    trip.routeId = routeId;
+    trip.name = dto.name;
+    trip.shockLevel = dto.shockLevel;
+    trip.capacity = dto.capacity;
+  }
+
+  private static async setTimetableAttributes(tripId: string, timetable: CreateTimetableDto, time: Timetable) {
+    time.tripId = tripId;
+    time.stop = timetable.stop;
+    time.time = timetable.time;
+  }
+
+  async deleteTrip(
+    account: Account,
+    logisticsId: string,
+    routeId: string,
+    tripId: string,
+  ): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId, routes: { id: routeId, trips: { id: tripId } } },
+        relations: ['routes', 'routes.trips'],
+      })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
+    const trip = await this.tripRepository.findOne({ where: { id: tripId } });
+    await this.tripRepository.remove(trip);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    setting.deliveryType = dto.deliveryType;
+    this.logisticsSettingRepository.save(setting);
+    return setting;
+  }
+
+  async updateRoute(logisticsId: string, id: string, dto: UpdateRouteDto): Promise<LogisticsSettingForLogistics> {
+    const route = await this.routeRepository.findOne({
+      where: { id },
+    });
+
+    if (!route) {
+      throw new BadRequestException();
+    }
+
+    route.name = dto.name;
+    await this.routeRepository.save(route);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
     return setting;
   }
 
@@ -187,6 +376,88 @@ export class LogisticsService {
 
     return filteredTrips;
   }
+
+  async getSystemConsolidationDefinition(): Promise<SystemConsolidationDefine[]> {
+    return await this.systemConsolidationDefineRepository.find().then((consolidation) => consolidation);
+  }
+
+  async createConsolidationDefinition(
+    account: Account,
+    dto: CreateConsolidationDefinitionDto,
+  ): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+    const consolidation = new UserConsolidationDefine();
+    consolidation.producerId = account.id;
+    consolidation.name = dto.name;
+    consolidation.shockLevel = dto.shockLevel;
+    await consolidation.save();
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async updateConsolidationDefinition(
+    account: Account,
+    consolidationId: string,
+    dto: CreateConsolidationDefinitionDto,
+  ): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+
+    const consolidation = await this.userConsolidationDefineRepository
+      .findOne({ where: { id: consolidationId, producerId: account.id } })
+      .then((consolidation) => consolidation);
+    if (!consolidation) {
+      throw new BadRequestException();
+    }
+    consolidation.name = dto.name;
+    consolidation.shockLevel = dto.shockLevel;
+    await this.userConsolidationDefineRepository.save(consolidation);
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
+  async deleteConsolidationDefinition(account: Account, consolidationId: string): Promise<LogisticsSettingForProducer> {
+    if (account.attribute !== USER_ATTRIBUTE.producer) {
+      throw new BadRequestException();
+    }
+
+    const consolidation = await this.userConsolidationDefineRepository
+      .findOne({ where: { id: consolidationId, producerId: account.id } })
+      .then((consolidation) => consolidation);
+    if (!consolidation) {
+      throw new BadRequestException();
+    }
+    await this.userConsolidationDefineRepository.remove(consolidation);
+
+    const setting = await this.producerSettingRepository
+      .findOne({ where: { producerId: account.id }, relations: ['consolidations'] })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
 }
 
 export type TSuggestTrip = {
@@ -213,17 +484,17 @@ async function checkAvailableCapacityTrip(
   shippingScheduleRepository: Repository<ShippingSchedule>,
   checkDate: Date,
 ) {
-  const shippingScheduleReservations = await shippingScheduleRepository
-    .find({
-      where: {
-        tripId: suggestTrip.tripId,
-        pickupTime: MoreThan(checkDate), // その日限りのものを取得するようにする
-      },
-      relations: ['reservations'],
+  const shippingScheduleReservationIds = await shippingScheduleRepository
+    .findBy({
+      tripId: suggestTrip.tripId,
+      pickupTime: MoreThan(checkDate), // その日限りのものを取得するようにする
     })
-    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservations));
+    .then((shippingSchedules) => shippingSchedules.map((shippingSchedule) => shippingSchedule.reservationIds));
 
-  const reservationCount = shippingScheduleReservations.reduce((acc, reservations) => acc + reservations.length, 0);
+  const reservationCount = shippingScheduleReservationIds.reduce(
+    (acc, reservationIds) => acc + reservationIds.length,
+    0,
+  );
 
   return reservationCount <= suggestTrip.capacity;
 }

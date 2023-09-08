@@ -4,6 +4,7 @@ import * as dayjs from 'dayjs';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { Repository, FindOptionsWhere } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, TProduct } from './entities/product.entity';
 
 @Injectable()
@@ -44,7 +45,7 @@ export class ProductService {
     if (account.attribute === USER_ATTRIBUTE.producer) {
       producer = account;
     } else {
-      // 農家以外の場合はエラーを表示。
+      // 生産者以外の場合はエラーを表示。
       throw new BadRequestException();
     }
     await ProductService.setProductAttributes(dto, product, producer);
@@ -53,7 +54,30 @@ export class ProductService {
     return product.convertTProduct();
   }
 
-  private static async setProductAttributes(dto: CreateProductDto, product: Product, producer: Account) {
+  async updateProduct(dto: UpdateProductDto, account: Account, productId: string): Promise<TProduct> {
+    const product = await this.productRepository.findOne({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      throw new BadRequestException();
+    }
+    if (account.id !== product.producerId) {
+      // 作成者以外の場合はエラーを表示。
+      throw new BadRequestException();
+    }
+
+    await ProductService.setProductAttributes(dto, product, account);
+    await product.save();
+
+    return product.convertTProduct();
+  }
+
+  private static async setProductAttributes(
+    dto: CreateProductDto | UpdateProductDto,
+    product: Product,
+    producer: Account,
+  ) {
     product.producerId = producer.id;
     product.name = dto.name;
     product.kinds = dto.kinds;

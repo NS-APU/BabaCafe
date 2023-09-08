@@ -11,17 +11,26 @@
   import { ProductRepository, type TProduct } from '../../../models/Product';
   import { AccountService } from '../../../services/AccountService';
   import { handleError } from '../../../utils/error-handle-helper';
-  import type { TReservationForm } from '../../../models/Reservation';
+  import type { TReservationForm, TReservation } from '../../../models/Reservation';
+
+  const QUANTITY_MAX = 100;
+  const QUANTITY_MIN = 1;
+
+  const DESIRE_DEFAULT_DATE_TIME = dayjs().minute(0);
+
+  const DATE_FORMAT_DESCRIPTION = 'MM/DD HH:mm';
+  const DATE_FORMAT_TEXTFIELD = 'YYYY-MM-DDTHH:mm';
 
   export let onConfirm: (values: Required<TReservationForm>) => unknown;
+
+  export let reservation: TReservation | undefined = undefined;
+  export let pageType: 'new' | 'edit';
 
   let shops: Record<string, string>[] | undefined = [];
   let shopIds: Record<string, string> | undefined = undefined;
   let selectedProduct: TProduct;
   let totalPrice = 0;
-  let reservationRangeMax: number;
-  const RESERVATION_MAX = 100;
-  const RESERVATION_MIN = 1;
+  let quantityRangeMax: number;
 
   onMount(async () => {
     try {
@@ -30,16 +39,12 @@
         new AccountService().getShops(),
       ]);
       shopIds = Object.fromEntries(shops.map(({ id, name }) => [id, name]));
-      reservationRangeMax = selectedProduct.remaining > RESERVATION_MAX ? RESERVATION_MAX : selectedProduct.remaining;
+      quantityRangeMax = selectedProduct.remaining > QUANTITY_MAX ? QUANTITY_MAX : selectedProduct.remaining;
       totalPrice = selectedProduct.unitPrice;
     } catch (err) {
       handleError(err);
     }
   });
-
-  const DESIRE_DEFAULT_DATE_TIME = new Date();
-  DESIRE_DEFAULT_DATE_TIME.setHours(0);
-  DESIRE_DEFAULT_DATE_TIME.setMinutes(0);
 
   const showPicker = (e: Event) => {
     if (e.target instanceof HTMLInputElement) {
@@ -47,34 +52,28 @@
     }
   };
 
-  // フォームの項目
-  let quantity = 1;
-  let desiredAt = DESIRE_DEFAULT_DATE_TIME.toISOString().slice(0, 16);
-  let receiveLocationId = shopIds ? Object.keys(shopIds)[0] : '';
-
-  const initialValues = {
-    quantity: 1,
-    desiredAt: DESIRE_DEFAULT_DATE_TIME.toISOString().slice(0, 16),
-    receiveLocationId: shopIds ? Object.keys(shopIds)[0] : '',
-    // totalPrice: totalPrice
-  };
-
   // TODO: バリデーションの実装
-  const { form } = createForm({
-    initialValues,
+  const { form, data } = createForm({
+    initialValues: {
+      quantity: reservation?.quantity || 1,
+      desiredAt: reservation?.desiredAt
+        ? dayjs(reservation.desiredAt).format(DATE_FORMAT_TEXTFIELD)
+        : DESIRE_DEFAULT_DATE_TIME.format(DATE_FORMAT_TEXTFIELD),
+      receiveLocationId: reservation?.receiveLocationId || '',
+    },
     onSubmit: async (values) => {
       await onConfirm({
         ...values,
         productId: selectedProduct.id,
-        quantity: quantity,
-        desiredAt: desiredAt,
-        receiveLocationId: receiveLocationId,
+        quantity: $data.quantity,
+        desiredAt: $data.desiredAt,
+        receiveLocationId: $data.receiveLocationId,
       });
     },
   });
 
   function calcTotalPrice() {
-    totalPrice = quantity * selectedProduct.unitPrice;
+    totalPrice = $data.quantity * selectedProduct.unitPrice;
   }
 </script>
 
@@ -113,9 +112,9 @@
         <div class="mt-2 text-center text-base text-[#5A5A5A]">残りあと{selectedProduct.remaining}点</div>
         <div class="mt-2 text-center text-base text-[#5A5A5A]">
           予約期間：
-          {dayjs(selectedProduct.startAt).format('MM/DD HH:mm')}
+          {dayjs(selectedProduct.startAt).format(DATE_FORMAT_DESCRIPTION)}
           -
-          {dayjs(selectedProduct.endAt).format('MM/DD HH:mm')}
+          {dayjs(selectedProduct.endAt).format(DATE_FORMAT_DESCRIPTION)}
         </div>
       </Paper>
     </div>
@@ -125,12 +124,12 @@
         <Textfield
           class="m-3 w-[200px]"
           label="予約数量"
-          bind:value={quantity}
+          bind:value={$data.quantity}
           required
           type={'number'}
           suffix="点"
-          input$min={RESERVATION_MIN}
-          input$max={reservationRangeMax}
+          input$min={QUANTITY_MIN}
+          input$max={quantityRangeMax}
           on:change={calcTotalPrice}
         />
       </div>
@@ -140,11 +139,11 @@
           class="m-3 w-[200px]"
           variant="standard"
           label="受け取り希望日時"
-          bind:value={desiredAt}
+          bind:value={$data.desiredAt}
           type="datetime-local"
           required
-          input$min={new Date(selectedProduct.startAt).toISOString().slice(0, 16)}
-          input$max={new Date(selectedProduct.endAt).toISOString().slice(0, 16)}
+          input$min={dayjs(selectedProduct.startAt).format(DATE_FORMAT_TEXTFIELD)}
+          input$max={dayjs(selectedProduct.endAt).format(DATE_FORMAT_TEXTFIELD)}
           on:click={showPicker}
         />
       </div>
@@ -156,7 +155,7 @@
               class="m-3 w-[200px]"
               label="受け取り場所"
               variant="standard"
-              bind:value={receiveLocationId}
+              bind:value={$data.receiveLocationId}
               required
             >
               {#each Object.keys(shopIds) as shopId}
@@ -164,12 +163,12 @@
               {/each}
             </Select>
           </div>
-          {#if receiveLocationId}
+          {#if $data.receiveLocationId}
             <div class="flex justify-center">
               <Paper class="w-[200px] p-1" color="secondary" variant="outlined">
                 <div class="text-base text-[#5A5A5A]">
-                  <div>〒{shops.find((shop) => shop.id === receiveLocationId).zipCode}</div>
-                  <div>{shops.find((shop) => shop.id === receiveLocationId).address}</div>
+                  <div>〒{shops.find((shop) => shop.id === $data.receiveLocationId).zipCode}</div>
+                  <div>{shops.find((shop) => shop.id === $data.receiveLocationId).address}</div>
                 </div>
               </Paper>
             </div>
@@ -192,7 +191,7 @@
           <p class="black">キャンセル</p>
         </Button>
         <Button variant="raised" class="mt-10 w-[150px] rounded-full px-4 py-2" color="secondary" type="submit">
-          <p class="black">予約確定</p>
+          <p class="black">{pageType === 'new' ? '予約確定' : '編集'}</p>
         </Button>
       </div>
     </form>
