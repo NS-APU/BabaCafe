@@ -30,4 +30,5 @@ export class LogisticsSettingForProducer extends BaseEntity {
 export type TLogisticsSettingForProducer = Pick<LogisticsSettingForProducer, 'producerId' | 'stop'> & {
   id: string;
   producer: Account;
+  consolidations: UserConsolidationDefine[];
 };

@@ -17,6 +17,7 @@
   } from '../../../constants/product';
   import { addToast } from '../../../stores/Toast';
   import { encodeFileToBase64 } from '../../../utils/file';
+  import SelectConsolidationDefinitionDialog from './SelectConsolidationDefinitionDialog.svelte';
   import type { TProductForm, TProduct } from '../../../models/Product';
 
   const START_DEFAULT_DATE_TIME = dayjs().minute(0);
@@ -58,7 +59,7 @@
       unitPrice: product?.unitPrice || 0,
       image: product?.image || '',
       quantity: product?.quantity || 1,
-      shockLevel: product?.shockLevel || SHOCK_LEVEL.strong,
+      shockLevel: String(product?.shockLevel || SHOCK_LEVEL.strong),
     },
     onSubmit: async (values) => {
       await onConfirm({
@@ -107,6 +108,8 @@
     onInput('');
     onBlur();
   }
+
+  let isOpenSelectConsolidationDefinitionDialog = false;
 </script>
 
 <div>
@@ -260,11 +263,23 @@
       </h1>
 
       <div>
-        <Select class="m-3 w-[300px]" variant="standard" label="衝撃" bind:value={$data.shockLevel} required>
-          {#each Object.keys(SHOCK_LEVEL) as shockLevel}
-            <Option value={SHOCK_LEVEL[shockLevel]}>{SHOCK_LEVEL_LABEL[shockLevel]}</Option>
+        <Select class="ml-3 mt-3 w-[300px]" variant="standard" label="衝撃" bind:value={$data.shockLevel} required>
+          {#each Object.keys(SHOCK_LEVEL) as shockLevelKey}
+            <Option value={String(SHOCK_LEVEL[shockLevelKey])}>{SHOCK_LEVEL_LABEL[shockLevelKey]}</Option>
           {/each}
         </Select>
+        <Button
+          variant="raised"
+          class="ml-3 mt-3 rounded !bg-[#EFEFEF]"
+          on:click={() => (isOpenSelectConsolidationDefinitionDialog = true)}
+          type="button"
+        >
+          <p>混載定義から選択</p>
+        </Button>
+        <SelectConsolidationDefinitionDialog
+          bind:open={isOpenSelectConsolidationDefinitionDialog}
+          bind:shockLevel={$data.shockLevel}
+        />
       </div>
     </div>
 

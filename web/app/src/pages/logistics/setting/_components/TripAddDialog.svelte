@@ -122,7 +122,7 @@
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
         <span>時刻表</span>
       </h1>
-      <TimetableImport bind:timetables {routeId} kinds="add" />
+      <TimetableImport bind:timetables {routeId} tripId={''} kinds="add" />
     </div>
   </Content>
 

@@ -4,7 +4,12 @@
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
-  import { LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
+  import {
+    LogisticsRepository,
+    type TLogisticsSetting,
+    type TRouteSetting,
+    type TTripSetting,
+  } from '../../../../models/Logistics';
   import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
   import TimetableImport from './TimetableImport.svelte';
@@ -13,8 +18,8 @@
   let logisticsRepository: LogisticsRepository = new LogisticsRepository();
   export let logisticsSetting: TLogisticsSetting = null;
   export let open = false;
-  export let trip;
-  export let routeId;
+  export let trip: TTripSetting;
+  export let route: TRouteSetting;
   let tripName = trip.name;
   let value = SHOCK_LEVEL_LABEL[Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === trip.shockLevel)];
   let capacity = trip.capacity;
@@ -24,9 +29,14 @@
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'updateTrip':
-        newDateTimetables = timetables.map((value) => {
-          const [stop, time] = [value.stop, changeFormatDate(value.time)];
-          return { stop, time };
+        newDateTimetables = timetables.map((value, index) => {
+          const [id, stop, time, tripId] = [
+            trip.timetables[index].id,
+            value.stop,
+            changeFormatDate(value.time),
+            trip.id,
+          ];
+          return { id, stop, time, tripId };
         });
 
         await updateTrip(trip.id);
@@ -127,7 +137,7 @@
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
         <span>時刻表</span>
       </h1>
-      <TimetableImport bind:timetables {routeId} kinds="edit" />
+      <TimetableImport bind:timetables routeId={route.id} tripId={trip.id} kinds="edit" />
     </div>
   </Content>
 
