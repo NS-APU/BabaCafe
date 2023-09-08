@@ -3,6 +3,7 @@
   import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
+  import dayjs from 'dayjs';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
   import { LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
   import { addToast } from '../../../../stores/Toast';
@@ -23,9 +24,8 @@
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'createTrip':
-        newDateTimetables = timetables.map((value) => {
-          const [stop, time] = [value.stop, changeFormatDate(value.time)];
-          return { stop, time };
+        newDateTimetables = timetables.map((timetable) => {
+          return { stop: timetable.stop, time: dayjs(timetable.time, 'hh:mm', true).toISOString() };
         });
 
         await createTrip(routeId);
@@ -35,17 +35,6 @@
         break;
     }
     clearInputData();
-  }
-
-  function changeFormatDate(time: string) {
-    if (!time) {
-      return;
-    }
-    const today = new Date();
-    today.setHours(Number(time.substring(0, 2)));
-    today.setMinutes(Number(time.substring(3)));
-    today.setSeconds(0);
-    return today;
   }
 
   async function createTrip(routeId: string) {

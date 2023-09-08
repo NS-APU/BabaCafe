@@ -3,6 +3,7 @@
   import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
+  import dayjs from 'dayjs';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
   import {
     LogisticsRepository,
@@ -29,17 +30,11 @@
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'updateTrip':
-        newDateTimetables = timetables.map((value, index) => {
-          const [id, stop, time, tripId] = [
-            trip.timetables[index].id,
-            value.stop,
-            changeFormatDate(value.time),
-            trip.id,
-          ];
-          return { id, stop, time, tripId };
+        newDateTimetables = timetables.map((timetable) => {
+          return { stop: timetable.stop, time: dayjs(timetable.time).toISOString() };
         });
 
-        await updateTrip(trip.id);
+        await updateTrip();
         break;
       default:
         // NOP
@@ -49,23 +44,9 @@
     cancelInputData();
   }
 
-  function changeFormatDate(time: string) {
-    if (!time) {
-      return;
-    }
-    if (time.length > 6) {
-      return new Date(time);
-    }
-    const today = new Date();
-    today.setHours(Number(time.substring(0, 2)));
-    today.setMinutes(Number(time.substring(3)));
-    today.setSeconds(0);
-    return today;
-  }
-
-  async function updateTrip(tripId: string) {
+  async function updateTrip() {
     try {
-      logisticsSetting = await logisticsRepository.updateTrip(logisticsSetting.logisticsId, tripId, {
+      logisticsSetting = await logisticsRepository.updateTrip(logisticsSetting.logisticsId, route.id, trip.id, {
         name: tripName,
         shockLevel: SHOCK_LEVEL[Object.keys(SHOCK_LEVEL_LABEL).find((key) => SHOCK_LEVEL_LABEL[key] === value)],
         capacity: capacity,

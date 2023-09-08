@@ -1,12 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
 import { LogisticsSettingForLogistics } from 'src/logistics/setting/logistics/entities/setting.entity';
 import { CreateLogisticsSettingForProducerDto } from 'src/logistics/setting/producer/dto/create-setting.dto';
 import { LogisticsSettingForProducer } from 'src/logistics/setting/producer/entities/setting.entity';
-import { MoreThan, Repository } from 'typeorm';
+import { DataSource, EntityManager, MoreThan, Repository } from 'typeorm';
 import { CreateShippingScheduleDto } from './schedule/dto/create-shipping-scedule.entity';
 import { ShippingSchedule } from './schedule/entities/shipping-schedule.entity';
 import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
@@ -43,6 +43,7 @@ export class LogisticsService {
     private systemConsolidationDefineRepository: Repository<SystemConsolidationDefine>,
     @InjectRepository(UserConsolidationDefine)
     private userConsolidationDefineRepository: Repository<UserConsolidationDefine>,
+    @InjectDataSource() private dataSource: DataSource,
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
@@ -109,7 +110,7 @@ export class LogisticsService {
 
   async createRoute(logisticsId: string, dto: CreateRouteDto): Promise<LogisticsSettingForLogistics> {
     const route = new Route();
-    await LogisticsService.setRouteAttributes(dto, route);
+    this.setRouteAttributes(dto, route);
     await route.save();
 
     const setting = await this.logisticsSettingRepository
@@ -151,23 +152,32 @@ export class LogisticsService {
     return resSetting;
   }
 
-  private static async setRouteAttributes(dto: CreateRouteDto, route: Route) {
+  private setRouteAttributes(dto: CreateRouteDto, route: Route) {
     route.logisticsSettingId = dto.logisticsSettingId;
     route.name = dto.name;
   }
 
-  async createTrip(logisticsId: string, routeId: string, dto: CreateTripDto): Promise<LogisticsSettingForLogistics> {
-    const trip = new Trip();
-    await LogisticsService.setTripAttributes(routeId, dto, trip);
-    const resultTrip = await trip.save();
-
-    const registerTimetables: Timetable[] = [];
-    for (const timetable of dto.timetables) {
-      const time = new Timetable();
-      await LogisticsService.setTimetableAttributes(resultTrip.id, timetable, time);
-      registerTimetables.push(time);
+  async createTrip(
+    account: Account,
+    logisticsId: string,
+    routeId: string,
+    dto: CreateTripDto,
+  ): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
     }
-    await this.timetableRepository.save(registerTimetables);
+
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      let trip = new Trip();
+      this.setTripAttributes(routeId, dto, trip);
+      trip = await manager.save(trip);
+      const timetables: Timetable[] = dto.timetables.map((dtoTimetable) => {
+        const timetable = new Timetable();
+        this.setTimetableAttributes(trip.id, dtoTimetable, timetable);
+        return timetable;
+      });
+      await manager.save(timetables);
+    });
 
     const setting = await this.logisticsSettingRepository
       .findOne({
@@ -183,35 +193,56 @@ export class LogisticsService {
     return setting;
   }
 
-  async updateTrip(logisticsId: string, tripId: string, dto: UpdateTripDto): Promise<LogisticsSettingForLogistics> {
+  async updateTrip(
+    account: Account,
+    logisticsId: string,
+    routeId: string,
+    tripId: string,
+    dto: UpdateTripDto,
+  ): Promise<LogisticsSettingForLogistics> {
+    if (account.id !== logisticsId) {
+      throw new BadRequestException();
+    }
+
+    const existsSetting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId, routes: { id: routeId, trips: { id: tripId } } },
+        relations: ['routes', 'routes.trips'],
+      })
+      .then((setting) => setting);
+    if (!existsSetting) {
+      throw new BadRequestException();
+    }
+
     const trip = await this.tripRepository.findOne({
       where: { id: tripId },
       relations: ['timetables'],
     });
-
-    console.log(trip);
-
     if (!trip) {
       throw new BadRequestException();
     }
 
-    const registerTimetables: Timetable[] = [];
-    for (const timetable of dto.timetables) {
-      const time = await this.timetableRepository.findOne({
-        where: { id: timetable.id },
+    await this.dataSource.manager.transaction(async (manager: EntityManager) => {
+      const removeTimetables = await this.timetableRepository.find({ where: { tripId } });
+      if (removeTimetables) {
+        await manager.remove(removeTimetables);
+      }
+
+      const addTimetables: Timetable[] = dto.timetables.map((dtoTimetable) => {
+        const timetable = new Timetable();
+        this.setTimetableAttributes(tripId, dtoTimetable, timetable);
+        return timetable;
       });
-      await LogisticsService.setTimetableAttributes(tripId, timetable, time);
-      registerTimetables.push(time);
-    }
-    console.log(registerTimetables);
+      if (addTimetables.length > 0) {
+        await manager.save(addTimetables);
+      }
 
-    trip.name = dto.name;
-    trip.shockLevel = dto.shockLevel;
-    trip.capacity = dto.capacity;
-    trip.timetables = registerTimetables;
-
-    await this.timetableRepository.save(registerTimetables);
-    await trip.save();
+      trip.name = dto.name;
+      trip.shockLevel = dto.shockLevel;
+      trip.capacity = dto.capacity;
+      trip.timetables = addTimetables;
+      await manager.save(trip);
+    });
 
     const setting = await this.logisticsSettingRepository
       .findOne({
@@ -227,14 +258,14 @@ export class LogisticsService {
     return setting;
   }
 
-  private static async setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
+  private setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
     trip.routeId = routeId;
     trip.name = dto.name;
     trip.shockLevel = dto.shockLevel;
     trip.capacity = dto.capacity;
   }
 
-  private static async setTimetableAttributes(tripId: string, timetable: CreateTimetableDto, time: Timetable) {
+  private setTimetableAttributes(tripId: string, timetable: CreateTimetableDto, time: Timetable) {
     time.tripId = tripId;
     time.stop = timetable.stop;
     time.time = timetable.time;

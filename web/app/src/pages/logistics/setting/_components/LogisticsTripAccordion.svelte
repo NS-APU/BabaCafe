@@ -91,6 +91,6 @@
       </Content>
     </Panel>
   </Accordion>
-  <TripEditDialog bind:open={isTripEditDialogOpen} {route} bind:logisticsSetting bind:trip />
+  <TripEditDialog bind:open={isTripEditDialogOpen} bind:logisticsSetting {route} {trip} />
   <TripDeleteDialog bind:open={isTripDeleteDialogOpen} bind:logisticsSetting {route} {trip} />
 </div>

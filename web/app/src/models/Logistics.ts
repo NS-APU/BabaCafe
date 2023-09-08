@@ -162,9 +162,14 @@ export class LogisticsRepository {
     });
   }
 
-  async updateTrip(logisticsId: string, tripId: string, body: TUpdateTripForm): Promise<TLogisticsSetting> {
+  async updateTrip(
+    logisticsId: string,
+    routeId: string,
+    tripId: string,
+    body: TUpdateTripForm,
+  ): Promise<TLogisticsSetting> {
     return await baseAPI({
-      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/trip/${tripId}/edit`,
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/route/${routeId}/trip/${tripId}`,
       method: 'PUT',
       body,
     });
