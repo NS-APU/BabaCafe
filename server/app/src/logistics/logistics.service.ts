@@ -333,10 +333,10 @@ export class LogisticsService {
 
     let filteredTrips = await Promise.all(
       availableTrips.map(async (trip) => {
-        const isAvailableTime = checkAvailableTimeTrip(trip, checkDate);
-        const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+        const isAvailableTime = await checkAvailableTimeTrip(trip, checkDate);
+        const availableCapacity = await getAvailableCapacityCount(trip, this.shippingScheduleRepository, checkDate);
 
-        if (!(await isAvailableTime) || !(await isAvailableCapacity)) return undefined;
+        if (!isAvailableTime || !availableCapacity) return undefined;
 
         const pickupTime = setDate(checkDate, trip.pickupTime);
         const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -345,6 +345,7 @@ export class LogisticsService {
           ...trip,
           pickupTime: await pickupTime,
           deliveryTime: await deliveryTime,
+          capacity: availableCapacity,
         };
       }),
     ).then((trips) => trips.filter(Boolean));
@@ -353,9 +354,9 @@ export class LogisticsService {
       checkDate.setDate(checkDate.getDate() + 1);
       const nextDayTrips = await Promise.all(
         availableTrips.map(async (trip) => {
-          const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+          const availableCapacity = await getAvailableCapacityCount(trip, this.shippingScheduleRepository, checkDate);
 
-          if (!(await isAvailableCapacity)) return undefined;
+          if (!availableCapacity) return undefined;
 
           const pickupTime = setDate(checkDate, trip.pickupTime);
           const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -364,6 +365,7 @@ export class LogisticsService {
             ...trip,
             pickupTime: await pickupTime,
             deliveryTime: await deliveryTime,
+            capacity: availableCapacity,
           };
         }),
       ).then((trips) => trips.filter(Boolean));
@@ -479,7 +481,7 @@ async function checkAvailableTimeTrip(suggestTrip: TSuggestTrip, checkDate: Date
   return isAvailableTime;
 }
 
-async function checkAvailableCapacityTrip(
+async function getAvailableCapacityCount(
   suggestTrip: TSuggestTrip,
   shippingScheduleRepository: Repository<ShippingSchedule>,
   checkDate: Date,
@@ -496,5 +498,5 @@ async function checkAvailableCapacityTrip(
     0,
   );
 
-  return reservationCount <= suggestTrip.capacity;
+  return suggestTrip.capacity - reservationCount;
 }
