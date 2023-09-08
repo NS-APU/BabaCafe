@@ -4,10 +4,14 @@
   import Accordion, { Panel, Header, Content } from '@smui-extra/accordion';
   import dayjs from 'dayjs';
   import { SHOCK_LEVEL_LABEL, SHOCK_LEVEL } from '../../../../constants/product';
-  import type { TTripSetting } from '../../../../models/Logistics';
+  import TripEditDialog from './TripEditDialog.svelte';
+  import type { TLogisticsSetting, TTripSetting } from '../../../../models/Logistics';
 
   export let trip: TTripSetting;
   $: panelOpen = false;
+  let isTripEditDialogOpen = false;
+  export let routeId;
+  export let logisticsSetting: TLogisticsSetting = null;
 
   function formatPickupTime(timeString) {
     return timeString ? dayjs(timeString).format('HH:mm') : '';
@@ -30,7 +34,13 @@
         {/if}
         {trip.name}
         <span slot="icon">
-          <IconButton class="material-icons" disabled>edit</IconButton>
+          <IconButton
+            class="material-icons"
+            on:click={(e) => {
+              isTripEditDialogOpen = true;
+              e.stopPropagation();
+            }}>edit</IconButton
+          >
           <IconButton class="material-icons" disabled>delete</IconButton>
         </span>
       </Header>
@@ -73,4 +83,5 @@
       </Content>
     </Panel>
   </Accordion>
+  <TripEditDialog bind:open={isTripEditDialogOpen} {routeId} bind:logisticsSetting bind:trip />
 </div>

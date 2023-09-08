@@ -50,6 +50,10 @@
     // 同一ファイルを選択してもイベントが発火するようにする
     target.value = '';
   }
+
+  function formatPickupTime(timeString) {
+    return timeString ? dayjs(timeString).format('HH:mm') : '';
+  }
 </script>
 
 <div>
@@ -80,7 +84,13 @@
         {#each timetables as timetable}
           <Row>
             <Cell class="text-center">{timetable.stop}</Cell>
-            <Cell class="text-center">{timetable.time}</Cell>
+            <!-- TODO: tripの情報はタームゾーンで入ってくるので、暫定的にlengthで分岐させてる -->
+            <!-- よい方法を探す必要あり -->
+            {#if timetable.time.length > 6}
+              <Cell class="text-center">{formatPickupTime(timetable.time)}</Cell>
+            {:else}
+              <Cell class="text-center">{timetable.time}</Cell>
+            {/if}
           </Row>
         {/each}
       </Body>

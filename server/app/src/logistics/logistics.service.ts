@@ -172,6 +172,48 @@ export class LogisticsService {
     return setting;
   }
 
+  async updateTrip(logisticsId: string, tripId: string, dto: CreateTripDto): Promise<LogisticsSettingForLogistics> {
+    const trip = await this.tripRepository.findOne({
+      where: { id: tripId },
+    });
+
+    console.log(trip);
+
+    if (!trip) {
+      throw new BadRequestException();
+    }
+
+    const registerTimetables: Timetable[] = [];
+    for (const timetable of dto.timetables) {
+      const time = new Timetable();
+      await LogisticsService.setTimetableAttributes(tripId, timetable, time);
+      registerTimetables.push(time);
+    }
+
+    trip.name = dto.name;
+    trip.shockLevel = dto.shockLevel;
+    trip.capacity = dto.capacity;
+    trip.timetables = registerTimetables;
+
+    console.log(trip);
+
+    await this.timetableRepository.save(registerTimetables);
+    await this.tripRepository.save(trip);
+
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+      })
+      .then((setting) => setting);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+
+    return setting;
+  }
+
   private static async setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
     trip.routeId = routeId;
     trip.name = dto.name;

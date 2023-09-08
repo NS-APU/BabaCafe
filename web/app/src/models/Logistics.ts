@@ -109,4 +109,12 @@ export class LogisticsRepository {
       body,
     });
   }
+
+  async updateTrip(logisticsId: string, tripId: string, body: TTripForm): Promise<TLogisticsSetting> {
+    return await baseAPI({
+      endpoint: `${this.baseEndpoint}/setting/logistics/${logisticsId}/trip/${tripId}/edit`,
+      method: 'PUT',
+      body,
+    });
+  }
 }

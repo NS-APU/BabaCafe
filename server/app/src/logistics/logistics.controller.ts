@@ -86,10 +86,20 @@ export class LogisticsController {
     return this.logisticService.createTrip(logisticsId, routeId, dto);
   }
 
+  @Put('/setting/logistics/:logisticsId/trip/:tripId/edit')
+  async editTrip(
+    @Param('logisticsId') logisticsId: string,
+    @Param('tripId') tripId: string,
+    @Body() dto: CreateTripDto,
+  ) {
+    return this.logisticService.updateTrip(logisticsId, tripId, dto);
+  }
+
   @Put('/setting/logistics/:logisticsId/deliveryType')
   async updateDeliveryType(@Param('logisticsId') logisticsId: string, @Body() dto: UpdateDeliveryTypeDto) {
     return this.logisticService.updateDeliveryType(logisticsId, dto);
   }
+
   @Post('/schedule')
   @HttpCode(HttpStatus.CREATED)
   async createShippingSchedule(@Body() dto: CreateShippingScheduleDto) {
