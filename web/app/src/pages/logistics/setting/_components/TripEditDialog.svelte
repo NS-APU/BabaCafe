@@ -3,7 +3,6 @@
   import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
-  import dayjs from 'dayjs';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
   import {
     LogisticsRepository,
@@ -30,8 +29,12 @@
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'updateTrip':
-        newDateTimetables = timetables.map((timetable) => {
-          return { stop: timetable.stop, time: dayjs(timetable.time).toISOString() };
+        newDateTimetables = await timetables.map((timetable) => {
+          const day = new Date();
+          day.setHours(timetable.time.slice(0, 2));
+          day.setMinutes(timetable.time.slice(3));
+          day.setSeconds(0);
+          return { stop: timetable.stop, time: day };
         });
 
         await updateTrip();
