@@ -20,6 +20,11 @@
     return timeString ? dayjs(timeString).format('HH:mm') : '';
   }
 
+  function onClickTripEditButton(event: Event) {
+    event.stopPropagation();
+    isTripEditDialogOpen = true;
+  }
+
   function onClickTripDeleteButton(event: Event) {
     event.stopPropagation();
     isTripDeleteDialogOpen = true;
@@ -42,13 +47,7 @@
         {/if}
         {trip.name}
         <span slot="icon">
-          <IconButton
-            class="material-icons"
-            on:click={(e) => {
-              isTripEditDialogOpen = true;
-              e.stopPropagation();
-            }}>edit</IconButton
-          >
+          <IconButton class="material-icons" on:click={onClickTripEditButton}>edit</IconButton>
           <IconButton class="material-icons" on:click={onClickTripDeleteButton}>delete</IconButton>
         </span>
       </Header>

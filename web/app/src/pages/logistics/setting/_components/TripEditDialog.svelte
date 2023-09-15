@@ -3,6 +3,7 @@
   import Dialog, { Title, Actions, Content } from '@smui/dialog';
   import Select, { Option } from '@smui/select';
   import Textfield from '@smui/textfield';
+  import dayjs from 'dayjs';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
   import {
     LogisticsRepository,
@@ -30,11 +31,7 @@
     switch (e.detail.action) {
       case 'updateTrip':
         newDateTimetables = await timetables.map((timetable) => {
-          const day = new Date();
-          day.setHours(timetable.time.slice(0, 2));
-          day.setMinutes(timetable.time.slice(3));
-          day.setSeconds(0);
-          return { stop: timetable.stop, time: day };
+          return { stop: timetable.stop, time: formatPickupTime(timetable.time) };
         });
 
         await updateTrip();
@@ -75,6 +72,16 @@
       capacity = 100;
     } else if (capacity < 1) {
       capacity = 1;
+    }
+  }
+
+  function formatPickupTime(timeString) {
+    if (dayjs(timeString, 'hh:mm', true).isValid()) {
+      return dayjs(timeString, 'hh:mm', true).toDate();
+    } else if (dayjs(timeString).isValid()) {
+      return timeString;
+    } else {
+      return '';
     }
   }
 </script>

@@ -11,6 +11,7 @@
   export let routeId;
   export let kinds;
   export let tripId;
+  $: csvUploadId = `csv_upload_${kinds === 'add' ? routeId : tripId}`;
 
   function csvFileParse(file: File) {
     parse(file, {
@@ -28,9 +29,6 @@
             type: 'error',
           });
           return;
-        }
-        if (timetables.length) {
-          timetables = [];
         }
 
         timetables = results?.data.map((el) => {
@@ -69,35 +67,19 @@
 
 <div>
   <div class="my-3 flex justify-center">
-    {#if kinds == 'add'}
-      <label
-        for={`csv_upload_${routeId}`}
-        class="cursor-pointer rounded bg-[#4499E1] px-10 py-1 font-bold text-[#ffffff] hover:bg-[#2B6CB0]"
-        >CSVインポート
-        <input
-          type="file"
-          name="file"
-          id={`csv_upload_${routeId}`}
-          accept="text/csv"
-          class="hidden"
-          on:change={csvFileOnChangeHandler}
-        />
-      </label>
-    {:else}
-      <label
-        for={`csv_upload_${tripId}`}
-        class="cursor-pointer rounded bg-[#4499E1] px-10 py-1 font-bold text-[#ffffff] hover:bg-[#2B6CB0]"
-        >CSVインポート
-        <input
-          type="file"
-          name="file"
-          id={`csv_upload_${tripId}`}
-          accept="text/csv"
-          class="hidden"
-          on:change={csvFileOnChangeHandler}
-        />
-      </label>
-    {/if}
+    <label
+      for={csvUploadId}
+      class="cursor-pointer rounded bg-[#4499E1] px-10 py-1 font-bold text-[#ffffff] hover:bg-[#2B6CB0]"
+      >CSVインポート
+      <input
+        type="file"
+        name="file"
+        id={csvUploadId}
+        accept="text/csv"
+        class="hidden"
+        on:change={csvFileOnChangeHandler}
+      />
+    </label>
   </div>
   <div class="my-3 flex justify-center">
     <DataTable stickyHeader class="max-h-[300px] w-4/5 min-w-[300px] overflow-auto">
