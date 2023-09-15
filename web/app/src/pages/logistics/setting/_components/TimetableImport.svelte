@@ -57,7 +57,13 @@
   }
 
   function formatPickupTime(timeString) {
-    return timeString ? dayjs(timeString).format('HH:mm') : '';
+    if (dayjs(timeString, 'hh:mm', true).isValid()) {
+      return timeString;
+    } else if (dayjs(timeString).isValid()) {
+      return dayjs(timeString).format('HH:mm');
+    } else {
+      return '';
+    }
   }
 </script>
 
@@ -105,13 +111,7 @@
         {#each timetables as timetable}
           <Row>
             <Cell class="text-center">{timetable.stop}</Cell>
-            <!-- TODO: tripの情報はタームゾーンで入ってくるので、暫定的にlengthで分岐させてる -->
-            <!-- よい方法を探す必要あり -->
-            {#if timetable.time.length > 6}
-              <Cell class="text-center">{formatPickupTime(timetable.time)}</Cell>
-            {:else}
-              <Cell class="text-center">{timetable.time}</Cell>
-            {/if}
+            <Cell class="text-center">{formatPickupTime(timetable.time)}</Cell>
           </Row>
         {/each}
       </Body>
