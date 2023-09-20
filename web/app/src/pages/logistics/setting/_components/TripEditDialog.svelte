@@ -5,7 +5,12 @@
   import Textfield from '@smui/textfield';
   import dayjs from 'dayjs';
   import { SHOCK_LEVEL, SHOCK_LEVEL_LABEL } from '../../../../constants/product';
-  import { LogisticsRepository, type TLogisticsSetting } from '../../../../models/Logistics';
+  import {
+    LogisticsRepository,
+    type TLogisticsSetting,
+    type TRouteSetting,
+    type TTripSetting,
+  } from '../../../../models/Logistics';
   import { addToast } from '../../../../stores/Toast';
   import { handleError } from '../../../../utils/error-handle-helper';
   import TimetableImport from './TimetableImport.svelte';
@@ -14,50 +19,49 @@
   let logisticsRepository: LogisticsRepository = new LogisticsRepository();
   export let logisticsSetting: TLogisticsSetting = null;
   export let open = false;
-  export let routeId;
-  let tripName = '';
-  let value = null;
-  let capacity: number = null;
-  let timetables = [];
-  let newDateTimetables = [];
+  export let trip: TTripSetting;
+  export let route: TRouteSetting;
+  let tripName = trip.name;
+  let value = SHOCK_LEVEL_LABEL[Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === trip.shockLevel)];
+  let capacity = trip.capacity;
+  let timetables = trip.timetables;
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
-      case 'createTrip':
-        newDateTimetables = timetables.map((timetable) => {
-          return { stop: timetable.stop, time: dayjs(timetable.time, 'hh:mm', true).toISOString() };
-        });
-
-        await createTrip(routeId);
+      case 'updateTrip':
+        await updateTrip();
         break;
       default:
         // NOP
         break;
     }
-    clearInputData();
+
+    cancelInputData();
   }
 
-  async function createTrip(routeId: string) {
+  async function updateTrip() {
     try {
-      logisticsSetting = await logisticsRepository.createTrip(logisticsSetting.logisticsId, routeId, {
+      logisticsSetting = await logisticsRepository.updateTrip(logisticsSetting.logisticsId, route.id, trip.id, {
         name: tripName,
         shockLevel: SHOCK_LEVEL[Object.keys(SHOCK_LEVEL_LABEL).find((key) => SHOCK_LEVEL_LABEL[key] === value)],
         capacity: capacity,
-        timetables: newDateTimetables,
+        timetables: timetables.map((timetable) => {
+          return { stop: timetable.stop, time: formatPickupTime(timetable.time) };
+        }),
       });
       addToast({
-        message: '便を追加しました。',
+        message: '便を編集しました。',
       });
     } catch (err) {
-      handleError(err, '便の追加');
+      handleError(err, '便の編集');
     }
   }
 
-  function clearInputData() {
-    tripName = '';
-    value = null;
-    capacity = null;
-    timetables = [];
+  function cancelInputData() {
+    tripName = trip.name;
+    value = SHOCK_LEVEL_LABEL[Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === trip.shockLevel)];
+    capacity = trip.capacity;
+    timetables = trip.timetables;
   }
 
   function inputNumberLimited() {
@@ -67,10 +71,20 @@
       capacity = 1;
     }
   }
+
+  function formatPickupTime(timeString) {
+    if (dayjs(timeString, 'hh:mm', true).isValid()) {
+      return dayjs(timeString, 'hh:mm', true).toDate();
+    } else if (dayjs(timeString).isValid()) {
+      return timeString;
+    } else {
+      return '';
+    }
+  }
 </script>
 
 <Dialog bind:open on:SMUIDialog:closed={onDialogClosedHandle} container$class="max-h-[80vh]">
-  <Title>運航便を追加します。</Title>
+  <Title>運航便を編集します。</Title>
   <Content>
     <div class="justify-left ml-8 mr-8">
       <Textfield
@@ -111,7 +125,7 @@
       <h1 class="mt-3 border-l-8 border-solid border-l-primary bg-[#f4f4f4] px-3 py-2 text-lg text-[#494949]">
         <span>時刻表</span>
       </h1>
-      <TimetableImport bind:timetables {routeId} tripId={''} kinds="add" />
+      <TimetableImport bind:timetables routeId={route.id} tripId={trip.id} kinds="edit" />
     </div>
   </Content>
 
@@ -123,10 +137,10 @@
       class="w-[150px] rounded-full px-4 py-2"
       color="secondary"
       variant="raised"
-      action="createTrip"
+      action="updateTrip"
       disabled={!tripName || !value || !capacity}
     >
-      <p class="text-lg font-bold">追加</p>
+      <p class="text-lg font-bold">編集</p>
     </Button>
   </Actions>
 </Dialog>

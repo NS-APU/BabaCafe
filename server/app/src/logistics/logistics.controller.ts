@@ -23,6 +23,7 @@ import { CreateRouteDto } from './setting/logistics/dto/create-route.dto';
 import { CreateTripDto } from './setting/logistics/dto/create-trip.dto';
 import { UpdateDeliveryTypeDto } from './setting/logistics/dto/update-delivery-type.dto';
 import { UpdateRouteDto } from './setting/logistics/dto/update-route.dto';
+import { UpdateTripDto } from './setting/logistics/dto/update-trip.dto';
 import { CreateConsolidationDefinitionDto } from './setting/producer/dto/create-consolidation-define.dto';
 
 @Controller('logistics')
@@ -84,8 +85,20 @@ export class LogisticsController {
     @Param('logisticsId') logisticsId: string,
     @Param('routeId') routeId: string,
     @Body() dto: CreateTripDto,
+    @GetAccount() account: Account,
   ) {
-    return this.logisticService.createTrip(logisticsId, routeId, dto);
+    return this.logisticService.createTrip(account, logisticsId, routeId, dto);
+  }
+
+  @Put('/setting/logistics/:logisticsId/route/:routeId/trip/:tripId')
+  async editTrip(
+    @Param('logisticsId') logisticsId: string,
+    @Param('routeId') routeId: string,
+    @Param('tripId') tripId: string,
+    @Body() dto: UpdateTripDto,
+    @GetAccount() account: Account,
+  ) {
+    return this.logisticService.updateTrip(account, logisticsId, routeId, tripId, dto);
   }
 
   @Delete('/setting/logistics/:logisticsId/route/:routeId/trip/:tripId')

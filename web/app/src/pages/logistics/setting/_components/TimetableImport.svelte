@@ -10,6 +10,8 @@
   export let timetables = [];
   export let routeId;
   export let kinds;
+  export let tripId;
+  $: csvUploadId = `csv_upload_${kinds === 'add' ? routeId : tripId}`;
 
   function csvFileParse(file: File) {
     parse(file, {
@@ -28,6 +30,7 @@
           });
           return;
         }
+
         timetables = results?.data.map((el) => {
           const [stop, time] = el;
           return { stop, time };
@@ -50,18 +53,28 @@
     // 同一ファイルを選択してもイベントが発火するようにする
     target.value = '';
   }
+
+  function formatPickupTime(timeString) {
+    if (dayjs(timeString, 'hh:mm', true).isValid()) {
+      return timeString;
+    } else if (dayjs(timeString).isValid()) {
+      return dayjs(timeString).format('HH:mm');
+    } else {
+      return '';
+    }
+  }
 </script>
 
 <div>
   <div class="my-3 flex justify-center">
     <label
-      for={`csv_upload_${routeId}_${kinds}`}
+      for={csvUploadId}
       class="cursor-pointer rounded bg-[#4499E1] px-10 py-1 font-bold text-[#ffffff] hover:bg-[#2B6CB0]"
       >CSVインポート
       <input
         type="file"
         name="file"
-        id={`csv_upload_${routeId}_${kinds}`}
+        id={csvUploadId}
         accept="text/csv"
         class="hidden"
         on:change={csvFileOnChangeHandler}
@@ -80,7 +93,7 @@
         {#each timetables as timetable}
           <Row>
             <Cell class="text-center">{timetable.stop}</Cell>
-            <Cell class="text-center">{timetable.time}</Cell>
+            <Cell class="text-center">{formatPickupTime(timetable.time)}</Cell>
           </Row>
         {/each}
       </Body>
