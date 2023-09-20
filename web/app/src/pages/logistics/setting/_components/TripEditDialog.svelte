@@ -25,15 +25,10 @@
   let value = SHOCK_LEVEL_LABEL[Object.keys(SHOCK_LEVEL).find((key) => SHOCK_LEVEL[key] === trip.shockLevel)];
   let capacity = trip.capacity;
   let timetables = trip.timetables;
-  let newDateTimetables = [];
 
   async function onDialogClosedHandle(e: CustomEvent<{ action: string }>) {
     switch (e.detail.action) {
       case 'updateTrip':
-        newDateTimetables = await timetables.map((timetable) => {
-          return { stop: timetable.stop, time: formatPickupTime(timetable.time) };
-        });
-
         await updateTrip();
         break;
       default:
@@ -50,7 +45,9 @@
         name: tripName,
         shockLevel: SHOCK_LEVEL[Object.keys(SHOCK_LEVEL_LABEL).find((key) => SHOCK_LEVEL_LABEL[key] === value)],
         capacity: capacity,
-        timetables: newDateTimetables,
+        timetables: timetables.map((timetable) => {
+          return { stop: timetable.stop, time: formatPickupTime(timetable.time) };
+        }),
       });
       addToast({
         message: '便を編集しました。',
