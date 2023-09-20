@@ -5,17 +5,24 @@
   import dayjs from 'dayjs';
   import { SHOCK_LEVEL_LABEL, SHOCK_LEVEL } from '../../../../constants/product';
   import TripDeleteDialog from './TripDeleteDialog.svelte';
+  import TripEditDialog from './TripEditDialog.svelte';
   import type { TTripSetting, TRouteSetting, TLogisticsSetting } from '../../../../models/Logistics';
 
   export let logisticsSetting: TLogisticsSetting = null;
   export let route: TRouteSetting;
   export let trip: TTripSetting;
   $: panelOpen = false;
+  let isTripEditDialogOpen = false;
 
   let isTripDeleteDialogOpen = false;
 
   function formatPickupTime(timeString) {
     return timeString ? dayjs(timeString).format('HH:mm') : '';
+  }
+
+  function onClickTripEditButton(event: Event) {
+    event.stopPropagation();
+    isTripEditDialogOpen = true;
   }
 
   function onClickTripDeleteButton(event: Event) {
@@ -40,7 +47,7 @@
         {/if}
         {trip.name}
         <span slot="icon">
-          <IconButton class="material-icons" disabled>edit</IconButton>
+          <IconButton class="material-icons" on:click={onClickTripEditButton}>edit</IconButton>
           <IconButton class="material-icons" on:click={onClickTripDeleteButton}>delete</IconButton>
         </span>
       </Header>
@@ -83,5 +90,6 @@
       </Content>
     </Panel>
   </Accordion>
+  <TripEditDialog bind:open={isTripEditDialogOpen} bind:logisticsSetting {route} {trip} />
   <TripDeleteDialog bind:open={isTripDeleteDialogOpen} bind:logisticsSetting {route} {trip} />
 </div>
