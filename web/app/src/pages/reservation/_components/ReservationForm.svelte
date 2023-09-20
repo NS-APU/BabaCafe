@@ -86,9 +86,9 @@
             <img class="h-[45px] w-[45px] rounded-[50%]" src={selectedProduct.producer.image} alt="" />
           </div>
         {:else if selectedProduct.producer.classification === 'individual'}
-          <img class="h-[45px] w-[45px] rounded-[50%]" src="./../../../../public/images/farmer.png" alt="" />
+          <img class="h-[45px] w-[45px] rounded-[50%]" src="/images/farmer.png" alt="" />
         {:else if selectedProduct.producer.classification === 'corporate'}
-          <img class="h-[45px] w-[45px] rounded-[50%]" src="./../../../../public/images/house.png" alt="" />
+          <img class="h-[45px] w-[45px] rounded-[50%]" src="/images/house.png" alt="" />
         {/if}
         <div class="ml-4 mt-3">
           <div class="text-xl text-[#8A8A8A]">

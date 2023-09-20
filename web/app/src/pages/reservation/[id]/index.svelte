@@ -63,9 +63,9 @@
           {#if reservationData.product.producer.image}
             <img class="h-[40px] w-[40px] rounded-[50%]" src={reservationData.product.producer.image} alt="" />
           {:else if reservationData.product.producer.classification === 'individual'}
-            <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/farmer.png" alt="" />
+            <img class="h-[40px] w-[40px] rounded-[50%]" src="/images/farmer.png" alt="" />
           {:else if reservationData.product.producer.classification === 'corporate'}
-            <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/house.png" alt="" />
+            <img class="h-[40px] w-[40px] rounded-[50%]" src="/images/house.png" alt="" />
           {/if}
         </p>
         <p class="inline-block align-middle">
@@ -87,7 +87,7 @@
         <div class="relative h-[300px] w-[300px] object-contain">
           <img
             class="absolute bottom-0 left-0 right-0 top-0 m-auto h-auto max-h-full w-auto max-w-full"
-            src={reservationData.product.image ?? './../../../public/images/default_product_image.png'}
+            src={reservationData.product.image ?? '/images/default_product_image.png'}
             alt=""
           />
         </div>
