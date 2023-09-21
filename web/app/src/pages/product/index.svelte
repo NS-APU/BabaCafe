@@ -54,17 +54,9 @@
                     {#if product.producer.image}
                       <img class="absolute top-0 h-[30px] w-[30px] rounded-[50%]" src={product.producer.image} alt="" />
                     {:else if product.producer.classification === 'corporate'}
-                      <img
-                        class="absolute top-0 h-[30px] w-[30px] rounded-[50%]"
-                        src="./../../../../public/images/house.png"
-                        alt=""
-                      />
+                      <img class="absolute top-0 h-[30px] w-[30px] rounded-[50%]" src="/images/house.png" alt="" />
                     {:else}
-                      <img
-                        class="absolute top-0 h-[30px] w-[30px] rounded-[50%]"
-                        src="./../../../public/images/farmer.png"
-                        alt=""
-                      />
+                      <img class="absolute top-0 h-[30px] w-[30px] rounded-[50%]" src="/images/farmer.png" alt="" />
                     {/if}
                     <div class="absolute left-[60px] top-[6%] text-sm text-[#4A4A4A]">
                       {product.producer.name}
@@ -77,7 +69,7 @@
                 <div>
                   <img
                     class="block h-48 w-96 object-contain"
-                    src={product.image ?? './../../../public/images/default_product_image.png'}
+                    src={product.image ?? '/images/default_product_image.png'}
                     alt=""
                   />
                 </div>

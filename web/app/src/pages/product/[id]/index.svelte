@@ -66,9 +66,9 @@
         {#if product.producer.image}
           <img class="h-[40px] w-[40px] rounded-[50%]" src={product.producer.image} alt="" />
         {:else if product.producer.classification === 'individual'}
-          <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/farmer.png" alt="" />
+          <img class="h-[40px] w-[40px] rounded-[50%]" src="/images/farmer.png" alt="" />
         {:else if product.producer.classification === 'corporate'}
-          <img class="h-[40px] w-[40px] rounded-[50%]" src="./../../../public/images/house.png" alt="" />
+          <img class="h-[40px] w-[40px] rounded-[50%]" src="/images/house.png" alt="" />
         {/if}
         <div class="ml-4 mt-3">
           <div class="text-xl text-[#8A8A8A]">
@@ -84,12 +84,7 @@
           <p class="text-xl text-[#ff0000]">終了</p>
         {/if}
       </div>
-      <img
-        src={product.image ?? './../../../public/images/default_product_image.png'}
-        alt=""
-        width="300"
-        class="mt-3"
-      />
+      <img src={product.image ?? '/images/default_product_image.png'} alt="" width="300" class="mt-3" />
     </div>
 
     <fieldset class="w-[300px] rounded border border-secondary p-3">
