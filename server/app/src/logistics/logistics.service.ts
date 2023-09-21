@@ -47,9 +47,29 @@ export class LogisticsService {
   ) {}
 
   async getLogisticsSetting(logisticsId: string): Promise<LogisticsSettingForLogistics> {
-    return await this.logisticsSettingRepository
-      .findOne({ where: { logisticsId }, relations: ['routes', 'routes.trips', 'routes.trips.timetables'] })
-      .then((setting) => setting);
+    const setting = await this.logisticsSettingRepository
+      .findOne({
+        where: { logisticsId },
+        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
+        order: {
+          routes: {
+            name: 'ASC',
+            trips: {
+              name: 'ASC',
+              timetables: {
+                time: 'ASC',
+              },
+            },
+          },
+        },
+      })
+      .then((setting) => setting)
+      .catch(() => null);
+
+    if (!setting) {
+      throw new BadRequestException();
+    }
+    return setting;
   }
 
   async getProducerSetting(producerId: string): Promise<LogisticsSettingForProducer> {
@@ -113,18 +133,7 @@ export class LogisticsService {
     this.setRouteAttributes(dto, route);
     await route.save();
 
-    const setting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   async deleteRoute(account: Account, logisticsId: string, routeId: string): Promise<LogisticsSettingForLogistics> {
@@ -142,14 +151,7 @@ export class LogisticsService {
     const route = await this.routeRepository.findOne({ where: { id: routeId } });
     await this.routeRepository.remove(route);
 
-    const resSetting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    return resSetting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   private setRouteAttributes(dto: CreateRouteDto, route: Route) {
@@ -179,18 +181,7 @@ export class LogisticsService {
       await manager.save(timetables);
     });
 
-    const setting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   async updateTrip(
@@ -244,18 +235,7 @@ export class LogisticsService {
       await manager.save(trip);
     });
 
-    const setting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   private setTripAttributes(routeId: string, dto: CreateTripDto, trip: Trip) {
@@ -294,18 +274,7 @@ export class LogisticsService {
     const trip = await this.tripRepository.findOne({ where: { id: tripId } });
     await this.tripRepository.remove(trip);
 
-    const setting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   async updateDeliveryType(logisticsId: string, dto: UpdateDeliveryTypeDto): Promise<LogisticsSettingForLogistics> {
@@ -337,18 +306,7 @@ export class LogisticsService {
     route.name = dto.name;
     await this.routeRepository.save(route);
 
-    const setting = await this.logisticsSettingRepository
-      .findOne({
-        where: { logisticsId },
-        relations: ['routes', 'routes.trips', 'routes.trips.timetables'],
-      })
-      .then((setting) => setting);
-
-    if (!setting) {
-      throw new BadRequestException();
-    }
-
-    return setting;
+    return await this.getLogisticsSetting(logisticsId);
   }
 
   async createShippingSchedule(dto: CreateShippingScheduleDto): Promise<ShippingSchedule> {
