@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. 非機能要件 &mdash; フードチェーンシステム 要求仕様書  ドキュメント</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=c033477b"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/translations.js?v=4dbe4bdc"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="検索" href="../search.html" />
+    <link rel="next" title="変更履歴" href="../history.html" />
+    <link rel="prev" title="2.4.1. テーブル関連図" href="../functional/table/index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            フードチェーンシステム 要求仕様書
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">要件定義</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../business/index.html">1. 業務要件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id2">1.1. システム化の目的・背景・狙い</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id3">1.2. ビジネスプロセスの関連図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id5">1.3. 業務機能構成表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id7">1.4. ビジネスプロセスフロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id9">1.5. システム化業務フロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../business/index.html#id11">1.6. 業務処理定義書</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../functional/index.html">2. 機能要件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../functional/index.html#id2">2.1. システム方式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../functional/system/index.html">2.1.1. システム構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/system/index.html#id2">2.1.2. ソフトウェア構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/system/index.html#id3">2.1.3. ネットワーク構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/system/index.html#id4">2.1.4. アプリケーション機能構成図</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../functional/index.html#id3">2.2. 機能要件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../functional/function/index.html">2.2.1. ユースケース図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/function/index.html#id2">2.2.2. 機能一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/function/index.html#id3">2.2.3. 機能詳細</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/signup.html">2.2.3.1. アカウント作成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/login.html">2.2.3.2. ログイン</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/product/product.html">2.2.3.3. 出品</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/product/browse.html">2.2.3.4. 出品内容閲覧</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/product/edit.html">2.2.3.5. 出品内容編集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/product/cancel.html">2.2.3.6. 出品取りやめ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/reserve.html">2.2.3.7. 予約</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/confirm.html">2.2.3.8. 予約内容確認</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/edit.html">2.2.3.9. 予約内容編集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/cancel.html">2.2.3.10. 予約取り消し</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/packed.html">2.2.3.11. 作物出荷</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/kept.html">2.2.3.12. 作物店舗預かり</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/reservation/received.html">2.2.3.13. 作物受取り</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/setting/producer.html">2.2.3.14. 生産者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/setting/logistics.html">2.2.3.15. 物流業者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/setting/intermediary.html">2.2.3.16. 引渡し業者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/function/detail/setting/consolidation.html">2.2.3.17. システム混載定義設定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../functional/index.html#id4">2.3. 画面要件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../functional/ui/index.html">2.3.1. 画面一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/ui/index.html#id2">2.3.2. 画面遷移図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/ui/index.html#id3">2.3.3. 画面レイアウト</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/login.html">2.3.3.1. ログイン画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/signup.html">2.3.3.2. アカウント作成画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/product/product.html">2.3.3.3. 出品画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/product/product.html#id2">2.3.3.3.1. 混載定義選択ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/product/list.html">2.3.3.4. 出品一覧画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/product/detail.html">2.3.3.5. 出品詳細画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/product/edit.html">2.3.3.6. 出品内容編集画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/reservation/reservation.html">2.3.3.7. 予約画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/reservation/list.html">2.3.3.8. 予約一覧画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html">2.3.3.9. 予約詳細画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id2">2.3.3.9.1. 出荷ウィザードダイアログ</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id3">2.3.3.9.1.1. 配送者選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id4">2.3.3.9.1.2. 配送便選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id5">2.3.3.9.1.3. 出荷確認ステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id6">2.3.3.9.2. 店舗預かり確認ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/reservation/detail.html#id7">2.3.3.9.3. 受取り確認ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/reservation/edit.html">2.3.3.10. 予約内容編集画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/setting/producer.html">2.3.3.11. 生産者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#select-bus-stop-wizard-dialog">2.3.3.11.1. バス停選択ウィザードダイアログ</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id3">2.3.3.11.1.1. 物流業者選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id4">2.3.3.11.1.2. 路線選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id5">2.3.3.11.1.3. バス停選択ステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id6">2.3.3.11.2. 混載定義追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id7">2.3.3.11.3. 混載定義編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/producer.html#id8">2.3.3.11.4. 混載定義削除ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html">2.3.3.12. 物流業者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id2">2.3.3.12.1. 集荷・配送方法変更ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id3">2.3.3.12.2. 路線追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id4">2.3.3.12.3. 路線編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id5">2.3.3.12.4. 路線削除ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id6">2.3.3.12.5. 便追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id7">2.3.3.12.6. 便編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/logistics.html#id8">2.3.3.12.7. 便削除ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../functional/ui/layout/setting/intermediary.html">2.3.3.13. 引渡し業者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../functional/ui/layout/setting/intermediary.html#id2">2.3.3.13.1. バス停選択ウィザードダイアログ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../functional/index.html#id5">2.4. テーブル・ファイル要件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../functional/table/index.html">2.4.1. テーブル関連図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/table/index.html#id3">2.4.2. テーブル・ファイル一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../functional/table/index.html#id5">2.4.3. テーブル・ファイル定義</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. 非機能要件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">3.1. 可用性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">3.2. 性能・拡張性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">3.3. 運用・保守性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">3.4. 移行性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id10">3.5. セキュリティ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id12">3.6. システム環境・エコロジー</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">変更履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">TODO</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">フードチェーンシステム 要求仕様書</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>非機能要件</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/non-functional/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">3. </span>非機能要件<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<section id="id2">
+<h2><span class="section-number">3.1. </span>可用性<a class="headerlink" href="#id2" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id14">
+<caption><span class="caption-number">表 3.1 </span><span class="caption-text">可用性要件</span><a class="headerlink" href="#id14" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>稼働率</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>目標復旧時間</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>大規模災害時の復旧</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id4">
+<h2><span class="section-number">3.2. </span>性能・拡張性<a class="headerlink" href="#id4" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id5">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id15">
+<caption><span class="caption-number">表 3.2 </span><span class="caption-text">性能・拡張要件</span><a class="headerlink" href="#id15" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>速さ</p></td>
+<td><p>性能目標（レスポンスやスループット）</p></td>
+</tr>
+<tr class="row-odd"><td><p>正確さ</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>信頼度/使用可能度</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>キャパシティ</p></td>
+<td><ol class="arabic">
+<li><p>システムが保持するデータ容量</p></li>
+<li><p>ハードディスク容量</p></li>
+<li><p>データ保管ポリシー</p></li>
+<li><p>入出力装置台数</p></li>
+<li><p>最大アクセス数</p></li>
+<li><p>システム利用ユーザー数</p></li>
+<li><p>拠点および拠点数</p></li>
+<li><p>バッチ処理件数/時間</p>
+<blockquote>
+<div><p>なし</p>
+</div></blockquote>
+</li>
+<li><p>バッチ処理時間帯</p>
+<blockquote>
+<div><p>なし</p>
+</div></blockquote>
+</li>
+<li><p>パージ処理対象と方式</p></li>
+</ol>
+</td>
+</tr>
+<tr class="row-even"><td><p>拡張性の有無</p></td>
+<td><p>ディスク等のリソース</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id6">
+<h2><span class="section-number">3.3. </span>運用・保守性<a class="headerlink" href="#id6" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id7">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id16">
+<caption><span class="caption-number">表 3.3 </span><span class="caption-text">運用・保守要件</span><a class="headerlink" href="#id16" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>システム運用形態</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>運用環境及び可搬性</p></td>
+<td><ol class="arabic">
+<li><p>対応OSとバージョン</p></li>
+<li><p>対応ブラウザとバージョン</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Google Chrome(Latest)</p></li>
+<li><p>Microsoft Edge(Latest)</p></li>
+<li><p>Mozilla Firefox(Latest)</p></li>
+<li><p>Apple Safari(Latest)</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</td>
+</tr>
+<tr class="row-even"><td><p>通常運用</p></td>
+<td><ol class="arabic">
+<li><p>通常運用時間帯</p></li>
+<li><p>監視情報とアラート標準</p></li>
+<li><p>実行ログ（サーバーサイド）</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>取得有無</p></li>
+<li><p>範囲、内容、項目</p></li>
+<li><p>取得方式</p></li>
+<li><p>管理ポリシー</p></li>
+</ol>
+</div></blockquote>
+</li>
+<li><p>実行ログ（クライアントサイド）</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>取得有無</p></li>
+<li><p>範囲、内容、項目</p></li>
+<li><p>取得方式</p></li>
+<li><p>管理ポリシー</p></li>
+</ol>
+</div></blockquote>
+</li>
+</ol>
+</td>
+</tr>
+<tr class="row-odd"><td><p>特定運用</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id8">
+<h2><span class="section-number">3.4. </span>移行性<a class="headerlink" href="#id8" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id9">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id17">
+<caption><span class="caption-number">表 3.4 </span><span class="caption-text">移行要件</span><a class="headerlink" href="#id17" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>移行対象データ</p></td>
+<td><ol class="arabic simple">
+<li><p>移行対象データ</p></li>
+<li><p>移行データ量</p></li>
+<li><p>移行条件</p></li>
+<li><p>データ移行ツール</p></li>
+</ol>
+</td>
+</tr>
+<tr class="row-odd"><td><p>移行手順・時期</p></td>
+<td><ol class="arabic simple">
+<li><p>移行時のシステム停止可否</p></li>
+<li><p>移行手順</p></li>
+<li><p>移行期間・スケジュール</p></li>
+<li><p>リハーサルの有無や範囲</p></li>
+</ol>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id10">
+<h2><span class="section-number">3.5. </span>セキュリティ<a class="headerlink" href="#id10" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id11">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id18">
+<caption><span class="caption-number">表 3.5 </span><span class="caption-text">セキュリティ要件</span><a class="headerlink" href="#id18" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>セキュリティ</p></td>
+<td><ul>
+<li><p>利用者の公開範囲</p></li>
+<li><p>制限される操作と条件</p></li>
+<li><p>不正監視の対象</p></li>
+<li><p>不正監視方法</p></li>
+<li><p>ネットワークへの攻撃による輻輳対策</p></li>
+<li><p>データ暗号化方式</p></li>
+<li><p>鍵管理方式</p></li>
+<li><p>デジタル署名の利用有無</p></li>
+<li><p>認証方式</p></li>
+<li><p>セキュリティログ</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>取得の有無</p></li>
+<li><p>内容と項目</p></li>
+<li><p>取得方式</p></li>
+<li><p>保管ポリシー</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Webアプリケーション特有のセキュリティ対策</p>
+<blockquote>
+<div><p>以下の攻撃への対策を講じる。</p>
+<ul class="simple">
+<li><p>ディレクトリトラバーサル</p></li>
+<li><p>セッションハイジャック</p></li>
+<li><p>クロスサイト・スクリプティング（XSS）</p></li>
+<li><p>クロスサイト・リクエストフォージュリ（CSRF）</p></li>
+<li><p>HTTPヘッダインジェクション</p></li>
+<li><p>クリックジャッキング</p></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id12">
+<h2><span class="section-number">3.6. </span>システム環境・エコロジー<a class="headerlink" href="#id12" title="Link to this heading"></a></h2>
+<div class="admonition-todo admonition" id="id13">
+<p class="admonition-title">課題</p>
+<p>RITSにて作成予定。</p>
+</div>
+<table class="docutils align-center" id="id19">
+<caption><span class="caption-number">表 3.6 </span><span class="caption-text">システム環境・エコロジー要件</span><a class="headerlink" href="#id19" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>分類</p></th>
+<th class="head"><p>要件とその理由、適合基準</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>法令・標準</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>文化/政治</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>設置場所</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>耐震の必要性</p></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../functional/table/index.html" class="btn btn-neutral float-left" title="2.4.1. テーブル関連図" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../history.html" class="btn btn-neutral float-right" title="変更履歴" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 秋田県立大学.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

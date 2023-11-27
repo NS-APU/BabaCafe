@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2.3.3.5. 出品詳細画面 &mdash; フードチェーンシステム 要求仕様書  ドキュメント</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=c033477b"></script>
+        <script src="../../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../../../../_static/translations.js?v=4dbe4bdc"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../../../genindex.html" />
+    <link rel="search" title="検索" href="../../../../search.html" />
+    <link rel="next" title="2.3.3.6. 出品内容編集画面" href="edit.html" />
+    <link rel="prev" title="2.3.3.4. 出品一覧画面" href="list.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            フードチェーンシステム 要求仕様書
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">要件定義</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../business/index.html">1. 業務要件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id2">1.1. システム化の目的・背景・狙い</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id3">1.2. ビジネスプロセスの関連図</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id5">1.3. 業務機能構成表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id7">1.4. ビジネスプロセスフロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id9">1.5. システム化業務フロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../business/index.html#id11">1.6. 業務処理定義書</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">2. 機能要件</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../index.html#id2">2.1. システム方式</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../system/index.html">2.1.1. システム構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../system/index.html#id2">2.1.2. ソフトウェア構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../system/index.html#id3">2.1.3. ネットワーク構成図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../system/index.html#id4">2.1.4. アプリケーション機能構成図</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../index.html#id3">2.2. 機能要件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../function/index.html">2.2.1. ユースケース図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../function/index.html#id2">2.2.2. 機能一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../function/index.html#id3">2.2.3. 機能詳細</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/signup.html">2.2.3.1. アカウント作成</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/login.html">2.2.3.2. ログイン</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/product/product.html">2.2.3.3. 出品</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/product/browse.html">2.2.3.4. 出品内容閲覧</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/product/edit.html">2.2.3.5. 出品内容編集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/product/cancel.html">2.2.3.6. 出品取りやめ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/reserve.html">2.2.3.7. 予約</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/confirm.html">2.2.3.8. 予約内容確認</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/edit.html">2.2.3.9. 予約内容編集</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/cancel.html">2.2.3.10. 予約取り消し</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/packed.html">2.2.3.11. 作物出荷</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/kept.html">2.2.3.12. 作物店舗預かり</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/reservation/received.html">2.2.3.13. 作物受取り</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/setting/producer.html">2.2.3.14. 生産者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/setting/logistics.html">2.2.3.15. 物流業者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/setting/intermediary.html">2.2.3.16. 引渡し業者向け物流設定</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../function/detail/setting/consolidation.html">2.2.3.17. システム混載定義設定</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../../index.html#id4">2.3. 画面要件</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../index.html">2.3.1. 画面一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../index.html#id2">2.3.2. 画面遷移図</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../index.html#id3">2.3.3. 画面レイアウト</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../login.html">2.3.3.1. ログイン画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../signup.html">2.3.3.2. アカウント作成画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="product.html">2.3.3.3. 出品画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="product.html#id2">2.3.3.3.1. 混載定義選択ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="list.html">2.3.3.4. 出品一覧画面</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">2.3.3.5. 出品詳細画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="edit.html">2.3.3.6. 出品内容編集画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reservation/reservation.html">2.3.3.7. 予約画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reservation/list.html">2.3.3.8. 予約一覧画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../reservation/detail.html">2.3.3.9. 予約詳細画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../reservation/detail.html#id2">2.3.3.9.1. 出荷ウィザードダイアログ</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../reservation/detail.html#id3">2.3.3.9.1.1. 配送者選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../reservation/detail.html#id4">2.3.3.9.1.2. 配送便選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../reservation/detail.html#id5">2.3.3.9.1.3. 出荷確認ステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../reservation/detail.html#id6">2.3.3.9.2. 店舗預かり確認ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../reservation/detail.html#id7">2.3.3.9.3. 受取り確認ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../reservation/edit.html">2.3.3.10. 予約内容編集画面</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../setting/producer.html">2.3.3.11. 生産者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../setting/producer.html#select-bus-stop-wizard-dialog">2.3.3.11.1. バス停選択ウィザードダイアログ</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="../setting/producer.html#id3">2.3.3.11.1.1. 物流業者選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../setting/producer.html#id4">2.3.3.11.1.2. 路線選択ステップ</a></li>
+<li class="toctree-l6"><a class="reference internal" href="../setting/producer.html#id5">2.3.3.11.1.3. バス停選択ステップ</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/producer.html#id6">2.3.3.11.2. 混載定義追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/producer.html#id7">2.3.3.11.3. 混載定義編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/producer.html#id8">2.3.3.11.4. 混載定義削除ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../setting/logistics.html">2.3.3.12. 物流業者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id2">2.3.3.12.1. 集荷・配送方法変更ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id3">2.3.3.12.2. 路線追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id4">2.3.3.12.3. 路線編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id5">2.3.3.12.4. 路線削除ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id6">2.3.3.12.5. 便追加ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id7">2.3.3.12.6. 便編集ダイアログ</a></li>
+<li class="toctree-l5"><a class="reference internal" href="../setting/logistics.html#id8">2.3.3.12.7. 便削除ダイアログ</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../setting/intermediary.html">2.3.3.13. 引渡し業者向け物流設定画面</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../setting/intermediary.html#id2">2.3.3.13.1. バス停選択ウィザードダイアログ</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../index.html#id5">2.4. テーブル・ファイル要件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../table/index.html">2.4.1. テーブル関連図</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../table/index.html#id3">2.4.2. テーブル・ファイル一覧</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../table/index.html#id5">2.4.3. テーブル・ファイル定義</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../non-functional/index.html">3. 非機能要件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id2">3.1. 可用性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id4">3.2. 性能・拡張性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id6">3.3. 運用・保守性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id8">3.4. 移行性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id10">3.5. セキュリティ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../non-functional/index.html#id12">3.6. システム環境・エコロジー</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">付録</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../history.html">変更履歴</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../todo.html">TODO</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">フードチェーンシステム 要求仕様書</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html"><span class="section-number">2. </span>機能要件</a></li>
+          <li class="breadcrumb-item"><a href="../../index.html"><span class="section-number">2.3.1. </span>画面一覧</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2.3.3.5. </span>出品詳細画面</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/functional/ui/layout/product/detail.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1><span class="section-number">2.3.3.5. </span>出品詳細画面<a class="headerlink" href="#id1" title="Link to this heading"></a></h1>
+<aside class="topic">
+<p class="topic-title">画面レイアウト</p>
+<figure class="align-center" id="id2">
+<img alt="../../../../_images/%E5%87%BA%E5%93%81%E8%A9%B3%E7%B4%B0%E7%94%BB%E9%9D%A2.png" src="../../../../_images/%E5%87%BA%E5%93%81%E8%A9%B3%E7%B4%B0%E7%94%BB%E9%9D%A2.png" />
+<figcaption>
+<p><span class="caption-number">図 2.12 </span><span class="caption-text">出品詳細画面</span><a class="headerlink" href="#id2" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+</aside>
+<aside class="topic">
+<p class="topic-title">構成一覧</p>
+<table class="docutils align-center" id="id3">
+<caption><span class="caption-number">表 2.29 </span><span class="caption-text">出品詳細画面</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>識別ID</p></th>
+<th class="head"><p>項目名</p></th>
+<th class="head"><p>種別</p></th>
+<th class="head"><p>説明</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>①</p></td>
+<td><p>生産者アイコン</p></td>
+<td><p>アイコン</p></td>
+<td><p>出品した生産者の区分を示すアイコン。</p>
+<ul class="simple">
+<li><p>生産者が個人か法人かでアイコンを変える</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>②</p></td>
+<td><p>生産者名ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品した生産者の名前を表示するラベル。</p></td>
+</tr>
+<tr class="row-even"><td><p>③</p></td>
+<td><p>作物名ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品された作物の名称を表示するラベル。</p></td>
+</tr>
+<tr class="row-odd"><td><p>④</p></td>
+<td><p>出品画像</p></td>
+<td><p>イメージ</p></td>
+<td><p>出品されたときにアップロードされた画像を表示するイメージ領域。</p>
+<ul class="simple">
+<li><p>画像が無い場合にはデフォルト画像を表示する</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>⑤</p></td>
+<td><p>説明テキスト</p></td>
+<td><p>テキスト</p></td>
+<td><p>出品されたときの説明を表示するテキスト領域。</p></td>
+</tr>
+<tr class="row-odd"><td><p>⑥</p></td>
+<td><p>単位ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品された作物の単位を表示するラベル。</p></td>
+</tr>
+<tr class="row-even"><td><p>⑦</p></td>
+<td><p>金額ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品された作物の名称を表示するラベル。</p></td>
+</tr>
+<tr class="row-odd"><td><p>⑧</p></td>
+<td><p>残り数量ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品された作物の残りの数量を表示するラベル。</p></td>
+</tr>
+<tr class="row-even"><td><p>⑨</p></td>
+<td><p>予約期間ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品された作物の予約期間（開始日、終了日）を表示するラベル。</p></td>
+</tr>
+<tr class="row-odd"><td><p>⑩</p></td>
+<td><p>予約ボタン</p></td>
+<td><p>ボタン</p></td>
+<td><p>予約画面に遷移するボタン。</p>
+<ul class="simple">
+<li><p>消費者の場合のみ表示する</p></li>
+<li><p>押下すると予約画面に遷移する</p></li>
+<li><p>出品が終了している場合は表示しない</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>⑪</p></td>
+<td><p>編集ボタン</p></td>
+<td><p>ボタン</p></td>
+<td><p>編集画面に遷移するボタン。</p>
+<ul class="simple">
+<li><p>生産者の場合のみ表示する</p></li>
+<li><p>押下すると出品内容編集画面に遷移する</p></li>
+<li><p>出品が終了している場合は表示しない</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>⑫</p></td>
+<td><p>出品取りやめボタン</p></td>
+<td><p>ボタン</p></td>
+<td><p>出品の取りやめを行うボタン。</p>
+<ul class="simple">
+<li><p>生産者の場合のみ表示する</p></li>
+<li><p>押下すると確認ダイアログを開く</p></li>
+<li><p>確認ダイアログでキャンセルボタンを押下した場合、確認ダイアログを閉じる</p></li>
+<li><p>確認ダイアログで出品取りやめボタンを押下した場合、出品をとりやめ、確認ダイアログを閉じ、出品一覧画面に遷移し、出品を取りやめたことをメッセージする</p></li>
+<li><p>出品に対する予約がある場合は表示しない</p></li>
+<li><p>出品が終了している場合は表示しない</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>⑬</p></td>
+<td><p>終了ラベル</p></td>
+<td><p>ラベル</p></td>
+<td><p>出品が終了していることを示すラベル。</p>
+<ul class="simple">
+<li><p>予約期間が過ぎている場合に表示する</p></li>
+<li><p>出品が取りやめられている場合に表示する</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</aside>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="list.html" class="btn btn-neutral float-left" title="2.3.3.4. 出品一覧画面" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="edit.html" class="btn btn-neutral float-right" title="2.3.3.6. 出品内容編集画面" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, 秋田県立大学.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
