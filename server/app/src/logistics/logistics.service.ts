@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { plainToClass, Type, Expose } from 'class-transformer';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
@@ -320,7 +321,21 @@ export class LogisticsService {
     deliveryStop: string,
     count: number,
     tripDate: Date,
+    conditionsStr: string,
   ): Promise<TSuggestTrip[]> {
+    let conditions = [];
+    try {
+      const plainConditions = JSON.parse(conditionsStr);
+      if (plainConditions instanceof Array) {
+        conditions = plainToClass(SuggestConditions, { conditions: plainConditions })
+          .conditions as Array<SuggestCondition>;
+      } else {
+        throw new BadRequestException();
+      }
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+
     const logisticsSetting = await this.getLogisticsSetting(logisticsId);
 
     if (!logisticsSetting) {
@@ -355,6 +370,7 @@ export class LogisticsService {
               tripId: trip.id,
               tripName: trip.name,
               capacity: trip.capacity,
+              shockLevel: trip.shockLevel,
               pickupStop: pickUpTimetable.stop,
               pickupTime: pickUpTimetable.time,
               deliveryStop: deliveryTimetable.stop,
@@ -369,8 +385,9 @@ export class LogisticsService {
       availableTrips.map(async (trip) => {
         const isAvailableTime = checkAvailableTimeTrip(trip, checkDate);
         const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+        const isMeetConditions = checkMeetConditionsTrip(trip, conditions);
 
-        if (!(await isAvailableTime) || !(await isAvailableCapacity)) return undefined;
+        if (!(await isAvailableTime) || !(await isAvailableCapacity) || !isMeetConditions) return undefined;
 
         const pickupTime = setDate(checkDate, trip.pickupTime);
         const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -388,8 +405,9 @@ export class LogisticsService {
       const nextDayTrips = await Promise.all(
         availableTrips.map(async (trip) => {
           const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+          const isMeetConditions = checkMeetConditionsTrip(trip, conditions);
 
-          if (!(await isAvailableCapacity)) return undefined;
+          if (!(await isAvailableCapacity) || !isMeetConditions) return undefined;
 
           const pickupTime = setDate(checkDate, trip.pickupTime);
           const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -531,4 +549,61 @@ async function checkAvailableCapacityTrip(
   );
 
   return reservationCount <= suggestTrip.capacity;
+}
+
+function checkMeetConditionsTrip(suggestTrip: TSuggestTrip, conditions: Array<SuggestCondition>) {
+  return conditions.every((condition) => {
+    const { property, operator, value } = condition;
+    const param = suggestTrip[property];
+    if (!property || !param || !OPERATORS[operator] || !(typeof value === 'number')) {
+      return true;
+    }
+    return getOperatorFn(operator)(param, value);
+  });
+}
+
+function getOperatorFn(operator: string) {
+  let fn;
+  switch (operator) {
+    case OPERATORS.equal:
+      fn = (param: number, value: number) => param === value;
+      break;
+    case OPERATORS.notEqual:
+      fn = (param: number, value: number) => param !== value;
+      break;
+    case OPERATORS.greaterThan:
+      fn = (param: number, value: number) => param > value;
+      break;
+    case OPERATORS.lessThan:
+      fn = (param: number, value: number) => param < value;
+      break;
+    case OPERATORS.greaterEqual:
+      fn = (param: number, value: number) => param >= value;
+      break;
+    case OPERATORS.lessEqual:
+      fn = (param: number, value: number) => param <= value;
+      break;
+    default:
+      fn = () => true;
+      break;
+  }
+  return fn;
+}
+
+const OPERATORS = {
+  equal: 'equal', // =
+  notEqual: 'notEqual', // !=
+  greaterThan: 'greaterThan', // >
+  lessThan: 'lessThan', // <
+  greaterEqual: 'greaterEqual', // >=
+  lessEqual: 'lessEqual', // <=
+};
+class SuggestCondition {
+  @Expose() property: string;
+  @Expose() operator: typeof OPERATORS[keyof typeof OPERATORS];
+  @Expose() value!: number;
+}
+class SuggestConditions {
+  @Type(() => SuggestCondition)
+  conditions: SuggestCondition[];
 }

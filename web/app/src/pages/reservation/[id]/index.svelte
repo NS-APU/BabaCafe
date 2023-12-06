@@ -157,6 +157,7 @@
           bind:reservationStatus
           pickupStop={reservationData.product.producer.logisticsSettingForProducer.stop}
           deliveryStop={reservationData.receiveLocation.logisticsSettingForIntermediary.stop}
+          shockLevel={reservationData.product.shockLevel}
         />
       {/if}
       {#if canKept(reservationData)}

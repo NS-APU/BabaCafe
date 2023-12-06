@@ -129,6 +129,7 @@ export class LogisticsController {
     @Query('delivery-stop') deliveryStop: string,
     @Query('count') count: number,
     @Query('date') date: string,
+    @Query('conditions') conditions: string,
   ) {
     return await this.logisticService.getTripSuggestions(
       logisticsId,
@@ -136,6 +137,7 @@ export class LogisticsController {
       deliveryStop,
       count,
       dayjs(date).toDate(),
+      conditions || '[]',
     );
   }
 
