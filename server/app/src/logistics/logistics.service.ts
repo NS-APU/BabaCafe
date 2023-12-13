@@ -563,31 +563,22 @@ function checkMeetConditionsTrip(suggestTrip: TSuggestTrip, conditions: Array<Su
 }
 
 function getOperatorFn(operator: string) {
-  let fn;
   switch (operator) {
     case OPERATORS.equal:
-      fn = (param: number, value: number) => param === value;
-      break;
+      return (param: number, value: number) => param === value;
     case OPERATORS.notEqual:
-      fn = (param: number, value: number) => param !== value;
-      break;
+      return (param: number, value: number) => param !== value;
     case OPERATORS.greaterThan:
-      fn = (param: number, value: number) => param > value;
-      break;
+      return (param: number, value: number) => param > value;
     case OPERATORS.lessThan:
-      fn = (param: number, value: number) => param < value;
-      break;
+      return (param: number, value: number) => param < value;
     case OPERATORS.greaterEqual:
-      fn = (param: number, value: number) => param >= value;
-      break;
+      return (param: number, value: number) => param >= value;
     case OPERATORS.lessEqual:
-      fn = (param: number, value: number) => param <= value;
-      break;
+      return (param: number, value: number) => param <= value;
     default:
-      fn = () => true;
-      break;
+      return () => true;
   }
-  return fn;
 }
 
 const OPERATORS = {
