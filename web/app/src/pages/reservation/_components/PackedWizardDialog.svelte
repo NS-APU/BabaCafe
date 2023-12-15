@@ -83,7 +83,8 @@
     const conditions = JSON.stringify([
       {
         property: 'shockLevel',
-        operator: 'lessEqual',
+        operator: 'greaterEqual',
+        type: 'number',
         value: shockLevel,
       },
     ]);

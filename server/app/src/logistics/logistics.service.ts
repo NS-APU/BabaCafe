@@ -553,48 +553,55 @@ async function checkAvailableCapacityTrip(
 
 function checkMeetConditionsTrip(suggestTrip: TSuggestTrip, conditions: Array<SuggestCondition>) {
   return conditions.every((condition) => {
-    const { property, operator, value } = condition;
+    const { property, operator, type, value } = condition;
     const param = suggestTrip[property];
-    if (!property || !param || !OPERATORS[operator] || !(typeof value === 'number')) {
-      return true;
+    const operatorFunction = OperatorFuctionsFactory.getOperatorFunctions(type)[operator];
+    if (property && param && typeof value === type && operatorFunction) {
+      return operatorFunction(param, value);
     }
-    return getOperatorFn(operator)(param, value);
+    return true;
   });
 }
 
-function getOperatorFn(operator: string) {
-  switch (operator) {
-    case OPERATORS.equal:
-      return (param: number, value: number) => param === value;
-    case OPERATORS.notEqual:
-      return (param: number, value: number) => param !== value;
-    case OPERATORS.greaterThan:
-      return (param: number, value: number) => param > value;
-    case OPERATORS.lessThan:
-      return (param: number, value: number) => param < value;
-    case OPERATORS.greaterEqual:
-      return (param: number, value: number) => param >= value;
-    case OPERATORS.lessEqual:
-      return (param: number, value: number) => param <= value;
-    default:
-      return () => true;
-  }
-}
+// 追加があれば union type で増やしていく
+type conditionType = number;
 
-const OPERATORS = {
-  equal: 'equal', // =
-  notEqual: 'notEqual', // !=
-  greaterThan: 'greaterThan', // >
-  lessThan: 'lessThan', // <
-  greaterEqual: 'greaterEqual', // >=
-  lessEqual: 'lessEqual', // <=
-};
 class SuggestCondition {
   @Expose() property: string;
-  @Expose() operator: typeof OPERATORS[keyof typeof OPERATORS];
-  @Expose() value!: number;
+  @Expose() operator: keyof OPERATOR_FUNCTIONS;
+  @Expose() type: string;
+  @Expose() value!: conditionType;
 }
+
 class SuggestConditions {
   @Type(() => SuggestCondition)
   conditions: SuggestCondition[];
 }
+
+class OperatorFuctionsFactory {
+  static getOperatorFunctions(type: string) {
+    switch (type) {
+      case 'number':
+      default:
+        return NUMBER_OPERATOR_FUNCTIONS;
+    }
+  }
+}
+
+type OPERATOR_FUNCTIONS = {
+  equal: (param: conditionType, value: conditionType) => boolean;
+  notEqual: (param: conditionType, value: conditionType) => boolean;
+  greaterThan: (param: conditionType, value: conditionType) => boolean;
+  lessThan: (param: conditionType, value: conditionType) => boolean;
+  greaterEqual: (param: conditionType, value: conditionType) => boolean;
+  lessEqual: (param: conditionType, value: conditionType) => boolean;
+};
+
+const NUMBER_OPERATOR_FUNCTIONS: OPERATOR_FUNCTIONS = {
+  equal: (param: number, value: number) => param === value,
+  notEqual: (param: number, value: number) => param !== value,
+  greaterThan: (param: number, value: number) => param < value,
+  lessThan: (param: number, value: number) => param > value,
+  greaterEqual: (param: number, value: number) => param <= value,
+  lessEqual: (param: number, value: number) => param >= value,
+} as const;
