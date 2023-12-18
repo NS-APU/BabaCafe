@@ -555,9 +555,9 @@ function checkMeetConditionsTrip(suggestTrip: TSuggestTrip, conditions: Array<Su
   return conditions.every((condition) => {
     const { property, operator, type, value } = condition;
     const param = suggestTrip[property];
-    const operatorFunction = OperatorFuctionsFactory.getOperatorFunctions(type)[operator];
-    if (property && param && typeof value === type && operatorFunction) {
-      return operatorFunction(param, value);
+    const operatorClass = OPERATORS.find((matcher: TypeOperatorMatcher) => matcher.match(type, operator));
+    if (property && param && operatorClass && operatorClass.isSupportValueType(value)) {
+      return operatorClass.compare(param, value);
     }
     return true;
   });
@@ -568,9 +568,9 @@ type conditionType = number;
 
 class SuggestCondition {
   @Expose() property: string;
-  @Expose() operator: keyof OPERATOR_FUNCTIONS;
+  @Expose() operator: string;
   @Expose() type: string;
-  @Expose() value!: conditionType;
+  @Expose() value: conditionType;
 }
 
 class SuggestConditions {
@@ -578,30 +578,65 @@ class SuggestConditions {
   conditions: SuggestCondition[];
 }
 
-class OperatorFuctionsFactory {
-  static getOperatorFunctions(type: string) {
-    switch (type) {
-      case 'number':
-      default:
-        return NUMBER_OPERATOR_FUNCTIONS;
-    }
+abstract class TypeOperatorMatcher {
+  abstract type: string;
+  abstract operator: string;
+  match(type: string, operator: string) {
+    return this.type === type && this.operator === operator;
   }
 }
 
-type OPERATOR_FUNCTIONS = {
-  equal: (param: conditionType, value: conditionType) => boolean;
-  notEqual: (param: conditionType, value: conditionType) => boolean;
-  greaterThan: (param: conditionType, value: conditionType) => boolean;
-  lessThan: (param: conditionType, value: conditionType) => boolean;
-  greaterEqual: (param: conditionType, value: conditionType) => boolean;
-  lessEqual: (param: conditionType, value: conditionType) => boolean;
-};
+interface Operator<T> {
+  isSupportValueType(value: conditionType): boolean;
+  compare(param: T, value: T): boolean;
+}
 
-const NUMBER_OPERATOR_FUNCTIONS: OPERATOR_FUNCTIONS = {
-  equal: (param: number, value: number) => param === value,
-  notEqual: (param: number, value: number) => param !== value,
-  greaterThan: (param: number, value: number) => param < value,
-  lessThan: (param: number, value: number) => param > value,
-  greaterEqual: (param: number, value: number) => param <= value,
-  lessEqual: (param: number, value: number) => param >= value,
-} as const;
+abstract class NumberOperator extends TypeOperatorMatcher implements Operator<number> {
+  type = 'number';
+  isSupportValueType(value) {
+    return typeof value === this.type;
+  }
+  abstract operator: string;
+  abstract compare(param, value);
+}
+
+const NUMBER_OPERATORS = [
+  new (class extends NumberOperator {
+    operator = 'equal';
+    compare(param, value) {
+      return param === value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'notEqual';
+    compare(param, value) {
+      return param !== value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'greaterThan';
+    compare(param, value) {
+      return param < value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'lessThan';
+    compare(param, value) {
+      return param > value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'greaterEqual';
+    compare(param, value) {
+      return param <= value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'lessEqual';
+    compare(param, value) {
+      return param >= value;
+    }
+  })(),
+];
+
+const OPERATORS = [...NUMBER_OPERATORS];
