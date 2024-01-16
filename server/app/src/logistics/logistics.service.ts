@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { plainToClass, Type, Expose } from 'class-transformer';
 import { Account, USER_ATTRIBUTE } from 'src/account/entities/account.entity';
 import { CreateLogisticsSettingForIntermediaryDto } from 'src/logistics/setting/intermediary/dto/create-setting.dto';
 import { LogisticsSettingForIntermediary } from 'src/logistics/setting/intermediary/entities/setting.entity';
@@ -320,7 +321,21 @@ export class LogisticsService {
     deliveryStop: string,
     count: number,
     tripDate: Date,
+    conditionsStr: string,
   ): Promise<TSuggestTrip[]> {
+    let conditions = [];
+    try {
+      const plainConditions = JSON.parse(conditionsStr);
+      if (plainConditions instanceof Array) {
+        conditions = plainToClass(SuggestConditions, { conditions: plainConditions })
+          .conditions as Array<SuggestCondition>;
+      } else {
+        throw new BadRequestException();
+      }
+    } catch (e) {
+      throw new BadRequestException(e);
+    }
+
     const logisticsSetting = await this.getLogisticsSetting(logisticsId);
 
     if (!logisticsSetting) {
@@ -355,6 +370,7 @@ export class LogisticsService {
               tripId: trip.id,
               tripName: trip.name,
               capacity: trip.capacity,
+              shockLevel: trip.shockLevel,
               pickupStop: pickUpTimetable.stop,
               pickupTime: pickUpTimetable.time,
               deliveryStop: deliveryTimetable.stop,
@@ -369,8 +385,9 @@ export class LogisticsService {
       availableTrips.map(async (trip) => {
         const isAvailableTime = checkAvailableTimeTrip(trip, checkDate);
         const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+        const isMeetConditions = checkMeetConditionsTrip(trip, conditions);
 
-        if (!(await isAvailableTime) || !(await isAvailableCapacity)) return undefined;
+        if (!(await isAvailableTime) || !(await isAvailableCapacity) || !isMeetConditions) return undefined;
 
         const pickupTime = setDate(checkDate, trip.pickupTime);
         const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -388,8 +405,9 @@ export class LogisticsService {
       const nextDayTrips = await Promise.all(
         availableTrips.map(async (trip) => {
           const isAvailableCapacity = checkAvailableCapacityTrip(trip, this.shippingScheduleRepository, checkDate);
+          const isMeetConditions = checkMeetConditionsTrip(trip, conditions);
 
-          if (!(await isAvailableCapacity)) return undefined;
+          if (!(await isAvailableCapacity) || !isMeetConditions) return undefined;
 
           const pickupTime = setDate(checkDate, trip.pickupTime);
           const deliveryTime = setDate(checkDate, trip.deliveryTime);
@@ -532,3 +550,93 @@ async function checkAvailableCapacityTrip(
 
   return reservationCount <= suggestTrip.capacity;
 }
+
+function checkMeetConditionsTrip(suggestTrip: TSuggestTrip, conditions: Array<SuggestCondition>) {
+  return conditions.every((condition) => {
+    const { property, operator, type, value } = condition;
+    const param = suggestTrip[property];
+    const operatorClass = OPERATORS.find((matcher: TypeOperatorMatcher) => matcher.match(type, operator));
+    if (property && param && operatorClass && operatorClass.isSupportValueType(value)) {
+      return operatorClass.compare(param, value);
+    }
+    return true;
+  });
+}
+
+// 追加があれば union type で増やしていく
+type conditionType = number;
+
+class SuggestCondition {
+  @Expose() property: string;
+  @Expose() operator: string;
+  @Expose() type: string;
+  @Expose() value: conditionType;
+}
+
+class SuggestConditions {
+  @Type(() => SuggestCondition)
+  conditions: SuggestCondition[];
+}
+
+abstract class TypeOperatorMatcher {
+  abstract type: string;
+  abstract operator: string;
+  match(type: string, operator: string) {
+    return this.type === type && this.operator === operator;
+  }
+}
+
+interface Operator<T> {
+  isSupportValueType(value: conditionType): boolean;
+  compare(param: T, value: T): boolean;
+}
+
+abstract class NumberOperator extends TypeOperatorMatcher implements Operator<number> {
+  type = 'number';
+  isSupportValueType(value) {
+    return typeof value === this.type;
+  }
+  abstract operator: string;
+  abstract compare(param, value);
+}
+
+const NUMBER_OPERATORS = [
+  new (class extends NumberOperator {
+    operator = 'equal';
+    compare(param, value) {
+      return param === value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'notEqual';
+    compare(param, value) {
+      return param !== value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'greaterThan';
+    compare(param, value) {
+      return param < value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'lessThan';
+    compare(param, value) {
+      return param > value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'greaterEqual';
+    compare(param, value) {
+      return param <= value;
+    }
+  })(),
+  new (class extends NumberOperator {
+    operator = 'lessEqual';
+    compare(param, value) {
+      return param >= value;
+    }
+  })(),
+];
+
+const OPERATORS = [...NUMBER_OPERATORS];

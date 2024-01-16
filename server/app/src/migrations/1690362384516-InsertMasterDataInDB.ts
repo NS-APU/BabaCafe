@@ -37,35 +37,35 @@ export class InsertMasterDataInDB1690362384516 implements MigrationInterface {
     );
     // 便（上り）
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('9e860e2b-0ffc-464d-84b7-b66926253aa4', '4d44a591-5924-4239-a46c-23d8134f9ff4', '1便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('9e860e2b-0ffc-464d-84b7-b66926253aa4', '4d44a591-5924-4239-a46c-23d8134f9ff4', '1便', 45, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('4d44a591-5924-4239-a46c-23d8134f9ff2', '4d44a591-5924-4239-a46c-23d8134f9ff4', '2便', 45, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('4d44a591-5924-4239-a46c-23d8134f9ff2', '4d44a591-5924-4239-a46c-23d8134f9ff4', '2便', 60, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('1466f21f-72d2-4c84-b394-da366b82e07a', '4d44a591-5924-4239-a46c-23d8134f9ff4', '3便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('1466f21f-72d2-4c84-b394-da366b82e07a', '4d44a591-5924-4239-a46c-23d8134f9ff4', '3便', 45, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('71726b3c-dd4e-4e2e-afb7-d032d4cc0b95', '4d44a591-5924-4239-a46c-23d8134f9ff4', '4便', 45, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('71726b3c-dd4e-4e2e-afb7-d032d4cc0b95', '4d44a591-5924-4239-a46c-23d8134f9ff4', '4便', 60, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('5fbb8335-e596-4d6d-b7a4-30b71dbd540b', '4d44a591-5924-4239-a46c-23d8134f9ff4', '5便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('5fbb8335-e596-4d6d-b7a4-30b71dbd540b', '4d44a591-5924-4239-a46c-23d8134f9ff4', '5便', 45, 10)`,
     );
     // 便（下り）
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('f5303601-e7bb-4277-af09-8a9750c30b11', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '1便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('f5303601-e7bb-4277-af09-8a9750c30b11', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '1便', 45, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('5a041d1c-52b9-4c3b-aaa4-125478729c39', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '2便', 45, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('5a041d1c-52b9-4c3b-aaa4-125478729c39', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '2便', 60, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('116435fa-5adf-46a7-a00b-36b2bd7a7aff', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '3便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('116435fa-5adf-46a7-a00b-36b2bd7a7aff', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '3便', 45, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('612ce9a2-810d-48b5-b54a-b87b75612c9e', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '4便', 45, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('612ce9a2-810d-48b5-b54a-b87b75612c9e', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '4便', 60, 10)`,
     );
     await queryRunner.query(
-      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('b3ba9859-9886-4b39-b676-e401d6cc7e58', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '5便', 60, 10)`,
+      `INSERT INTO trip (id, route_id, name, shock_level, capacity) VALUES ('b3ba9859-9886-4b39-b676-e401d6cc7e58', '2e9c5a4a-0519-4d47-b259-d5a5f4a76728', '5便', 45, 10)`,
     );
     // 時刻表（上り 1便）
     await queryRunner.query(

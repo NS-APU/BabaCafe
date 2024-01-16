@@ -104,9 +104,10 @@ export class LogisticsRepository {
     pickupStop: string,
     deliveryStop: string,
     count: number,
+    conditions: string,
   ): Promise<Record<string, string>[]> {
     return await baseAPI<Record<string, string>[]>({
-      endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}`,
+      endpoint: `${this.baseEndpoint}/tripsuggestions?logisticsId=${logisticsId}&pickup-stop=${pickupStop}&delivery-stop=${deliveryStop}&count=${count}&conditions=${conditions}`,
     });
   }
 

@@ -23,6 +23,7 @@
   export let reservationStatus: TReservation['status'];
   export let pickupStop: string;
   export let deliveryStop: string;
+  export let shockLevel: number;
 
   $: reservationRepository = new ReservationRepository();
 
@@ -79,12 +80,21 @@
 
   async function fetchTripSuggestions(): Promise<TSuggestTrip[]> {
     selectedTrip = null;
+    const conditions = JSON.stringify([
+      {
+        property: 'shockLevel',
+        operator: 'greaterEqual',
+        type: 'number',
+        value: shockLevel,
+      },
+    ]);
     try {
       suggestions = await new LogisticsRepository().getTripSuggestions(
         selectedShipper.id,
         pickupStop,
         deliveryStop,
         MAX_SUGGEST_TRIP_COUNT,
+        conditions,
       );
       return suggestions;
     } catch (err) {
